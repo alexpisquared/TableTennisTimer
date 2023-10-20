@@ -1,18 +1,58 @@
 ﻿@page "/counter"
+@using System.Timers
+@using System.Diagnostics
 
 <PageTitle>Counter</PageTitle>
 
-<h1>Counter</h1>
+<h1>Counter WASM</h1>
+<h2>Current Time: @currentTime</h2>
+<h3>Time left: @currentTime</h3>
 
 <p role="status">Current count: @currentCount</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
 @code {
-    private int currentCount = 0;
+  private string currentTime = "@@@@@@@@@";
+  private int currentCount = 0;
+  // private readonly Timer timer = new Timer(333);
 
-    private void IncrementCount()
+  protected override async void OnInitialized()
+  {
+    // timer.Elapsed += (sender, e) => UpdateTime();
+    // timer.Start();
+    await MainLoop();
+  }
+
+  async Task MainLoop()
+  {
+    while (true)
     {
-        currentCount++;
+      await Task.Delay(1000);
+      UpdateTime();
     }
+  }
+
+  private void UpdateTime()
+  {
+    currentTime = DateTime.Now.ToString("HH:mm:ss");
+    InvokeAsync(StateHasChanged);
+    Debug.WriteLine(currentTime);
+  }
+
+  private void IncrementCount()
+  {
+    currentCount++;
+  }
+
+  public bool IsDisposed { get; private set; }
+
+  public void Dispose()
+  {
+    if (IsDisposed)
+      return;
+
+    // timer.Dispose();
+    IsDisposed = true;
+  }
 }

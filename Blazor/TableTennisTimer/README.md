@@ -1,4 +1,7 @@
 # 2023-10-18:
+New .Net 8.0 Blazor template with all default settings during project creation + PWA.
+
+# 2023-10-18:
 From https://learn.microsoft.com/en-us/aspnet/core/blazor/progressive-web-app?view=aspnetcore-7.0&tabs=visual-studio:
 dotnet new blazorwasm -o TableTennisTimer --pwa             :used to create the app
 dotnet new blazorwasm -o TableTennisTimer --pwa --hosted    :GPT suggested to use this one
@@ -44,3 +47,4 @@ I had the exact same problem (on an Azure Windows Web Service). I just created a
 </configuration>
 This adds the mime configuration for json-files.
 
+# 2023-10-20:
