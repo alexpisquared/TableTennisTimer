@@ -1,0 +1,53 @@
+﻿@page "/PlayAudioFromCs"
+@using System;
+@using System.Diagnostics;
+@using System.Media;
+@using System.Threading.Tasks;
+@using System.Timers;
+@using Microsoft.AspNetCore.Components;
+@using static System.Console;
+@inject IJSRuntime JSRuntime
+
+<h1>Blazor Sound Demo</h1>
+<h3>PlayAudioFromCs</h3>
+<audio id="sound1" controls ><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
+<p>Muted startup starter</p>
+<audio id="sound2" autoplay controls muted><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
+@* <audio id="sound1" controls loop="loop"><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio> *@
+@* <audio id="sound3" controls muted><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio> *@
+
+
+<p>To play the sound, click the button: <button id="soundButton" @onclick="PlaySound">Click me!</button></p>
+
+<p>To make the sound stop playing, click this button: <button id="stopButton" @onclick="PauseSound">Stop sound!</button></p>
+
+@code {
+
+  protected override async void OnInitialized()
+  {
+    base.OnInitialized();
+
+    await Task.Delay(15_000);
+    await PlaySound();
+  }
+  public async Task PlaySound()
+  {
+    while (true)
+    {
+      WriteLine("start playing sound1  ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
+      await JSRuntime.InvokeAsync<string>("PlayAudio", "sound1");
+      await Task.Delay(1_500);
+    }
+  }
+
+  public async Task PlaySound2()
+  {
+    WriteLine("start playing sound1  ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
+    await JSRuntime.InvokeAsync<string>("PlayAudio", "sound1");
+  }
+  public async Task PauseSound()
+  {
+    WriteLine("start playing sound1  ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
+    await JSRuntime.InvokeAsync<string>("PauseAudio", "sound1");
+  }
+}
