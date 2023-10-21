@@ -10,6 +10,7 @@
 
 <h1>Blazor Sound Demo</h1>
 <h3>PlayAudioFromCs</h3>
+<p>https://exceptionnotfound.net/how-to-play-a-sound-with-blazor-and-javascript/</p>
 <audio id="sound1" controls ><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
 <p>Muted startup starter</p>
 <audio id="sound2" autoplay controls muted><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
@@ -30,7 +31,7 @@
     await Task.Delay(15_000);
     await PlaySound();
   }
-  public async Task PlaySound()
+  public async Task PlaySoundWhileTrue()
   {
     while (true)
     {
@@ -40,7 +41,7 @@
     }
   }
 
-  public async Task PlaySound2()
+  public async Task PlaySound()
   {
     WriteLine("start playing sound1  ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
     await JSRuntime.InvokeAsync<string>("PlayAudio", "sound1");
