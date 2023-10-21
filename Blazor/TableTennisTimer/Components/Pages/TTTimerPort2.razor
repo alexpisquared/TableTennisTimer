@@ -1,5 +1,14 @@
 ﻿@page "/tennis-timer"
+@using System.Timers;
+@using System.Diagnostics;
+@using static System.Console;
+@using Microsoft.AspNetCore.Components;
+@using System;
+@using System.Media;
+@using System.Threading.Tasks;
 @inject IJSRuntime JSRuntime
+
+<PageTitle>TennisTimer</PageTitle>
 
 <h1>Tennis Timer</h1>
 
@@ -13,53 +22,32 @@
 <p>Report: @report</p>
 <p>Error: @error</p>
 
-<button @onclick="() => { isLooping = !isLooping; }">@if (isLooping) { "Stop" } else { "Start" }</button>
-
 @code {
-  bool isLooping = false;
-  int everyXMin = 10;
-  int percentComplete = 0;
-  string countdownString = "··:··";
-  string report = "";
-  string error = "no error";
-  DateTime nextTime = DateTime.Now;
-  string nextHHMM = "88:88";
-  int[] playPeriods = new int[] { 2, 10, 15, 20, 30, 999 };
-  object wakeLock;
-  Audio soundEffect = new Audio();
+  private bool isLooping = true;
+  private int everyXMin = 10;
+  private int percentComplete = 0;
+  private string countdownString = "··:··";
+  private string report = "";
+  private string error = "no error";
+  private DateTime nextTime = DateTime.Now;
+  private string nextHHMM = "88:88";
+  private int[] playPeriods = new int[] { 2, 10, 15, 20, 30, 999 };
+  private object? wakeLock;
 
   protected override async Task OnInitializedAsync()
   {
-    try
-    {
-      soundEffect.Autoplay = true;
-      soundEffect.Src = "Audio\\Start - Arcade Alarm.mp3";
-      error = "++++";
-      await Delay(222);
-    }
-    catch (Exception err)
-    {
-      error = $"■  {err.GetType().Name}, {err.Message}";
-      try
-      {
-        soundEffect.Src = "data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
-      }
-      catch (Exception err2)
-      {
-        error = $"■■ {err2.GetType().Name}, {err2.Message}";
-      }
-    }
-
-    MainLoop();
+    WriteLine("protected override async void OnInitializedAsync() ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
+    await base.OnInitializedAsync();
+    await MainLoopTask();
   }
 
-  async Task MainLoop()
+  async Task MainLoopTask()
   {
     wakeLock = null;
 
     try
     {
-      wakeLock = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen");
+      wakeLock = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
       report = "Wake Lock is active!";
     }
     catch (Exception err)
@@ -75,7 +63,7 @@
       while (isLooping && now < nextTime)
       {
         int prev = everyXMin;
-        await Delay(950);
+        await Task.Delay(950);
         if (prev != everyXMin) // if the user changed the time, then reset the timer
         {
           SetAndShowNextTime();
@@ -91,6 +79,8 @@
           countdownString = "▓▓▓▓";
           await PlayWavFilesAsync(1);
         }
+
+        StateHasChanged(); // await InvokeAsync(StateHasChanged);
       } // while (now < nextTime)
 
       if (isLooping)
@@ -105,8 +95,8 @@
       }
     } // while (isLooping)
 
-    await Delay(250); // collides with the "Wake Lock released" sound.
-    soundEffect.Src = "Audio\\Start - Arcade Chirp Descend.mp3";
+    await Task.Delay(250); // collides with the "Wake Lock released" sound.
+                           // soundEffect.Src = "Audio\\Start - Arcade Chirp Descend.mp3"; // Commented out due to error
   }
 
   private void SetAndShowNextTime()
@@ -116,23 +106,21 @@
     nextHHMM = $"{nextTime.Hour:00}:{nextTime.Minute:00}";
   }
 
-  async Task Delay(int ms) => await Task.Delay(ms);
-
   async Task PlayWavFilesAsync(int i)
   {
     switch (i)
     {
       case 1:
-        PlayResourse("Audio\\Start - Arcade Power Up.7.mp3");
-        await Delay(2500);
-        PlayResourse(GetLastMinute());
-        await Delay(2000);
+        await PlayResourse("Audio\\Start - Arcade Power Up.7.mp3");
+        await Task.Delay(2500);
+        await PlayResourse(GetLastMinute());
+        await Task.Delay(2000);
         break;
       default:
-        PlayResourse("Audio\\Good - Fanfare.7.mp3");
-        await Delay(5000);
-        PlayResourse(GetTimeToChange());
-        await Delay(1000);
+        await PlayResourse("Audio\\Good - Fanfare.7.mp3");
+        await Task.Delay(5000);
+        await PlayResourse(GetTimeToChange());
+        await Task.Delay(1000);
         break;
     }
   }
@@ -143,17 +131,17 @@
     {
       await JSRuntime.InvokeAsync<object>("navigator.wakeLock.release", wakeLock);
       report = "Wake Lock released";
-      Console.WriteLine("Wake Lock released");
+      WriteLine("Wake Lock released ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
       wakeLock = null;
-      PlayResourse("Audio\\en-US-AriaNeural~1.00~100~whispering~Wake Lock released!.7.mp3");
-      await Delay(1000);
+      await PlayResourse("Audio\\en-US-AriaNeural~1.00~100~whispering~Wake Lock released!.7.mp3");
+      await Task.Delay(1000);
     }
   }
 
   async Task PlayResourse(string filePath)
   {
     await JSRuntime.InvokeVoidAsync("PlayAudioFile", "filePath");
-  } // => soundEffect.Src = filePath;
+  }
 
   string GetLastMinute()
   {
