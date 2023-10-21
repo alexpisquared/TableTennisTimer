@@ -6,30 +6,42 @@
 
 <h1>Counter WASM</h1>
 <h2>Current Time: @currentTime</h2>
-<h3>Time left: @currentTime</h3>
+<h3>Time left: @ct2</h3>
 
 <p role="status">Current count: @currentCount</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
 @code {
-  private string currentTime = "@@@@@@@@@";
+  private string currentTime = "HH:mm:ss", ct2 = "lkjl";
   private int currentCount = 0;
-  // private readonly Timer timer = new Timer(333);
+  //-86 private readonly Timer timer = new Timer(333);
 
   protected override async void OnInitialized()
   {
-    // timer.Elapsed += (sender, e) => UpdateTime();
-    // timer.Start();
-    await MainLoop();
+    base.OnInitialized();
+    MainLoopVoid();
+    await MainLoopTask();
+    //-86 timer.Elapsed += (sender, e) => UpdateTime();
+    //-86 timer.Start();
   }
 
-  async Task MainLoop()
+  async void MainLoopVoid()
+  {
+    while (true) //todo: PeriodicTimer??
+    {
+      await Task.Delay(900);
+      ct2 = DateTime.Now.ToString("HH:mm:ss");
+      StateHasChanged(); // await InvokeAsync(StateHasChanged);
+    }
+  }
+  async Task MainLoopTask()
   {
     while (true)
     {
-      await Task.Delay(1000);
-      UpdateTime();
+      await Task.Delay(800);
+      currentTime = DateTime.Now.ToString("HH:mm:ss");
+      await InvokeAsync(StateHasChanged);
     }
   }
 
@@ -37,7 +49,6 @@
   {
     currentTime = DateTime.Now.ToString("HH:mm:ss");
     InvokeAsync(StateHasChanged);
-    Debug.WriteLine(currentTime);
   }
 
   private void IncrementCount()
@@ -52,7 +63,7 @@
     if (IsDisposed)
       return;
 
-    // timer.Dispose();
+    //-86 timer.Dispose();
     IsDisposed = true;
   }
 }
