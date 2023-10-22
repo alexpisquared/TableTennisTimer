@@ -11,25 +11,29 @@
 <h1>Blazor Sound Demo</h1>
 <h3>PlayAudioFromCs</h3>
 <p>https://exceptionnotfound.net/how-to-play-a-sound-with-blazor-and-javascript/</p>
-<audio id="sound1" controls ><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
-<p>Muted startup starter</p>
-<audio id="sound2" autoplay controls muted><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
-@* <audio id="sound1" controls loop="loop"><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio> *@
-@* <audio id="sound3" controls muted><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio> *@
 
+<p>Main target <audio id="sound1" controls><source src=@src type="audio/mpeg"></audio></p>
+<p>Muted startup starter <audio id="sound2" autoplay controls muted="true"><source src=@src type="audio/mpeg"></audio> </p>
+@* <audio id="sound1" controls loop="loop"><source src=@src type="audio/mpeg"></audio> *@
+@* <audio id="sound3" controls muted><source src=@src type="audio/mpeg"></audio> *@
 
-<p>To play the sound, click the button: <button id="soundButton" @onclick="PlaySound">Click me!</button></p>
+<p>Report: @src</p>
 
-<p>To make the sound stop playing, click this button: <button id="stopButton" @onclick="PauseSound">Stop sound!</button></p>
+<p>
+  <button id="soundButton" @onclick="PlaySound">PlaySound</button> 
+  <button id="stopButton" @onclick="PauseSound">PauseSound</button>
+  <button id="cngButton" @onclick="ChangeSound">ChangeSound</button>
+</p>
 
 @code {
+  private string src = "Audio/Start - Arcade Alarm.mp3";
 
   protected override async void OnInitialized()
   {
     base.OnInitialized();
 
-    await Task.Delay(15_000);
-    await PlaySound();
+    // await Task.Delay(1000); //tu: does not work without this delay. why?
+    // await PlaySound();
   }
   public async Task PlaySoundWhileTrue()
   {
@@ -40,11 +44,15 @@
       await Task.Delay(1_500);
     }
   }
-
   public async Task PlaySound()
   {
     WriteLine("start playing sound1  ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
     await JSRuntime.InvokeAsync<string>("PlayAudio", "sound1");
+  }
+  public void ChangeSound()
+  {
+    src = "Audio/Start - Arcade Power Up.7.mp3";
+    StateHasChanged(); // await InvokeAsync(StateHasChanged);
   }
   public async Task PauseSound()
   {
