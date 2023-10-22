@@ -17,15 +17,11 @@
 <p>---Report:<h3> @report</h3></p>
 <p>----Error:<h3> @error</h3></p>
 
-<audio id="sound1" controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
 <audio id="sound2" autoplay controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
-<audio id="sound3" controls muted><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
 <br />
-<button onclick="document.getElementById('sound1').play()">Play through Javascript</button>
-<button onclick="document.getElementById('sound2').play()">Play through Javascript</button>
-<button onclick="document.getElementById('sound3').play()">Play through Javascript</button>
+<button onclick="document.getElementById('Intro').play()">Play through Javascript</button>
 <button @onclick="@ClickHandler">Play through C#</button>
-
+<br />
 <audio id="Intro" controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
 <audio id="Power" controls><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
 <audio id="Chirp" controls><source src="Audio/Start - Arcade Chirp Descend.mp3"></audio>
@@ -59,7 +55,7 @@
 
   async void ClickHandler()
   {
-    await JSRuntime.InvokeAsync<string>("PlayAudio", "sound1");
+    await JSRuntime.InvokeAsync<string>("PlayAudio", "Intro");
   }
 
   protected override async Task OnInitializedAsync()
@@ -123,8 +119,9 @@
       }
     } // while (isLooping)
 
-    await Task.Delay(250); // collides with the "Wake Lock released" sound.
-                           // soundEffect.Src = "Audio\\Start - Arcade Chirp Descend.mp3"; // Commented out due to error
+    await Task.Delay(250); // collides with the "Wake Lock released" sound. ...on NG.
+                           
+    await PlayResourse("Chirp");
   }
 
   private void SetAndShowNextTime()
@@ -139,13 +136,13 @@
     switch (i)
     {
       case 1:
-        await PlayResourse("Audio\\Start - Arcade Power Up.7.mp3");
+        await PlayResourse("Power");
         await Task.Delay(2500);
         await PlayResourse(GetLastMinute());
         await Task.Delay(2000);
         break;
       default:
-        await PlayResourse("Audio\\Good - Fanfare.7.mp3");
+        await PlayResourse("Fanfare");
         await Task.Delay(5000);
         await PlayResourse(GetTimeToChange());
         await Task.Delay(1000);
@@ -161,39 +158,38 @@
       report = "Wake Lock released";
       WriteLine("Wake Lock released ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
       wakeLock = null;
-      await PlayResourse("Audio\\en-US-AriaNeural~1.00~100~whispering~Wake Lock released!.7.mp3");
+      await PlayResourse("LockReleased");
       await Task.Delay(1000);
     }
   }
 
   async Task PlayResourse(string filePath)
-  {
-    // await JSRuntime.InvokeVoidAsync("PlayAudio", "filePath");
-    await JSRuntime.InvokeAsync<string>("PlayAudio", "sound1");
+  {    
+    await JSRuntime.InvokeAsync<string>("PlayAudio", filePath);
   }
 
   string GetLastMinute()
   {
     string[] stringArr = new string[] {
-      "Audio\\zh-CN-XiaomoNeural~1.00~100~angry~Last minute! EQAQJ！.7.mp3",
-      "Audio\\zh-CN-XiaomoNeural~1.00~100~calm~Last minute! EQAQJ！.7.mp3",
-      "Audio\\zh-CN-XiaomoNeural~1.00~100~cheerful~Last minute! EQAQJ！.7.mp3",
-      "Audio\\zh-CN-XiaomoNeural~1.00~100~gentle~Last minute! EQAQJ！.7.mp3",
-      "Audio\\zh-CN-XiaomoNeural~1.00~100~sad~Last minute! EQAQJ！.7.mp3",
-      "Audio\\zh-CN-XiaomoNeural~1.00~100~serious~Last minute! EQAQJ！.7.mp3"};
+      "angryLastMinute", //      "Audio\\zh-CN-XiaomoNeural~1.00~100~angry~Last minute! EQAQJ！.7.mp3",
+      "calmLastMinute", //      "Audio\\zh-CN-XiaomoNeural~1.00~100~calm~Last minute! EQAQJ！.7.mp3",
+      "cheerfulLastMinute", //      "Audio\\zh-CN-XiaomoNeural~1.00~100~cheerful~Last minute! EQAQJ！.7.mp3",
+      "gentleLastMinute", //      "Audio\\zh-CN-XiaomoNeural~1.00~100~gentle~Last minute! EQAQJ！.7.mp3",
+      "sadLastMinute", //      "Audio\\zh-CN-XiaomoNeural~1.00~100~sad~Last minute! EQAQJ！.7.mp3",
+      "seriousLastMinute" }; //      "Audio\\zh-CN-XiaomoNeural~1.00~100~serious~Last minute! EQAQJ！.7.mp3"};
     return stringArr[new Random().Next(stringArr.Length)];
   }
 
   string GetTimeToChange()
   {
     string[] stringArr = new string[] {
-      "Audio\\zh-CN-XiaomoNeural~1.00~100~angry~Time to rotate! DYRGOE！.7.mp3",
-      "Audio\\zh-CN-XiaomoNeural~1.00~100~calm~Time to rotate! DYRGOE！.7.mp3",
-      "Audio\\zh-CN-XiaomoNeural~1.00~100~cheerful~Time to rotate! DYRGOE！.7.mp3",
-      "Audio\\zh-CN-XiaomoNeural~1.00~100~gentle~Time to rotate! DYRGOE！.7.mp3",
-      "Audio\\zh-CN-XiaomoNeural~1.00~100~sad~Time to rotate! DYRGOE！.7.mp3",
-      "Audio\\zh-CN-XiaomoNeural~1.00~100~serious~Time to rotate! DYRGOE！.7.mp3"};
-    return stringArr[new Random().Next(stringArr.Length)];
+      "angryRotate", //       "Audio\\zh-CN-XiaomoNeural~1.00~100~angry~Time to rotate! DYRGOE！.7.mp3",
+      "calmRotate", //       "Audio\\zh-CN-XiaomoNeural~1.00~100~calm~Time to rotate! DYRGOE！.7.mp3",
+      "cheerfulRotate", //       "Audio\\zh-CN-XiaomoNeural~1.00~100~cheerful~Time to rotate! DYRGOE！.7.mp3",
+      "gentleRotate", //       "Audio\\zh-CN-XiaomoNeural~1.00~100~gentle~Time to rotate! DYRGOE！.7.mp3",
+      "sadRotate", //       "Audio\\zh-CN-XiaomoNeural~1.00~100~sad~Time to rotate! DYRGOE！.7.mp3",
+      "seriousRotate" }; //       "Audio\\zh-CN-XiaomoNeural~1.00~100~serious~Time to rotate! DYRGOE！.7.mp3"};
+  return stringArr[new Random().Next(stringArr.Length)];
   }
 
   async ValueTask DisposeAsync()
@@ -201,4 +197,4 @@
     isLooping = false;
     await ReleaseWakeLock();
   }
-}
+  }
