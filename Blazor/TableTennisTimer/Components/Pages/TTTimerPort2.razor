@@ -25,7 +25,7 @@
 <br />
 @*
   <button onclick="document.getElementById('Intro').play()">Play through Javascript</button>
-  <button @onclick="@ClickHandler">Play through C#</button>
+  <button @onclick="@ClickHandlerCs">Play through C#</button>
 *@
 <br />
 <audio id="Intro" controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
@@ -59,7 +59,7 @@
   private int[] playPeriods = new int[] { 2, 10, 15, 20, 30, 999 };
   private object? wakeLock;
 
-  async void ClickHandler()
+  async void ClickHandlerCs()
   {
     await JSRuntime.InvokeAsync<string>("PlayAudio", "Intro");
   }
@@ -101,7 +101,7 @@
         countdownString = $"{Math.Floor(secondsLeft / 60):00}:{Math.Floor(secondsLeft % 60):00}";
         percentComplete = $"{((100 * (everyXMin * 60 - secondsLeft) / (everyXMin * 60))):N1}";
 
-        if (secondsLeft <= 60 && secondsLeft > 56) // play a sound when there is 1 minute left
+        if (secondsLeft <= 60 && secondsLeft > 56) // a sound when there is 1 minute left
         {
           countdownString = "▓▓▓▓";
           StateHasChanged(); // await InvokeAsync(StateHasChanged);
@@ -210,17 +210,18 @@
 
   public async ValueTask DisposeAsync()
   {
-    WriteLine("DisposeAsync() ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
+    WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀  DisposeAsync() ");
     isLooping = false;
     await ReleaseWakeLockAsync();
   }
   public bool IsDisposed { get; private set; }
   public void Dispose()
   {
-    WriteLine("Dispose() ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
+    WriteLine($"▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀  Dispose()  IsDisposed: {IsDisposed}");
     if (IsDisposed)
       return;
 
+    isLooping = false;
     ReleaseWakeLock();
 
     IsDisposed = true;
