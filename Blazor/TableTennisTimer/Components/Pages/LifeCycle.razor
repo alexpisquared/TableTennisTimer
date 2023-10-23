@@ -1,0 +1,41 @@
+﻿@page "/LifeCycle"
+@using System;
+@using System.Diagnostics;
+@using System.Media;
+@using System.Threading.Tasks;
+@using System.Timers;
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.AspNetCore.Components.Routing
+@using static System.Console;
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+<h3>LifeCycle</h3>
+<input type="text" @bind-value="@fieldContent" />
+
+@code {
+  private string fieldContent = default!;
+
+  protected override void OnInitialized()
+  {
+    WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀ 0000000");
+    NavigationManager.LocationChanged += HandleLocationChanging;
+  }
+
+  private void HandleLocationChanging(object sender, LocationChangedEventArgs e)  {    ValidateFieldContents();  }
+
+  public void ValidateFieldContents()
+  {
+    WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀ ValidateFieldContents()");
+    
+    if (string.IsNullOrEmpty(fieldContent) == true)
+    {
+      fieldContent = "No content";
+    }
+  }
+  public void Dispose()
+  {
+    WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀ Dispose()");
+    NavigationManager.LocationChanged -= HandleLocationChanging;
+  }
+}

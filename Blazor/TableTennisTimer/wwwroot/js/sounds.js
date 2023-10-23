@@ -1,7 +1,13 @@
 window.PlayAudio = (elementName) => {
-  document.getElementById(elementName).play();
+  var audio = document.getElementById(elementName);
+  if (audio !== null && audio != null) {
+    audio.play();
+  }
 }
 
 window.PauseAudio = (elementName) => {
-  document.getElementById(elementName).pause();
+  var audio = document.getElementById(elementName);
+  if (audio !== null && audio != null) {
+    audio.pause();
+  }
 }
