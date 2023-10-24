@@ -8,6 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Components\Pages\TTTimerPort2.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Components\Pages\TTTimerPort2.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\web.config" />
   </ItemGroup>
 

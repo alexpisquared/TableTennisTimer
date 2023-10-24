@@ -7,50 +7,73 @@
 @using Microsoft.AspNetCore.Components;
 @using static System.Console;
 @inject IJSRuntime JSRuntime
-@implements IDisposable 
-@implements IAsyncDisposable 
-@* 
-*@
+@implements IDisposable
+@implements IAsyncDisposable
 
 <PageTitle>TennisTimer</PageTitle>
+<div class="centered-div">
+  <div class="pb" style="width:@progress%;"></div>
+  <div style="width:@regress%;"></div>
+</div>
+<div class="centered-div">
+  @countdownString
+</div>
+<div class="topmost-div">
+  <EditForm EditContext="this.editContext">
+    @foreach (var model in tables)
+    {
+      @* <h3>@model.TableName</h3> *@
+      <span title="Play period in minutes" style="color: #00f;">Minutes</span>
+      <span>
+        <InputRadioGroup @bind-Value="model.SelectedPeriod">
+          @foreach (var option in model.Options)
+          {
+            <span>
+              <InputRadio Value="option.PeriodInMin" />
+              <span style="color: #00f; margin-right: 20px;">@option.PeriodInMin</span>
+            </span>
+          }
+        </InputRadioGroup>
+        <span>Dbg <b style="color: #00f;"> @model.SelectedPeriod</b></span>
+      </span>
+    }
+  </EditForm>
+</div>
 
-<h1>Tennis Timer</h1>
-<p>Countdown:<h1> @countdownString</h1></p>
-<p>Next time:<h1> @nextHHMM</h1></p>
-<p>Percent %:<h1> @percentComplete %</h1></p>
-<p>---Report:<h3> @report</h3></p>
-<p>----Error:<h3> @error</h3></p>
-
-<audio id="sound2" autoplay controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
-<br />
-@*
-  <button onclick="document.getElementById('Intro').play()">Play through Javascript</button>
-  <button @onclick="@ClickHandlerCs">Play through C#</button>
-*@
-<br />
-<audio id="Intro" controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
-<audio id="Power" controls><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
-<audio id="Chirp" controls><source src="Audio/Start - Arcade Chirp Descend.mp3"></audio>
-<audio id="Fanfare" controls><source src="Audio/Good - Fanfare.7.mp3"></audio>
-<audio id="angryLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~angry~Last minute! EQAQJ！.7.mp3"></audio>
-<audio id="calmLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~calm~Last minute! EQAQJ！.7.mp3"></audio>
-<audio id="cheerfulLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~cheerful~Last minute! EQAQJ！.7.mp3"></audio>
-<audio id="gentleLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~gentle~Last minute! EQAQJ！.7.mp3"></audio>
-<audio id="sadLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~sad~Last minute! EQAQJ！.7.mp3"></audio>
-<audio id="seriousLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~serious~Last minute! EQAQJ！.7.mp3" }></audio>
-<audio id="angryRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~angry~Time to rotate! DYRGOE！.7.mp3"></audio>
-<audio id="calmRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~calm~Time to rotate! DYRGOE！.7.mp3"></audio>
-<audio id="cheerfulRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~cheerful~Time to rotate! DYRGOE！.7.mp3"></audio>
-<audio id="gentleRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~gentle~Time to rotate! DYRGOE！.7.mp3"></audio>
-<audio id="sadRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~sad~Time to rotate! DYRGOE！.7.mp3"></audio>
-<audio id="seriousRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~serious~Time to rotate! DYRGOE！.7.mp3"></audio>
-<audio id="LockReleased" controls><source src="Audio/en-US-AriaNeural~1.00~100~whispering~Wake Lock released!.7.mp3"></audio>
+<div class="bottom-div">
+    Next&nbsp;time:&nbsp;@nextHHMM&nbsp;&nbsp;&nbsp;@progressString&nbsp;%&nbsp;&nbsp;&nbsp;@report&nbsp;&nbsp;&nbsp;@error
+    @*
+    <button onclick="document.getElementById('Intro').play()">Play through Javascript</button>
+    <button @onclick="@ClickHandlerCs">Play through C#</button>
+    <button @onclick="OnClick" class="btn btn-dark" >Ok</button>
+    *@
+</div>
+    <div class="hidden-div ">
+      <audio id="sound2" autoplay controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
+      <audio id="Intro" controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
+      <audio id="Power" controls><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
+      <audio id="Chirp" controls><source src="Audio/Start - Arcade Chirp Descend.mp3"></audio>
+      <audio id="Fanfare" controls><source src="Audio/Good - Fanfare.7.mp3"></audio>
+      <audio id="angryLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~angry~Last minute! EQAQJ！.7.mp3"></audio>
+      <audio id="calmLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~calm~Last minute! EQAQJ！.7.mp3"></audio>
+      <audio id="cheerfulLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~cheerful~Last minute! EQAQJ！.7.mp3"></audio>
+      <audio id="gentleLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~gentle~Last minute! EQAQJ！.7.mp3"></audio>
+      <audio id="sadLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~sad~Last minute! EQAQJ！.7.mp3"></audio>
+      <audio id="seriousLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~serious~Last minute! EQAQJ！.7.mp3" }></audio>
+      <audio id="angryRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~angry~Time to rotate! DYRGOE！.7.mp3"></audio>
+      <audio id="calmRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~calm~Time to rotate! DYRGOE！.7.mp3"></audio>
+      <audio id="cheerfulRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~cheerful~Time to rotate! DYRGOE！.7.mp3"></audio>
+      <audio id="gentleRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~gentle~Time to rotate! DYRGOE！.7.mp3"></audio>
+      <audio id="sadRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~sad~Time to rotate! DYRGOE！.7.mp3"></audio>
+      <audio id="seriousRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~serious~Time to rotate! DYRGOE！.7.mp3"></audio>
+      <audio id="LockReleased" controls><source src="Audio/en-US-AriaNeural~1.00~100~whispering~Wake Lock released!.7.mp3"></audio>
+    </div>
 
 @code {
   private string src = "Audio/Start - Arcade Alarm.mp3";
   private bool isLooping = true;
   private int everyXMin = 2;
-  private string percentComplete = "%";
+  private string progressString = "%";
   private string countdownString = "··:··";
   private string report = "";
   private string error = "no error";
@@ -59,16 +82,50 @@
   private int[] playPeriods = new int[] { 2, 10, 15, 20, 30, 999 };
   private object? wakeLock;
 
-  async void ClickHandlerCs()
-  {
-    await JSRuntime.InvokeAsync<string>("PlayAudio", "Intro");
-  }
+  double progress = 33, regress = 67;
+  // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
+  private EditContext editContext;
+  private List<ModelTable> tables;
 
   protected override async Task OnInitializedAsync()
   {
+    tables = Tables;
+    editContext = new EditContext(tables);
+
     WriteLine("protected override async void OnInitializedAsync() ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
     await base.OnInitializedAsync();
     await MainLoopTask();
+
+    // return Task.CompletedTask;
+  }
+
+  public List<ModelTable> Tables => new List<ModelTable>() { new ModelTable() { TableName = "Table - All", SelectedPeriod = "10" }, };
+
+  public class ModelOptions
+  {
+    public string PeriodInMin { get; set; } = "xx";
+    public bool IsSelected { get => _isSelected; set { _isSelected = value; } }
+    public bool _isSelected;
+  }
+
+  public class ModelTable
+  {
+    public string TableName { get; set; } = "xx";
+    public string SelectedPeriod { get; set; } = "xx";
+    public List<ModelOptions> Options { get; set; } = new List<ModelOptions>()
+    {
+      new ModelOptions() {PeriodInMin="02", IsSelected=true},
+      new ModelOptions() {PeriodInMin="10", IsSelected=false},
+      new ModelOptions() {PeriodInMin="15", IsSelected=false},
+      new ModelOptions() {PeriodInMin="20", IsSelected=false},
+      new ModelOptions() {PeriodInMin="30", IsSelected=false},
+    };
+  }
+
+
+  async void ClickHandlerCs()
+  {
+    await JSRuntime.InvokeAsync<string>("PlayAudio", "Intro");
   }
 
   async Task MainLoopTask()
@@ -90,7 +147,7 @@
       while (isLooping && now < nextTime)
       {
         int prev = everyXMin;
-        await Task.Delay(1000);
+        await Task.Delay(999);
         if (prev != everyXMin) // if the user changed the time, then reset the timer
         {
           SetAndShowNextTime();
@@ -98,12 +155,14 @@
 
         now = DateTime.Now;
         double secondsLeft = (nextTime - now).TotalSeconds;
-        countdownString = $"{Math.Floor(secondsLeft / 60):00}:{Math.Floor(secondsLeft % 60):00}";
-        percentComplete = $"{((100 * (everyXMin * 60 - secondsLeft) / (everyXMin * 60))):N1}";
+        countdownString = $"{(nextTime - now):m\\:ss}";
+        progress = ((100 * (everyXMin * 60 - secondsLeft) / (everyXMin * 60)));
+        regress = 100 - progress;
+        progressString = $"{progress:N1}";
 
-        if (secondsLeft <= 60 && secondsLeft > 56) // a sound when there is 1 minute left
+        if (secondsLeft <= 60 && secondsLeft > 56) // a sound when there is 1 minute regress
         {
-          countdownString = "▓▓▓▓";
+          countdownString = "Last·minute";
           StateHasChanged(); // await InvokeAsync(StateHasChanged);
           await PlayWavFilesAsync(1);
         }
@@ -113,7 +172,7 @@
 
       if (isLooping)
       {
-        countdownString = "▄▀▄▀";
+        countdownString = "Rotate!!!";
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
         await PlayWavFilesAsync(2);
       }
