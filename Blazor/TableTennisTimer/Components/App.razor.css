@@ -1,4 +1,4 @@
-﻿.pb {
+﻿.progress-bar {
   height: 100%;
   background-color: #800;
   border-radius: 8.8px;
@@ -19,7 +19,7 @@
   overflow: visible;
   font-weight: 600;
   font-family: Tw Cen MT Condensed;
-  color: #fff;
+  color: #630;
   border-radius: 8.8px;
   border: 1px solid #ddd;
 }
@@ -31,7 +31,6 @@
   transform: translate(-50%, 0%);
   padding: 8px 16px;
   margin: 8px 0;
-  font-weight: 600;
   border-radius: 8.8px;
   color: #ccc;
 }
@@ -43,11 +42,39 @@
   transform: translate(-50%, 0%);
   padding: 8px 16px;
   margin: 8px 0;
-  font-weight: 600;
   border-radius: 8.8px;
   color: #ccc;
 }
 
+.right-div {
+  right: 0;
+  position: absolute;
+  padding: 8px 16px;
+  margin: 8px;
+  border-radius: 8.8px;
+  color: #ccc;
+  background-color: #555a;
+}
+
 .hidden-div {
   visibility: collapse;
+}
+
+input[type=checkbox] {
+  width: 32px;
+  height: 32px;
+}
+
+input[type=radio] {
+  width: 32px;
+  height: 32px;
+}
+
+button {
+  width: 52px;
+}
+
+h1 {
+  color: #f0f;
+  font-family: Tahoma, Geneva, Verdana, sans-serif;
 }

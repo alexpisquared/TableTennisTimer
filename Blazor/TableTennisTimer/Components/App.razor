@@ -10,266 +10,275 @@
 @implements IAsyncDisposable
 
 <PageTitle>TennisTimer</PageTitle>
-<div class="centered-div" style="background-color: #040;">
-  <div style="width: @progress%;" class="pb"></div>
-  <div style="width: @regress%;"></div>
-</div>
-<div class="centered-div">
-  @countdownString
-</div>
-<div class="topmost-div">
-  <EditForm EditContext="this.editContext">
-    @foreach (var model in tables)
-    {
-      @* <h3>@model.TableName</h3> *@
-      <span title="Play period in minutes">Minutes&nbsp;</span>
-      <span>
-        <InputRadioGroup @bind-Value="model.SelectedPeriod">
-          @foreach (var option in model.Options)
-          {
-            <span>
-              <InputRadio Value="option.PeriodInMin" />
-              <span style="margin-right: 20px;">@option.PeriodInMin</span>
-            </span>
-          }
-        </InputRadioGroup>
-        <span>Dbg <b > @model.SelectedPeriod</b></span>
-      </span>
-    }
-  </EditForm>
-</div>
 
-<div class="bottom-div">
-  Next&nbsp;time:&nbsp;@nextHHMM&nbsp;&nbsp;&nbsp;@progressString&nbsp;%&nbsp;&nbsp;&nbsp;@report&nbsp;&nbsp;&nbsp;@error
-  @*
-  <button onclick="document.getElementById('Intro').play()">Play through Javascript</button>
-  <button @onclick="@ClickHandlerCs">Play through C#</button>
-  <button @onclick="OnClick" class="btn btn-dark" >Ok</button>
-  *@
-</div>
-<div class="hidden-div ">
-  <audio id="sound2" autoplay controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
-  <audio id="Intro" controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
-  <audio id="Power" controls><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
-  <audio id="Chirp" controls><source src="Audio/Start - Arcade Chirp Descend.mp3"></audio>
-  <audio id="Fanfare" controls><source src="Audio/Good - Fanfare.7.mp3"></audio>
-  <audio id="angryLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~angry~Last minute! EQAQJ！.7.mp3"></audio>
-  <audio id="calmLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~calm~Last minute! EQAQJ！.7.mp3"></audio>
-  <audio id="cheerfulLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~cheerful~Last minute! EQAQJ！.7.mp3"></audio>
-  <audio id="gentleLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~gentle~Last minute! EQAQJ！.7.mp3"></audio>
-  <audio id="sadLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~sad~Last minute! EQAQJ！.7.mp3"></audio>
-  <audio id="seriousLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~serious~Last minute! EQAQJ！.7.mp3" }></audio>
-  <audio id="angryRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~angry~Time to rotate! DYRGOE！.7.mp3"></audio>
-  <audio id="calmRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~calm~Time to rotate! DYRGOE！.7.mp3"></audio>
-  <audio id="cheerfulRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~cheerful~Time to rotate! DYRGOE！.7.mp3"></audio>
-  <audio id="gentleRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~gentle~Time to rotate! DYRGOE！.7.mp3"></audio>
-  <audio id="sadRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~sad~Time to rotate! DYRGOE！.7.mp3"></audio>
-  <audio id="seriousRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~serious~Time to rotate! DYRGOE！.7.mp3"></audio>
-  <audio id="LockReleased" controls><source src="Audio/en-US-AriaNeural~1.00~100~whispering~Wake Lock released!.7.mp3"></audio>
-</div>
+<EditForm EditContext="this.editContext">
+  <div class="centered-div" style="background-color: #040;">
+    <div style="width: @court.progress%;" class="progress-bar"></div>
+    <div style="width: @court.regress%;"></div>
+  </div>
+  <div class="centered-div">
+    @court.countdownString
+  </div>
+  <div class="topmost-div">
+    <h1>@court.CourtName</h1>
+    <span title="Play period in minutes">Minutes&nbsp;</span>
+    <span>
+      <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
+        @foreach (var option in court.PlayPeriods)
+        {
+          <InputRadio Value="option.PeriodInMin" style="width: 16px; height: 16px;" />
+          <span style="margin-right: 20px;">@option.PeriodInMin</span>
+        }
+      </InputRadioGroup>
+      <span>==> <b> @court.SelectPeriodInMin</b></span>
+    </span>
+  </div>
+  <div class="right-div">
+    Play <br />
+    <button @onclick="@court.ClickHandlerCs1">1min</button> <br />
+    <button @onclick="@court.ClickHandlerCs2">Rota</button> <br />
+    <InputCheckbox style="width: 26px; height: 26px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" />
+    <InputCheckbox style="width: 26px; height: 26px;" @bind-Value="court.IsAudible" />
+    <br />
+    <input type="checkbox" />
+    <br />
+    @*
+    <button onclick="document.getElementById('Intro').play()">JS</button> <br />
+    *@
+  </div>
+  <div class="bottom-div">
+    @court.report&nbsp;&nbsp;&nbsp;@court.error
+    @*    <button @onclick="OnClick" class="btn btn-dark" >Ok</button>    *@
+  </div>
+  <div class="hidden-div ">
+    <audio id="sound2" autoplay controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
+    <audio id="Intro" controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
+    <audio id="Power" controls><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
+    <audio id="Chirp" controls><source src="Audio/Start - Arcade Chirp Descend.mp3"></audio>
+    <audio id="Fanfare" controls><source src="Audio/Good - Fanfare.7.mp3"></audio>
+    <audio id="angryLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~angry~Last minute! EQAQJ！.7.mp3"></audio>
+    <audio id="calmLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~calm~Last minute! EQAQJ！.7.mp3"></audio>
+    <audio id="cheerfulLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~cheerful~Last minute! EQAQJ！.7.mp3"></audio>
+    <audio id="gentleLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~gentle~Last minute! EQAQJ！.7.mp3"></audio>
+    <audio id="sadLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~sad~Last minute! EQAQJ！.7.mp3"></audio>
+    <audio id="seriousLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~serious~Last minute! EQAQJ！.7.mp3" }></audio>
+    <audio id="angryRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~angry~Time to rotate! DYRGOE！.7.mp3"></audio>
+    <audio id="calmRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~calm~Time to rotate! DYRGOE！.7.mp3"></audio>
+    <audio id="cheerfulRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~cheerful~Time to rotate! DYRGOE！.7.mp3"></audio>
+    <audio id="gentleRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~gentle~Time to rotate! DYRGOE！.7.mp3"></audio>
+    <audio id="sadRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~sad~Time to rotate! DYRGOE！.7.mp3"></audio>
+    <audio id="seriousRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~serious~Time to rotate! DYRGOE！.7.mp3"></audio>
+    <audio id="LockReleased" controls><source src="Audio/en-US-AriaNeural~1.00~100~whispering~Wake Lock released!.7.mp3"></audio>
+  </div>
+</EditForm>
 
 @code {
-  private string src = "Audio/Start - Arcade Alarm.mp3";
-  private bool isLooping = true;
-  private int everyXMin = 2;
-  private string progressString = "%";
-  private string countdownString = "··:··";
-  private string report = "";
-  private string error = "no error";
-  private DateTime nextTime = DateTime.Now;
-  private string nextHHMM = "88:88";
-  private int[] playPeriods = new int[] { 2, 10, 15, 20, 30, 999 };
-  private object? wakeLock;
+  ModelCourt court;
+  EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
 
-  double progress = 33, regress = 67;
-  // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
-  private EditContext editContext;
-  private List<ModelTable> tables;
-
+  bool _isCheck; public bool isCheck { get { return _isCheck; } set { _isCheck = value; } }    //CheckValueStrChanged.InvokeAsync(value.ToString()); // https://stackoverflow.com/questions/74044673/blazor-inputcheckbox-binding-to-string-backing-field
+  public App()
+  {
+    court = new ModelCourt() { CourtName = "All Tables", SelectPeriodInMin = 11, JSRuntime = JSRuntime };
+    editContext = new EditContext(court);
+  }
   protected override async Task OnInitializedAsync()
   {
-    tables = Tables;
-    editContext = new EditContext(tables);
-
-    WriteLine("protected override async void OnInitializedAsync() ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀");
+    court.JSRuntime = JSRuntime;
     await base.OnInitializedAsync();
-    await MainLoopTask();
-
-    // return Task.CompletedTask;
+    await court.MainLoopTask(StateHasChanged);    // return Task.CompletedTask;
   }
 
-  public List<ModelTable> Tables => new List<ModelTable>() { new ModelTable() { TableName = "Table - All", SelectedPeriod = "10" }, };
-
-  public class ModelOptions
+  public class PlayPeriod
   {
-    public string PeriodInMin { get; set; } = "xx";
-    public bool IsSelected { get => _isSelected; set { _isSelected = value; } }
-    public bool _isSelected;
+    public int PeriodInMin { get; set; } = 22;
+    public bool IsSelected { get; set; }
   }
 
-  public class ModelTable
+  public class ModelCourt
   {
-    public string TableName { get; set; } = "xx";
-    public string SelectedPeriod { get; set; } = "xx";
-    public List<ModelOptions> Options { get; set; } = new List<ModelOptions>()
+    public bool isLooping = true;
+    public string countdownString = "";
+    public string report = "";
+    public string error = "";
+    DateTime nextTime = DateTime.Now;
+    object? wakeLock;
+    public double progress = 33, regress = 67;
+    public IJSRuntime JSRuntime { get; set; }
+    public string CourtName { get; set; } = "xx";
+    int selectPeriodInMin; public int SelectPeriodInMin { get { return selectPeriodInMin; } set { selectPeriodInMin = value; } }
+
+    public List<PlayPeriod> PlayPeriods { get; set; } = new List<PlayPeriod>()
+{
+  new PlayPeriod() {PeriodInMin=02, IsSelected=false},
+  new PlayPeriod() {PeriodInMin=10, IsSelected=false},
+  new PlayPeriod() {PeriodInMin=15, IsSelected=false},
+  new PlayPeriod() {PeriodInMin=30, IsSelected=false},
+};
+
+    [Parameter] public bool IsAudible { get; set; } = true;
+    public void CheckboxChanged(bool e)
     {
-      new ModelOptions() {PeriodInMin="02", IsSelected=true},
-      new ModelOptions() {PeriodInMin="10", IsSelected=false},
-      new ModelOptions() {PeriodInMin="15", IsSelected=false},
-      new ModelOptions() {PeriodInMin="20", IsSelected=false},
-      new ModelOptions() {PeriodInMin="30", IsSelected=false},
-    };
-  }
+      IsAudible = e;
+      report = $"Turning Audio {(IsAudible ? "ON" : "Off")}.  e = {e}.";
 
-
-  async void ClickHandlerCs()
-  {
-    await JSRuntime.InvokeAsync<string>("PlayAudio", "Intro");
-  }
-
-  async Task MainLoopTask()
-  {
-    wakeLock = null;
-
-    try
-    {
-      wakeLock = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
-      report = "Wake Lock is active!";
+      Console.WriteLine($"Checkbox changed {IsAudible}");
     }
-    catch (Exception err) { error = $"{err.GetType().Name}, {err.Message}"; WriteLine(error); }
 
-    while (isLooping)
+    public async Task MainLoopTask(Action StateHasChanged)
     {
-      DateTime now = DateTime.Now;
-      SetAndShowNextTime();
+      wakeLock = null;
 
-      while (isLooping && now < nextTime)
+      try
       {
-        int prev = everyXMin;
-        await Task.Delay(999);
-        if (prev != everyXMin) // if the user changed the time, then reset the timer
-        {
-          SetAndShowNextTime();
-        }
+        wakeLock = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
+        report = "Wake Lock is active!";
+      }
+      catch (Exception err) { error = $"{err.GetType().Name}, {err.Message}"; WriteLine(error); }
 
-        now = DateTime.Now;
-        double secondsLeft = (nextTime - now).TotalSeconds;
-        countdownString = $"{(nextTime - now):m\\:ss}";
-        progress = ((100 * (everyXMin * 60 - secondsLeft) / (everyXMin * 60)));
-        regress = 100 - progress;
-        progressString = $"{progress:N1}";
+      while (isLooping)
+      {
+        DateTime now = DateTime.Now;
+        SetAndShowNextTime();
 
-        if (secondsLeft <= 60 && secondsLeft > 56) // a sound when there is 1 minute regress
+        while (isLooping && now < nextTime)
         {
+          int prev = selectPeriodInMin;
+          await Task.Delay(999);
+          if (prev != selectPeriodInMin) // if the user changed the time, then reset the timer
+          {
+            SetAndShowNextTime();
+          }
+
+          now = DateTime.Now;
+          double secondsLeft = (nextTime - now).TotalSeconds;
+          countdownString = $"{(nextTime - now):m\\:ss}";
+          progress = ((100 * (selectPeriodInMin * 60 - secondsLeft) / (selectPeriodInMin * 60)));
+          regress = 100 - progress;
+
+          if (secondsLeft <= 60 && secondsLeft > 56) // a sound when there is 1 minute regress
+          {
+            StateHasChanged(); // await InvokeAsync(StateHasChanged);
+            await PlayWavFilesAsync(1);
+          }
+
           StateHasChanged(); // await InvokeAsync(StateHasChanged);
-          await PlayWavFilesAsync(1);
+        } // while (now < nextTime)
+
+        if (isLooping)
+        {
+          countdownString = "Rotate!";
+          StateHasChanged(); // await InvokeAsync(StateHasChanged);
+          await PlayWavFilesAsync(2);
         }
+        else
+        {
+          countdownString = "■ ■";
+          error = "·";
+        }
+      } // while (isLooping)
 
-        StateHasChanged(); // await InvokeAsync(StateHasChanged);
-      } // while (now < nextTime)
+      await Task.Delay(250); // collides with the "Wake Lock released" sound. ...on NG.
 
-      if (isLooping)
+      await PlayResource("Chirp");
+    }
+
+    void SetAndShowNextTime()
+    {
+      var now = DateTime.Now;
+      nextTime = now.AddMinutes(selectPeriodInMin - now.Minute % selectPeriodInMin).AddSeconds(-now.Second).AddMilliseconds(-now.Millisecond);
+    }
+
+    public async void ClickHandlerCs1() { await PlayWavFilesAsync(1); }
+    public async void ClickHandlerCs2() { await PlayWavFilesAsync(2); }
+    async Task PlayWavFilesAsync(int i)
+    {
+      switch (i)
       {
-        countdownString = "Rotate!";
-        StateHasChanged(); // await InvokeAsync(StateHasChanged);
-        await PlayWavFilesAsync(2);
+        case 1:
+          await PlayResource("Power");
+          await Task.Delay(350);
+          await PlayResource(GetLastMinute());
+          // await Task.Delay(2000);
+          break;
+        default:
+          await PlayResource("Fanfare");
+          await Task.Delay(4500);
+          await PlayResource(GetTimeToChange());
+          // await Task.Delay(1000);
+          break;
+      }
+    }
+    async Task PlayResource(string filePath)
+    {
+      if (IsAudible)
+      {
+        report = $"Playing {filePath}.";
+        await JSRuntime.InvokeAsync<string>("PlayAudio", filePath);
       }
       else
       {
-        countdownString = "■ ■";
-        error = "·";
+        report = "Audio is off.";
       }
-    } // while (isLooping)
-
-    await Task.Delay(250); // collides with the "Wake Lock released" sound. ...on NG.
-
-    await PlayResourse("Chirp");
-  }
-
-  private void SetAndShowNextTime()
-  {
-    DateTime now = DateTime.Now;
-    nextTime = now.AddMinutes(everyXMin - now.Minute % everyXMin).AddSeconds(-now.Second).AddMilliseconds(-now.Millisecond);
-    nextHHMM = $"{nextTime.Hour:00}:{nextTime.Minute:00}";
-  }
-
-  async Task PlayWavFilesAsync(int i)
-  {
-    switch (i)
-    {
-      case 1:
-        await PlayResourse("Power");
-        await Task.Delay(2500);
-        await PlayResourse(GetLastMinute());
-        // await Task.Delay(2000);
-        break;
-      default:
-        await PlayResourse("Fanfare");
-        await Task.Delay(5000);
-        await PlayResourse(GetTimeToChange());
-        // await Task.Delay(1000);
-        break;
     }
-  }
 
-  async Task PlayResourse(string filePath) => await JSRuntime.InvokeAsync<string>("PlayAudio", filePath);
-
-  string GetLastMinute()
-  {
-    string[] stringArr = new string[] {
+    string GetLastMinute()
+    {
+      string[] stringArr = new string[] {
       "angryLastMinute",      //      "Audio\\zh-CN-XiaomoNeural~1.00~100~angry~Last minute! EQAQJ！.7.mp3",
       "calmLastMinute",       //      "Audio\\zh-CN-XiaomoNeural~1.00~100~calm~Last minute! EQAQJ！.7.mp3",
       "cheerfulLastMinute",   //      "Audio\\zh-CN-XiaomoNeural~1.00~100~cheerful~Last minute! EQAQJ！.7.mp3",
       "gentleLastMinute",     //      "Audio\\zh-CN-XiaomoNeural~1.00~100~gentle~Last minute! EQAQJ！.7.mp3",
       "sadLastMinute",        //      "Audio\\zh-CN-XiaomoNeural~1.00~100~sad~Last minute! EQAQJ！.7.mp3",
       "seriousLastMinute" };  //      "Audio\\zh-CN-XiaomoNeural~1.00~100~serious~Last minute! EQAQJ！.7.mp3"};
-    return stringArr[new Random().Next(stringArr.Length)];
-  }
+      return stringArr[new Random().Next(stringArr.Length)];
+    }
 
-  string GetTimeToChange()
-  {
-    string[] stringArr = new string[] {
+    string GetTimeToChange()
+    {
+      string[] stringArr = new string[] {
       "angryRotate",      //       "Audio\\zh-CN-XiaomoNeural~1.00~100~angry~Time to rotate! DYRGOE！.7.mp3",
       "calmRotate",       //       "Audio\\zh-CN-XiaomoNeural~1.00~100~calm~Time to rotate! DYRGOE！.7.mp3",
       "cheerfulRotate",   //       "Audio\\zh-CN-XiaomoNeural~1.00~100~cheerful~Time to rotate! DYRGOE！.7.mp3",
       "gentleRotate",     //       "Audio\\zh-CN-XiaomoNeural~1.00~100~gentle~Time to rotate! DYRGOE！.7.mp3",
       "sadRotate",        //       "Audio\\zh-CN-XiaomoNeural~1.00~100~sad~Time to rotate! DYRGOE！.7.mp3",
       "seriousRotate" };  //       "Audio\\zh-CN-XiaomoNeural~1.00~100~serious~Time to rotate! DYRGOE！.7.mp3"};
-    return stringArr[new Random().Next(stringArr.Length)];
-  }
-
-  async Task ReleaseWakeLockAsync()
-  {
-    if (wakeLock != null)
-    {
-      try
-      {
-        //todo: await JSRuntime.InvokeAsync<object>("navigator.wakeLock.release", wakeLock);
-        // Microsoft.AspNetCore.Components.WebAssembly.Rendering.WebAssemblyRenderer[100] Unhandled exception rendering component: Could not find 'navigator.wakeLock.release' ('release' was undefined).
-        //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
-        wakeLock = null;
-        report = "Wake Lock released";
-        WriteLine("▄▀▄▀▄▀▄ ReleaseWakeLockAsync");
-        await Task.Delay(1000);
-        WriteLine("Wake Lock released ▄▀▄▀▄▀▄ ********************");
-
-        // await PlayResourse("LockReleased");
-        // await Task.Delay(1000);
-        await Task.CompletedTask;
-      }
-      catch (Exception err) { error = $"{err.GetType().Name}, {err.Message}"; WriteLine(error); }
+      return stringArr[new Random().Next(stringArr.Length)];
     }
-  }
-  void ReleaseWakeLock()
-  {
-    WriteLine("▄▀▄▀▄▀▄ ReleaseWakeLock");
+
+   public async Task ReleaseWakeLockAsync()
+    {
+      if (wakeLock != null)
+      {
+        try
+        {
+          //todo: await JSRuntime.InvokeAsync<object>("navigator.wakeLock.release", wakeLock);
+          // Microsoft.AspNetCore.Components.WebAssembly.Rendering.WebAssemblyRenderer[100] Unhandled exception rendering component: Could not find 'navigator.wakeLock.release' ('release' was undefined).
+          //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
+          wakeLock = null;
+          report = "Wake Lock released";
+          WriteLine("▄▀▄▀▄▀▄ ReleaseWakeLockAsync");
+          await Task.Delay(1000);
+          WriteLine("Wake Lock released ▄▀▄▀▄▀▄ ********************");
+
+          // await PlayResourse("LockReleased");
+          // await Task.Delay(1000);
+          await Task.CompletedTask;
+        }
+        catch (Exception err) { error = $"{err.GetType().Name}, {err.Message}"; WriteLine(error); }
+      }
+    }
+   public void ReleaseWakeLock()
+    {
+      WriteLine("▄▀▄▀▄▀▄ ReleaseWakeLock");
+    }
   }
 
   public async ValueTask DisposeAsync()
   {
     WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀  DisposeAsync() ");
-    isLooping = false;
-    await ReleaseWakeLockAsync();
+    court.isLooping = false;
+    await court.ReleaseWakeLockAsync();
   }
   public bool IsDisposed { get; private set; }
   public void Dispose()
@@ -278,8 +287,8 @@
     if (IsDisposed)
       return;
 
-    isLooping = false;
-    ReleaseWakeLock();
+    court.isLooping = false;
+    court.ReleaseWakeLock();
 
     IsDisposed = true;
   }
