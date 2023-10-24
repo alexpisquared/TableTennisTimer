@@ -10,9 +10,9 @@
 @implements IAsyncDisposable
 
 <PageTitle>TennisTimer</PageTitle>
-<div class="centered-div" style="background-color: #050;">
-  <div class="pb" style="width:@progress%;"></div>
-  <div style="width:@regress%;"></div>
+<div class="centered-div" style="background-color: #040;">
+  <div style="width: @progress%;" class="pb"></div>
+  <div style="width: @regress%;"></div>
 </div>
 <div class="centered-div">
   @countdownString
@@ -22,18 +22,18 @@
     @foreach (var model in tables)
     {
       @* <h3>@model.TableName</h3> *@
-      <span title="Play period in minutes" style="color: #00f;">Minutes</span>
+      <span title="Play period in minutes">Minutes&nbsp;</span>
       <span>
         <InputRadioGroup @bind-Value="model.SelectedPeriod">
           @foreach (var option in model.Options)
           {
             <span>
               <InputRadio Value="option.PeriodInMin" />
-              <span style="color: #00f; margin-right: 20px;">@option.PeriodInMin</span>
+              <span style="margin-right: 20px;">@option.PeriodInMin</span>
             </span>
           }
         </InputRadioGroup>
-        <span>Dbg <b style="color: #00f;"> @model.SelectedPeriod</b></span>
+        <span>Dbg <b > @model.SelectedPeriod</b></span>
       </span>
     }
   </EditForm>
@@ -161,7 +161,6 @@
 
         if (secondsLeft <= 60 && secondsLeft > 56) // a sound when there is 1 minute regress
         {
-          countdownString = "Last·minute";
           StateHasChanged(); // await InvokeAsync(StateHasChanged);
           await PlayWavFilesAsync(1);
         }
@@ -202,13 +201,13 @@
         await PlayResourse("Power");
         await Task.Delay(2500);
         await PlayResourse(GetLastMinute());
-        await Task.Delay(2000);
+        // await Task.Delay(2000);
         break;
       default:
         await PlayResourse("Fanfare");
         await Task.Delay(5000);
         await PlayResourse(GetTimeToChange());
-        await Task.Delay(1000);
+        // await Task.Delay(1000);
         break;
     }
   }
