@@ -20,7 +20,7 @@
     @court.countdownString
   </div>
   <div class="topmost-div">
-    <h1>@court.CourtName</h1>
+    @* <h1>@court.CourtName</h1> *@
     <span title="Play period in minutes">Minutes&nbsp;</span>
     <span>
       <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
@@ -110,13 +110,12 @@
 
     public List<PlayPeriod> PlayPeriods { get; set; } = new List<PlayPeriod>()
 {
-  new PlayPeriod() {PeriodInMin=02, IsSelected=false},
   new PlayPeriod() {PeriodInMin=10, IsSelected=false},
   new PlayPeriod() {PeriodInMin=15, IsSelected=false},
   new PlayPeriod() {PeriodInMin=30, IsSelected=false},
 };
 
-    [Parameter] public bool IsAudible { get; set; } = true;
+    [Parameter] public bool IsAudible { get; set; } = false;
     public void CheckboxChanged(bool e)
     {
       IsAudible = e;
