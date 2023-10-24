@@ -8,11 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Components\App.razor.css" />
     <None Remove="Components\Pages\TTTimerPort2.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Components\Pages\TTTimerPort2.razor.css" />
+    <Content Include="Components\App.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
