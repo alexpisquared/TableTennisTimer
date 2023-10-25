@@ -1,0 +1,51 @@
+﻿@page "/screenwakelock"
+@using ScreenWakeLockDemo.Services
+@inject IScreenWakeLockService ScreenWakeLockService
+<PageTitle>ScreenWakeLock</PageTitle>
+<h3>ScreenWakeLock</h3>
+
+@if (_isSupported)
+{
+  <p>The browser supports the screen wake lock API.</p>
+  <button @onclick="ToggleWakeLock">@(_isLocked ? "Disable" : "Enable") screen wake lock</button>
+}
+else
+{
+  <p>The browser does not support the screen wake lock API.</p>
+}
+
+@code {
+  bool _isSupported;
+  bool _isLocked;
+  WakeLockSentinel _sentinel;
+
+  protected override async Task OnInitializedAsync()
+  {
+    _isSupported = await ScreenWakeLockService.IsSupportedAsync(); // Check if the browser supports the screen wake lock API
+  }
+
+  private async Task ToggleWakeLock()
+  {
+    try
+    {
+      if (_isLocked)
+      {
+        // Release the screen wake lock
+        await ScreenWakeLockService.ReleaseWakeLockAsync(_sentinel);
+        _sentinel = null;
+        _isLocked = false;
+      }
+      else
+      {
+        // Request a screen wake lock
+        _sentinel = await ScreenWakeLockService.RequestWakeLockAsync();
+        _isLocked = true;
+      }
+    }
+    catch (Exception ex)
+    {
+      // Handle possible errors or rejections
+      Console.WriteLine(ex.Message);
+    }
+  }
+}

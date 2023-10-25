@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34219.65
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScreenWakeLockDemo", "ScreenWakeLockDemo\ScreenWakeLockDemo.csproj", "{EDF167EE-EA0A-4955-8056-70E4D74E87D7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTennisTimer", "TableTennisTimer\TableTennisTimer.csproj", "{FCCBA85E-45DD-40EE-B2DF-BDABA52D6D32}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EDF167EE-EA0A-4955-8056-70E4D74E87D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDF167EE-EA0A-4955-8056-70E4D74E87D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDF167EE-EA0A-4955-8056-70E4D74E87D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDF167EE-EA0A-4955-8056-70E4D74E87D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCCBA85E-45DD-40EE-B2DF-BDABA52D6D32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCCBA85E-45DD-40EE-B2DF-BDABA52D6D32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCCBA85E-45DD-40EE-B2DF-BDABA52D6D32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCCBA85E-45DD-40EE-B2DF-BDABA52D6D32}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1D61B8AA-294B-402E-9649-A26B0ABADFF2}
+	EndGlobalSection
+EndGlobal

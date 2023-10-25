@@ -4,8 +4,10 @@
 @using System.Threading.Tasks;
 @using System.Timers;
 @using Microsoft.AspNetCore.Components;
+@using ScreenWakeLockDemo.Services
 @using static System.Console;
 @inject IJSRuntime JSRuntime
+@inject IScreenWakeLockService ScreenWakeLockService
 @implements IDisposable
 @implements IAsyncDisposable
 
@@ -72,11 +74,29 @@
   </div>
 </EditForm>
 
+<div style="background-color: #fff5;">
+  <h3>ScreenWakeLock</h3>
+  @if (_isSupported)
+  {
+    <p style="color: green;">
+      The browser supports the screen wake lock API.
+      <button @onclick="ToggleWakeLock">@(_isLocked ? "Disable" : "Enable")</button>
+    </p>
+  }
+  else
+  {
+    <p style="color: red;">
+      The browser does not support the screen wake lock API.
+    </p>
+  }
+</div>
+
 @code {
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
+  WakeLockSentinel _sentinel;
+  bool _isSupported, _isLocked, _isCheck; public bool isCheck { get { return _isCheck; } set { _isCheck = value; } }    //CheckValueStrChanged.InvokeAsync(value.ToString()); // https://stackoverflow.com/questions/74044673/blazor-inputcheckbox-binding-to-string-backing-field
 
-  bool _isCheck; public bool isCheck { get { return _isCheck; } set { _isCheck = value; } }    //CheckValueStrChanged.InvokeAsync(value.ToString()); // https://stackoverflow.com/questions/74044673/blazor-inputcheckbox-binding-to-string-backing-field
   public App()
   {
     court = new ModelCourt() { CourtName = "All Tables", SelectPeriodInMin = 11, JSRuntime = JSRuntime };
@@ -86,7 +106,33 @@
   {
     court.JSRuntime = JSRuntime;
     await base.OnInitializedAsync();
+    _isSupported = await ScreenWakeLockService.IsSupportedAsync(); // Check if the browser supports the screen wake lock API
     await court.MainLoopTask(StateHasChanged);    // return Task.CompletedTask;
+  }
+
+  async Task ToggleWakeLock()
+  {
+    try
+    {
+      if (_isLocked)
+      {
+        // Release the screen wake lock
+        await ScreenWakeLockService.ReleaseWakeLockAsync(_sentinel);
+        _sentinel = null;
+        _isLocked = false;
+      }
+      else
+      {
+        // Request a screen wake lock
+        _sentinel = await ScreenWakeLockService.RequestWakeLockAsync();
+        _isLocked = true;
+      }
+    }
+    catch (Exception ex)
+    {
+      // Handle possible errors or rejections
+      Console.WriteLine(ex.Message);
+    }
   }
 
   public class PlayPeriod
