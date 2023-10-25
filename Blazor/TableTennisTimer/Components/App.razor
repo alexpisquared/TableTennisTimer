@@ -28,25 +28,31 @@
       <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
         @foreach (var option in court.PlayPeriods)
         {
-          <InputRadio Value="option.PeriodInMin" style="width: 16px; height: 16px;" />
-          <span style="margin-right: 20px;">@option.PeriodInMin</span>
+          <InputRadio Value="option.PeriodInMin" style="width: 22px; height: 22px; margin-left: 26px;" id="@option.PeriodInMin" />
+          <label for="@option.PeriodInMin">@option.PeriodInMin</label>
         }
       </InputRadioGroup>
-      <span>==> <b> @court.SelectPeriodInMin</b></span>
     </span>
   </div>
   <div class="right-div">
-    Play <br />
-    <button @onclick="@court.ClickHandlerCs1">1min</button> <br />
-    <button @onclick="@court.ClickHandlerCs2">Rota</button> <br />
-    <InputCheckbox style="width: 26px; height: 26px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" />
-    <InputCheckbox style="width: 26px; height: 26px;" @bind-Value="court.IsAudible" />
-    <br />
-    <input type="checkbox" />
-    <br />
+    @if (court.IsAudible)
+    {
+      <button @onclick="@court.ClickHandlerCs1">1min</button>
+      <button @onclick="@court.ClickHandlerCs2">Rota</button>
+    }
     @*
     <button onclick="document.getElementById('Intro').play()">JS</button> <br />
     *@
+    @if (_isSupported)
+    {
+      <button @onclick="ToggleWakeLock" style="color: green;">@(_isLocked ? "Disable" : "Enable") wake lock</button>
+    }
+    else
+    {
+      <p style="color: red;">The browser does not support the screen wake lock API.</p>
+    }
+    <InputCheckbox style="width: 26px; height: 26px; margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="exampleI" />
+    <label for="exampleI">Audio</label>
   </div>
   <div class="bottom-div">
     @court.report&nbsp;&nbsp;&nbsp;@court.error
@@ -74,32 +80,15 @@
   </div>
 </EditForm>
 
-<div style="background-color: #fff5;">
-  <h3>ScreenWakeLock</h3>
-  @if (_isSupported)
-  {
-    <p style="color: green;">
-      The browser supports the screen wake lock API.
-      <button @onclick="ToggleWakeLock">@(_isLocked ? "Disable" : "Enable")</button>
-    </p>
-  }
-  else
-  {
-    <p style="color: red;">
-      The browser does not support the screen wake lock API.
-    </p>
-  }
-</div>
-
 @code {
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
-  WakeLockSentinel _sentinel;
+  WakeLockSentinel? _sentinel;
   bool _isSupported, _isLocked, _isCheck; public bool isCheck { get { return _isCheck; } set { _isCheck = value; } }    //CheckValueStrChanged.InvokeAsync(value.ToString()); // https://stackoverflow.com/questions/74044673/blazor-inputcheckbox-binding-to-string-backing-field
 
   public App()
   {
-    court = new ModelCourt() { CourtName = "All Tables", SelectPeriodInMin = 11, JSRuntime = JSRuntime };
+    court = new ModelCourt() { CourtName = "All Tables", SelectPeriodInMin = 10, JSRuntime = JSRuntime };
     editContext = new EditContext(court);
   }
   protected override async Task OnInitializedAsync()
@@ -116,50 +105,40 @@
     {
       if (_isLocked)
       {
-        // Release the screen wake lock
         await ScreenWakeLockService.ReleaseWakeLockAsync(_sentinel);
         _sentinel = null;
         _isLocked = false;
       }
       else
       {
-        // Request a screen wake lock
         _sentinel = await ScreenWakeLockService.RequestWakeLockAsync();
         _isLocked = true;
       }
     }
-    catch (Exception ex)
-    {
-      // Handle possible errors or rejections
-      Console.WriteLine(ex.Message);
-    }
+    catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(ToggleWakeLock)}, {err.Message}"; WriteLine(err); }
   }
 
   public class PlayPeriod
   {
+    public PlayPeriod(int p) { PeriodInMin = p; }
     public int PeriodInMin { get; set; } = 22;
     public bool IsSelected { get; set; }
   }
 
   public class ModelCourt
   {
+    DateTime nextTime = DateTime.Now;
+    object? wakeLock;
     public bool isLooping = true;
     public string countdownString = "";
     public string report = "";
     public string error = "";
-    DateTime nextTime = DateTime.Now;
-    object? wakeLock;
     public double progress = 33, regress = 67;
     public IJSRuntime JSRuntime { get; set; }
     public string CourtName { get; set; } = "xx";
     int selectPeriodInMin; public int SelectPeriodInMin { get { return selectPeriodInMin; } set { selectPeriodInMin = value; } }
 
-    public List<PlayPeriod> PlayPeriods { get; set; } = new List<PlayPeriod>()
-{
-  new PlayPeriod() {PeriodInMin=10, IsSelected=false},
-  new PlayPeriod() {PeriodInMin=15, IsSelected=false},
-  new PlayPeriod() {PeriodInMin=30, IsSelected=false},
-};
+    public List<PlayPeriod> PlayPeriods { get; set; } = new List<PlayPeriod>() { new PlayPeriod(10), new PlayPeriod(15), new PlayPeriod(30) };
 
     [Parameter] public bool IsAudible { get; set; } = false;
     public void CheckboxChanged(bool e)

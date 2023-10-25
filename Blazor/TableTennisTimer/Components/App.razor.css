@@ -47,8 +47,9 @@
 }
 
 .right-div {
-  right: 0;
   position: absolute;
+  right: 0;
+  bottom: 0;
   padding: 8px 16px;
   margin: 8px;
   border-radius: 8.8px;
@@ -63,6 +64,7 @@
 input[type=checkbox] {
   width: 32px;
   height: 32px;
+  margin: 8px;
 }
 
 input[type=radio] {
@@ -71,10 +73,9 @@ input[type=radio] {
 }
 
 button {
-  width: 68px;
+  margin: 10px;
+  min-width: 52px;
 }
-
-h1 {
-  color: #f0f;
-  font-family: Tahoma, Geneva, Verdana, sans-serif;
+label {
+  font-size: 2vw;
 }
