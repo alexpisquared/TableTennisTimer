@@ -120,20 +120,11 @@
     {
       IsAudible = e;
       report = $"Turning Audio {(IsAudible ? "ON" : "Off")}.  e = {e}.";
-
-      Console.WriteLine($"Checkbox changed {IsAudible}");
     }
 
     public async Task MainLoopTask(Action StateHasChanged)
     {
-      wakeLock = null;
-
-      try
-      {
-        wakeLock = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
-        report = "Wake Lock is active!";
-      }
-      catch (Exception err) { error = $"{err.GetType().Name}, {err.Message}"; WriteLine(error); }
+      await RequestWakeLock();
 
       while (isLooping)
       {
@@ -245,29 +236,39 @@
       return stringArr[new Random().Next(stringArr.Length)];
     }
 
-   public async Task ReleaseWakeLockAsync()
+    async Task RequestWakeLock()
     {
-      if (wakeLock != null)
+      try
       {
-        try
-        {
-          //todo: await JSRuntime.InvokeAsync<object>("navigator.wakeLock.release", wakeLock);
-          // Microsoft.AspNetCore.Components.WebAssembly.Rendering.WebAssemblyRenderer[100] Unhandled exception rendering component: Could not find 'navigator.wakeLock.release' ('release' was undefined).
-          //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
-          wakeLock = null;
-          report = "Wake Lock released";
-          WriteLine("▄▀▄▀▄▀▄ ReleaseWakeLockAsync");
-          await Task.Delay(1000);
-          WriteLine("Wake Lock released ▄▀▄▀▄▀▄ ********************");
-
-          // await PlayResourse("LockReleased");
-          // await Task.Delay(1000);
-          await Task.CompletedTask;
-        }
-        catch (Exception err) { error = $"{err.GetType().Name}, {err.Message}"; WriteLine(error); }
+        wakeLock = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
+        report = "Wake Lock is active!";
       }
+      catch (Exception err) { error = $"{err.GetType().Name}.{nameof(RequestWakeLock)}, {err.Message}"; WriteLine(error); }
     }
-   public void ReleaseWakeLock()
+
+    public async Task ReleaseWakeLockAsync() // Note that a screen wake lock will be automatically released when the user minimises the tab or window, or switches away from a tab or window where the screen wake lock is active.
+    {
+      if (wakeLock == null)
+        return;
+
+
+      try
+      {
+        WriteLine("▄▀▄▀▄▀▄ ReleaseWakeLockAsync ...");
+        //todo: await JSRuntime.InvokeAsync<object>("navigator.wakeLock.release", wakeLock);         // Microsoft.AspNetCore.Components.WebAssembly.Rendering.WebAssemblyRenderer[100] Unhandled exception rendering component: Could not find 'navigator.wakeLock.release' ('release' was undefined).
+        //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
+        wakeLock = null;
+        report = "Wake Lock released";
+        await Task.Delay(1000);
+        WriteLine("▄▀▄▀▄▀▄ ReleaseWakeLockAsync  Wake Lock released ▄▀▄▀▄▀▄ ");
+
+        // await PlayResourse("LockReleased");
+        // await Task.Delay(1000);
+        await Task.CompletedTask;
+      }
+      catch (Exception err) { error = $"{err.GetType().Name}.{nameof(ReleaseWakeLockAsync)}, {err.Message}"; WriteLine(error); }
+    }
+    public void ReleaseWakeLock()
     {
       WriteLine("▄▀▄▀▄▀▄ ReleaseWakeLock");
     }
