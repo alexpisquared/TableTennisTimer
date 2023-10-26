@@ -96,10 +96,31 @@
     court.JSRuntime = JSRuntime;
     await base.OnInitializedAsync();
     _isSupported = await ScreenWakeLockService.IsSupportedAsync(); // Check if the browser supports the screen wake lock API
+    await SetWakeLockOn();
     await court.MainLoopTask(StateHasChanged);    // return Task.CompletedTask;
   }
 
   async Task ToggleWakeLock()
+  {
+    if (_isLocked)
+      await SetWakeLockOff();
+    else
+      await SetWakeLockOn();
+  }
+  async Task SetWakeLockOn()
+  {
+    try
+    {
+      if (!_isLocked)
+      {
+        _sentinel = await ScreenWakeLockService.RequestWakeLockAsync();
+        _isLocked = true;
+      }
+      court.report = "Wake Lock is active!";
+    }
+    catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(SetWakeLockOn)}, {err.Message}"; WriteLine(err); }
+  }
+  async Task SetWakeLockOff()
   {
     try
     {
@@ -109,13 +130,9 @@
         _sentinel = null;
         _isLocked = false;
       }
-      else
-      {
-        _sentinel = await ScreenWakeLockService.RequestWakeLockAsync();
-        _isLocked = true;
-      }
+      court.report = "Wake Lock is released.";
     }
-    catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(ToggleWakeLock)}, {err.Message}"; WriteLine(err); }
+    catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(SetWakeLockOff)}, {err.Message}"; WriteLine(err); }
   }
 
   public class PlayPeriod
@@ -149,8 +166,6 @@
 
     public async Task MainLoopTask(Action StateHasChanged)
     {
-      await RequestWakeLock();
-
       while (isLooping)
       {
         DateTime now = DateTime.Now;
@@ -261,41 +276,14 @@
       return stringArr[new Random().Next(stringArr.Length)];
     }
 
-    async Task RequestWakeLock()
+    async Task RequestWakeLock_nogoOnIPhone()
     {
       try
       {
         wakeLock = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
         report = "Wake Lock is active!";
       }
-      catch (Exception err) { error = $"{err.GetType().Name}.{nameof(RequestWakeLock)}, {err.Message}"; WriteLine(error); }
-    }
-
-    public async Task ReleaseWakeLockAsync() // Note that a screen wake lock will be automatically released when the user minimises the tab or window, or switches away from a tab or window where the screen wake lock is active.
-    {
-      if (wakeLock == null)
-        return;
-
-
-      try
-      {
-        WriteLine("▄▀▄▀▄▀▄ ReleaseWakeLockAsync ...");
-        //todo: await JSRuntime.InvokeAsync<object>("navigator.wakeLock.release", wakeLock);         // Microsoft.AspNetCore.Components.WebAssembly.Rendering.WebAssemblyRenderer[100] Unhandled exception rendering component: Could not find 'navigator.wakeLock.release' ('release' was undefined).
-        //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
-        wakeLock = null;
-        report = "Wake Lock released";
-        await Task.Delay(1000);
-        WriteLine("▄▀▄▀▄▀▄ ReleaseWakeLockAsync  Wake Lock released ▄▀▄▀▄▀▄ ");
-
-        // await PlayResourse("LockReleased");
-        // await Task.Delay(1000);
-        await Task.CompletedTask;
-      }
-      catch (Exception err) { error = $"{err.GetType().Name}.{nameof(ReleaseWakeLockAsync)}, {err.Message}"; WriteLine(error); }
-    }
-    public void ReleaseWakeLock()
-    {
-      WriteLine("▄▀▄▀▄▀▄ ReleaseWakeLock");
+      catch (Exception err) { error = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(error); }
     }
   }
 
@@ -303,7 +291,7 @@
   {
     WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀  DisposeAsync() ");
     court.isLooping = false;
-    await court.ReleaseWakeLockAsync();
+    await SetWakeLockOff();
   }
   public bool IsDisposed { get; private set; }
   public void Dispose()
@@ -313,7 +301,7 @@
       return;
 
     court.isLooping = false;
-    court.ReleaseWakeLock();
+    SetWakeLockOff();
 
     IsDisposed = true;
   }
