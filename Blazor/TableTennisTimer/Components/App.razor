@@ -49,7 +49,7 @@
 
     @if (_isWakeLockSupported == true)
     {
-      <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "Stop" : "Start") wake lock</button>
+      <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "Stop" : "Start") WL</button>
     }
     else @if (_isWakeLockSupported == false)
     {
@@ -88,7 +88,7 @@
 
   public App()
   {
-    court = new ModelCourt(() => SetWakeLockOn()) { CourtName = "All Tables", SelectPeriodInMin = 02, JSRuntime = JSRuntime };
+    court = new ModelCourt(StateHasChanged, () => SetWakeLockOn(), JSRuntime);
     editContext = new EditContext(court);
   }
   protected override async Task OnInitializedAsync()
@@ -101,7 +101,6 @@
     await Task.Delay(3000);
     await SetWakeLockOn();
     await court.PlayResource("Chirp");
-    await court.MainLoopTask(StateHasChanged);    // return Task.CompletedTask;
   }
 
   async Task ToggleWakeLock()
@@ -159,18 +158,31 @@
   {
     DateTime nextTime = DateTime.Now;
     object? wakeLock;
-    public bool isLooping = true;
-    public string countdownString = "";
+    public bool isLooping = false;
+    public string countdownString = "Se↑ect";
     public string report = "";
     public string error = "";
     public double progress = 33, regress = 67;
     public IJSRuntime JSRuntime { get; set; }
     public string CourtName { get; set; } = "xx";
-    int selectPeriodInMin; public int SelectPeriodInMin { get { return selectPeriodInMin; } set { selectPeriodInMin = value; } }
+    int selectPeriodInMin;
+
+    public int SelectPeriodInMin
+    {
+      get { return selectPeriodInMin; }
+      set
+      {
+        selectPeriodInMin = value;
+        if (isLooping) return;
+
+        isLooping = true;
+        MainLoopTask();
+      }
+    }
 
     public List<PlayPeriod> PlayPeriods { get; set; } = new List<PlayPeriod>() { new PlayPeriod(02), new PlayPeriod(15), new PlayPeriod(30) };
 
-    [Parameter] public bool IsAudible { get; set; }
+    [Parameter] public bool IsAudible { get; set; } = true;
 
 #if DEBUG
   public bool IsDebug { get; set; } = false;
@@ -178,15 +190,22 @@
     public bool IsDebug { get; set; } = false;
 #endif
 
-    public ModelCourt(Action setWakeLockOn)
+    public ModelCourt(
+      Action stateHasChanged,
+      Action setWakeLockOn,
+      IJSRuntime jsRuntime)
     {
+      StateHasChanged = stateHasChanged;
       SetWakeLockOn = setWakeLockOn;
+      JSRuntime = jsRuntime;
     }
+
     Action SetWakeLockOn;
+    Action StateHasChanged;
 
     public void CheckboxChanged(bool e) { report = $"Audio is {((IsAudible = e) ? "ON" : "Off")}."; }
 
-    public async Task MainLoopTask(Action StateHasChanged)
+    public async void MainLoopTask()
     {
       IsAudible = !IsDebug;
 
@@ -197,7 +216,7 @@
 
         while (isLooping && now < nextTime)
         {
-          SetWakeLockOn.Invoke();
+          // SetWakeLockOn.Invoke();
 
           int prev = selectPeriodInMin;
           await Task.Delay(999);
@@ -257,12 +276,12 @@
     {
       if (IsAudible)
       {
-        report = $"Playing {filePath}.";
+        report = $"{filePath}  ++playing...";
         await JSRuntime.InvokeAsync<string>("PlayAudio", filePath);
       }
       else
       {
-        report = $"{filePath} Audio is off.";
+        report = $"{filePath} ...but Audio is off.";
       }
     }
 
