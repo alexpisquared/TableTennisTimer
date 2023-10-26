@@ -40,22 +40,24 @@
       <button @onclick="@court.ClickHandlerCs1">1min</button>
       <button @onclick="@court.ClickHandlerCs2">Rota</button>
     }
-    @*
-    <button onclick="document.getElementById('Intro').play()">JS</button> <br />
-    *@
-    @if (_isSupported)
+    @if (_isWakeLockSupported)
     {
-      <button @onclick="ToggleWakeLock" style="color: green;">@(_isLocked ? "Disable" : "Enable") wake lock</button>
+        <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "Disable" : "Enable") wake lock</button> 
+      @*
+      *@
     }
     else
     {
       <p style="color: red;">The browser does not support the screen wake lock API.</p>
     }
-    <InputCheckbox style="width: 26px; height: 26px; margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="exampleI" />
+    @* <InputCheckbox style="width: 26px; height: 26px; margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="exampleI" checked="@court.IsAudible" /> *@
+    <InputCheckbox style="width: 26px; height: 26px; margin: 10px;" id="exampleI" checked="@court.IsAudible" @bind-Value="court.IsAudible" />
     <label for="exampleI">Audio</label>
+    @*    <button onclick="document.getElementById('Intro').play()">JS</button> <br />    *@
   </div>
   <div class="bottom-div">
-    @court.report&nbsp;&nbsp;&nbsp;@court.error
+    <span style="color: #ff0">@court.error</span><br />
+    @court.report
     @*    <button @onclick="OnClick" class="btn btn-dark" >Ok</button>    *@
   </div>
   <div class="hidden-div ">
@@ -84,7 +86,7 @@
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   WakeLockSentinel? _sentinel;
-  bool _isSupported, _isLocked, _isCheck; public bool isCheck { get { return _isCheck; } set { _isCheck = value; } }    //CheckValueStrChanged.InvokeAsync(value.ToString()); // https://stackoverflow.com/questions/74044673/blazor-inputcheckbox-binding-to-string-backing-field
+  bool _isWakeLockSupported, _isWakeLocked, _isCheck; public bool isCheck { get { return _isCheck; } set { _isCheck = value; } }    //CheckValueStrChanged.InvokeAsync(value.ToString()); // https://stackoverflow.com/questions/74044673/blazor-inputcheckbox-binding-to-string-backing-field
 
   public App()
   {
@@ -95,14 +97,14 @@
   {
     court.JSRuntime = JSRuntime;
     await base.OnInitializedAsync();
-    _isSupported = await ScreenWakeLockService.IsSupportedAsync(); // Check if the browser supports the screen wake lock API
+    _isWakeLockSupported = await ScreenWakeLockService.IsSupportedAsync(); // Check if the browser supports the screen wake lock API
     await SetWakeLockOn();
     await court.MainLoopTask(StateHasChanged);    // return Task.CompletedTask;
   }
 
   async Task ToggleWakeLock()
   {
-    if (_isLocked)
+    if (_isWakeLocked)
       await SetWakeLockOff();
     else
       await SetWakeLockOn();
@@ -111,10 +113,10 @@
   {
     try
     {
-      if (!_isLocked)
+      if (!_isWakeLocked)
       {
         _sentinel = await ScreenWakeLockService.RequestWakeLockAsync();
-        _isLocked = true;
+        _isWakeLocked = true;
       }
       court.report = "Wake Lock is active!";
     }
@@ -124,11 +126,11 @@
   {
     try
     {
-      if (_isLocked)
+      if (_isWakeLocked)
       {
         await ScreenWakeLockService.ReleaseWakeLockAsync(_sentinel);
         _sentinel = null;
-        _isLocked = false;
+        _isWakeLocked = false;
       }
       court.report = "Wake Lock is released.";
     }
@@ -157,15 +159,20 @@
 
     public List<PlayPeriod> PlayPeriods { get; set; } = new List<PlayPeriod>() { new PlayPeriod(10), new PlayPeriod(15), new PlayPeriod(30) };
 
-    [Parameter] public bool IsAudible { get; set; } = false;
-    public void CheckboxChanged(bool e)
-    {
-      IsAudible = e;
-      report = $"Turning Audio {(IsAudible ? "ON" : "Off")}.  e = {e}.";
-    }
+    [Parameter] public bool IsAudible { get; set; }
+
+#if DEBUG
+  public bool IsDebug { get; set; } = true;
+#else
+    public bool IsDebug { get; set; } = false;
+#endif
+
+    public void CheckboxChanged(bool e) { report = $"Audio is {((IsAudible = e) ? "ON" : "Off")}."; }
 
     public async Task MainLoopTask(Action StateHasChanged)
     {
+      IsAudible = !IsDebug;
+
       while (isLooping)
       {
         DateTime now = DateTime.Now;
