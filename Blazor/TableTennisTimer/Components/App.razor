@@ -42,9 +42,9 @@
     }
     @if (_isWakeLockSupported)
     {
-        <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "Disable" : "Enable") wake lock</button> 
+      <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "Disable" : "Enable") wake lock</button>
       @*
-      *@
+    *@
     }
     else
     {
@@ -90,7 +90,7 @@
 
   public App()
   {
-    court = new ModelCourt() { CourtName = "All Tables", SelectPeriodInMin = 10, JSRuntime = JSRuntime };
+    court = new ModelCourt(() => SetWakeLockOn()) { CourtName = "All Tables", SelectPeriodInMin = 10, JSRuntime = JSRuntime };
     editContext = new EditContext(court);
   }
   protected override async Task OnInitializedAsync()
@@ -113,12 +113,16 @@
   {
     try
     {
-      if (!_isWakeLocked)
+      if (_isWakeLocked)
+        court.report = "Wake Lock is already active!";
+      else
       {
         _sentinel = await ScreenWakeLockService.RequestWakeLockAsync();
         _isWakeLocked = true;
+        court.report = "Wake Lock is active!";
       }
-      court.report = "Wake Lock is active!";
+
+      court.error = "";
     }
     catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(SetWakeLockOn)}, {err.Message}"; WriteLine(err); }
   }
@@ -132,6 +136,8 @@
         _sentinel = null;
         _isWakeLocked = false;
       }
+
+      court.error = "";
       court.report = "Wake Lock is released.";
     }
     catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(SetWakeLockOff)}, {err.Message}"; WriteLine(err); }
@@ -167,6 +173,12 @@
     public bool IsDebug { get; set; } = false;
 #endif
 
+    public ModelCourt(Action setWakeLockOn)
+    {
+      SetWakeLockOn = setWakeLockOn;
+    }
+    Action SetWakeLockOn;
+
     public void CheckboxChanged(bool e) { report = $"Audio is {((IsAudible = e) ? "ON" : "Off")}."; }
 
     public async Task MainLoopTask(Action StateHasChanged)
@@ -180,6 +192,8 @@
 
         while (isLooping && now < nextTime)
         {
+          SetWakeLockOn.Invoke();
+
           int prev = selectPeriodInMin;
           await Task.Delay(999);
           if (prev != selectPeriodInMin) // if the user changed the time, then reset the timer
