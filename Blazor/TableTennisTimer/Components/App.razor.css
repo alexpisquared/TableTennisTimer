@@ -24,37 +24,31 @@
   border: 1px solid #ddd;
 }
 
-.topmost-div {
-  top: 0;
+.top-div {
+  justify-content: center;
+  align-items: center;
   position: absolute;
-  left: 50%;
-  transform: translate(-50%, 0%);
-  padding: 8px 16px;
-  margin: 8px 0;
-  border-radius: 8.8px;
-  color: #ccc;
+  display: flex;
+  width: 100%;
+  padding: 16px 0px;
 }
 
 .bottom-div {
-  bottom: 0;
+  justify-content: center;
+  align-items: center;
   position: absolute;
-  left: 50%;
-  transform: translate(-50%, 0%);
-  padding: 8px 16px;
-  margin: 8px 0;
-  border-radius: 8.8px;
-  color: #ccc;
+  display: flex;
+  width: 100%;
+  bottom: 0;
 }
 
-.right-div {
+.bottom-right-div {
   position: absolute;
-  right: 0;
   bottom: 0;
+  right: 0;
   padding: 8px 16px;
-  margin: 8px;
   border-radius: 8.8px;
-  color: #ccc;
-  background-color: #555a;
+  background-color: #0003;
 }
 
 .hidden-div {
@@ -62,19 +56,20 @@
 }
 
 input[type=checkbox] {
-  width: 32px;
-  height: 32px;
+  width:  42px;
+  height: 42px;
   margin: 8px;
 }
 
 input[type=radio] {
-  width: 32px;
-  height: 32px;
+  width:  42px;
+  height: 42px;
 }
 
 button {
   margin: 10px;
   min-width: 52px;
+  height: 42px;
 }
 label {
   font-size: 2vw;

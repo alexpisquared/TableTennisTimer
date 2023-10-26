@@ -21,48 +21,45 @@
   <div class="centered-div">
     @court.countdownString
   </div>
-  <div class="topmost-div">
-    @* <h1>@court.CourtName</h1> *@
-    <span title="Play period in minutes">Minutes&nbsp;</span>
-    <span>
+  <div class="top-div">
+    <span title="Play period in minutes">
       <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
         @foreach (var option in court.PlayPeriods)
         {
           <InputRadio Value="option.PeriodInMin" style="width: 22px; height: 22px; margin-left: 26px;" id="@option.PeriodInMin" />
           <label for="@option.PeriodInMin">@option.PeriodInMin</label>
         }
+        <label>&nbsp;min</label>
       </InputRadioGroup>
     </span>
-  </div>
-  <div class="right-div">
-    @if (court.IsAudible)
-    {
-      <button @onclick="@court.ClickHandlerCs1">1min</button>
-      <button @onclick="@court.ClickHandlerCs2">Rota</button>
-    }
-    @if (_isWakeLockSupported)
-    {
-      <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "Disable" : "Enable") wake lock</button>
-      @*
-    *@
-    }
-    else
-    {
-      <p style="color: red;">The browser does not support the screen wake lock API.</p>
-    }
-    @* <InputCheckbox style="width: 26px; height: 26px; margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="exampleI" checked="@court.IsAudible" /> *@
-    <InputCheckbox style="width: 26px; height: 26px; margin: 10px;" id="exampleI" checked="@court.IsAudible" @bind-Value="court.IsAudible" />
-    <label for="exampleI">Audio</label>
-    @*    <button onclick="document.getElementById('Intro').play()">JS</button> <br />    *@
   </div>
   <div class="bottom-div">
     <span style="color: #ff0">@court.error</span><br />
     @court.report
     @*    <button @onclick="OnClick" class="btn btn-dark" >Ok</button>    *@
   </div>
+  <div class="bottom-right-div">
+    @if (court.IsAudible)
+    {
+      <button @onclick="@court.ClickHandlerCs1">1min</button>
+      <button @onclick="@court.ClickHandlerCs2">Rota</button>
+    }
+    <InputCheckbox style="width: 26px; height: 26px; margin: 10px;" id="exampleI" checked="@court.IsAudible" @bind-Value="court.IsAudible" />
+    <label for="exampleI">Audio</label>
+
+    @if (_isWakeLockSupported == true)
+    {
+      <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "Stop" : "Start") wake lock</button>
+    }
+    else @if (_isWakeLockSupported == false)
+    {
+      <p style="color: red;">The browser does not support the screen wake lock API.</p>
+    }
+    @* <InputCheckbox style="width: 26px; height: 26px; margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="exampleI" checked="@court.IsAudible" /> *@
+    @*    <button onclick="document.getElementById('Intro').play()">JS</button> <br />    *@
+  </div>
   <div class="hidden-div ">
-    <audio id="sound2" autoplay controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
-    <audio id="Intro" controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
+    <audio id="Intro" controls autoplay><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
     <audio id="Power" controls><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
     <audio id="Chirp" controls><source src="Audio/Start - Arcade Chirp Descend.mp3"></audio>
     <audio id="Fanfare" controls><source src="Audio/Good - Fanfare.7.mp3"></audio>
@@ -86,19 +83,24 @@
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   WakeLockSentinel? _sentinel;
-  bool _isWakeLockSupported, _isWakeLocked, _isCheck; public bool isCheck { get { return _isCheck; } set { _isCheck = value; } }    //CheckValueStrChanged.InvokeAsync(value.ToString()); // https://stackoverflow.com/questions/74044673/blazor-inputcheckbox-binding-to-string-backing-field
+  bool _isWakeLocked, _isCheck; public bool isCheck { get { return _isCheck; } set { _isCheck = value; } }    //CheckValueStrChanged.InvokeAsync(value.ToString()); // https://stackoverflow.com/questions/74044673/blazor-inputcheckbox-binding-to-string-backing-field
+  bool? _isWakeLockSupported = null;
 
   public App()
   {
-    court = new ModelCourt(() => SetWakeLockOn()) { CourtName = "All Tables", SelectPeriodInMin = 10, JSRuntime = JSRuntime };
+    court = new ModelCourt(() => SetWakeLockOn()) { CourtName = "All Tables", SelectPeriodInMin = 02, JSRuntime = JSRuntime };
     editContext = new EditContext(court);
   }
   protected override async Task OnInitializedAsync()
   {
-    court.JSRuntime = JSRuntime;
     await base.OnInitializedAsync();
+    court.JSRuntime = JSRuntime;
     _isWakeLockSupported = await ScreenWakeLockService.IsSupportedAsync(); // Check if the browser supports the screen wake lock API
+    await Task.Delay(3000);
+    await court.PlayResource("Chirp");
+    await Task.Delay(3000);
     await SetWakeLockOn();
+    await court.PlayResource("Chirp");
     await court.MainLoopTask(StateHasChanged);    // return Task.CompletedTask;
   }
 
@@ -132,8 +134,11 @@
     {
       if (_isWakeLocked)
       {
-        await ScreenWakeLockService.ReleaseWakeLockAsync(_sentinel);
-        _sentinel = null;
+        if (_sentinel is not null)
+        {
+          await ScreenWakeLockService.ReleaseWakeLockAsync(_sentinel);
+          _sentinel = null;
+        }
         _isWakeLocked = false;
       }
 
@@ -163,12 +168,12 @@
     public string CourtName { get; set; } = "xx";
     int selectPeriodInMin; public int SelectPeriodInMin { get { return selectPeriodInMin; } set { selectPeriodInMin = value; } }
 
-    public List<PlayPeriod> PlayPeriods { get; set; } = new List<PlayPeriod>() { new PlayPeriod(10), new PlayPeriod(15), new PlayPeriod(30) };
+    public List<PlayPeriod> PlayPeriods { get; set; } = new List<PlayPeriod>() { new PlayPeriod(02), new PlayPeriod(15), new PlayPeriod(30) };
 
     [Parameter] public bool IsAudible { get; set; }
 
 #if DEBUG
-  public bool IsDebug { get; set; } = true;
+  public bool IsDebug { get; set; } = false;
 #else
     public bool IsDebug { get; set; } = false;
 #endif
@@ -207,20 +212,20 @@
           progress = ((100 * (selectPeriodInMin * 60 - secondsLeft) / (selectPeriodInMin * 60)));
           regress = 100 - progress;
 
-          if (secondsLeft <= 60 && secondsLeft > 56) // a sound when there is 1 minute regress
-          {
-            StateHasChanged(); // await InvokeAsync(StateHasChanged);
-            await PlayWavFilesAsync(1);
-          }
-
           StateHasChanged(); // await InvokeAsync(StateHasChanged);
+
+          if (58 <= secondsLeft && secondsLeft <= 60)
+          {
+            await PlayWavFilesAsync("Power", 360, GetLastMinute());
+            await Task.Delay(1_640);
+          }
         } // while (now < nextTime)
 
         if (isLooping)
         {
           countdownString = "Rotate!";
           StateHasChanged(); // await InvokeAsync(StateHasChanged);
-          await PlayWavFilesAsync(2);
+          await PlayWavFilesAsync("Fanfare", 4_500, GetTimeToChange());
         }
         else
         {
@@ -240,27 +245,15 @@
       nextTime = now.AddMinutes(selectPeriodInMin - now.Minute % selectPeriodInMin).AddSeconds(-now.Second).AddMilliseconds(-now.Millisecond);
     }
 
-    public async void ClickHandlerCs1() { await PlayWavFilesAsync(1); }
-    public async void ClickHandlerCs2() { await PlayWavFilesAsync(2); }
-    async Task PlayWavFilesAsync(int i)
+    public async void ClickHandlerCs1() { await PlayWavFilesAsync("Power", 360, GetLastMinute()); }
+    public async void ClickHandlerCs2() { await PlayWavFilesAsync("Fanfare", 4_500, GetTimeToChange()); }
+    async Task PlayWavFilesAsync(string name, int delay, string speech)
     {
-      switch (i)
-      {
-        case 1:
-          await PlayResource("Power");
-          await Task.Delay(350);
-          await PlayResource(GetLastMinute());
-          // await Task.Delay(2000);
-          break;
-        default:
-          await PlayResource("Fanfare");
-          await Task.Delay(4500);
-          await PlayResource(GetTimeToChange());
-          // await Task.Delay(1000);
-          break;
-      }
+      await PlayResource(name);
+      await Task.Delay(delay);
+      await PlayResource(speech);
     }
-    async Task PlayResource(string filePath)
+    public async Task PlayResource(string filePath)
     {
       if (IsAudible)
       {
@@ -269,7 +262,7 @@
       }
       else
       {
-        report = "Audio is off.";
+        report = $"{filePath} Audio is off.";
       }
     }
 

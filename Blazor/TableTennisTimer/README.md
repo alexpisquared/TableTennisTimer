@@ -54,3 +54,6 @@ Silent mode
 https://learn.microsoft.com/en-us/aspnet/core/blazor/forms-and-input-components?view=aspnetcore-7.0
 https://learn.microsoft.com/en-us/aspnet/core/blazor/forms-and-input-components?view=aspnetcore-8.0#built-in-input-components
 https://blazor-university.com/forms/editcontext-fieldidentifiers-and-fieldstate/
+
+# 2023-10-26:
+https://whuysentruit.medium.com/blazor-wasm-pwa-adding-a-new-update-available-notification-d9f65c4ad13
