@@ -16,7 +16,7 @@
 <EditForm EditContext="this.editContext">
 
   <div class="mainRoot">
-    <div class="row top">
+    <div class="row top" style="height: 3.5rem;">
       <div class="left">
         <span title="Play period in minutes">
           <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
@@ -47,7 +47,7 @@
       </div>
     </div>
 
-    <div class="row bottom">
+    <div class="row bottom" style="min-height: max-content;">
       <div><span style="color: #ffa">@court.error</span></div>
       @if (court.IsDebug)
       {
@@ -174,20 +174,18 @@
   public class ModelCourt
   {
     DateTime nextTime = DateTime.Now;
-    object? wakeLock;
+    object? wakeLock_OLD;
     public string countdownString = "↑Select";
     public string report = "";
     public string error = "";
     public double progress = 0, regress = 0;
     public IJSRuntime JSRuntime { get; set; }
-    public string CourtName { get; set; } = "xx";
     int selectPeriodInMin;
 #if DEBUG
    const bool isDebug = true;
 #else
     const bool isDebug = false;
 #endif
-
 
     public int SelectPeriodInMin
     {
@@ -199,9 +197,9 @@
         Task.Run(async () =>
         {
           SetWakeLockOn.Invoke();
-          await PlayResource("Intro", 1.0); await Task.Delay(999);
-          await PlayResource("PoweQ", 0.1); await Task.Delay(999);
-          await PlayResource("FanfQ", 0.1); await Task.Delay(999);
+          await PlayResource("Intro", 1.0); await Task.Delay(99);
+          await PlayResource("Power", 0.1); await Task.Delay(99);
+          await PlayResource("Fanfr", 0.1); 
           if (IsLooping != true)
             await MainLoopTask();
         });
@@ -343,7 +341,7 @@
     {
       try
       {
-        wakeLock = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
+        wakeLock_OLD = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
         report = "Wake Lock is  active -- !";
       }
       catch (Exception err) { error = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(error); }

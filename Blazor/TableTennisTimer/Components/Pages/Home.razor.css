@@ -41,7 +41,8 @@ label {
   display: flex;
   flex-direction: column;
   color: #fff;
-  background-color: #0005;
+  margin: -19px;
+  /*background-color: #0005;*/
 }
 
 .row {
@@ -49,9 +50,11 @@ label {
   flex-direction: row;
 }
 
-.top, .bottom {
-  min-height: max-content;
-  background-color: #0003;
+.top, .bottom {  
+  justify-content: flex-end;  
+  display: flex;
+  align-items: center;
+  background-color: #0002;
 }
 
 .center {
@@ -64,7 +67,7 @@ label {
 
 .middle {
   width: calc(100% - 340px);
-  background-color: #fff1;
+  /*background-color: #0005;*/
 }
 
 .right {
@@ -72,14 +75,14 @@ label {
 }
 
 .center > div, .bottom > div {
-  width: 100%;
+  margin-left: -4px;
 }
 
 .center > div {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #0008;
+  /*background-color: #0005;*/
 }
 
   .center > div h1 {
@@ -98,13 +101,13 @@ label {
 
 .progress-bar-progress {
   height: 100%;
-  background-color: #800;
+  background-color: #700;
   border-radius: 8.8px 0px 0px 8.8px;
 }
 
 .progress-bar-regress {
   height: 100%;
-  background-color: #080;
+  background-color: #070;
   border-radius: 0px 8.8px 8.8px 0px;
 }
 
@@ -118,7 +121,7 @@ label {
   width: 96%;
   height: 96%;
   margin: 2%;
-  background-color: #00f2;
+  /*background-color: #0005;*/
 }
 .px26x26 {
   width: 26px;

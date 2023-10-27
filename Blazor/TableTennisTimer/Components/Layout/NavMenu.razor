@@ -8,19 +8,19 @@
   </div>
 </div>
 
-  <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-@if (IsDebug)
-{
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+  <nav class="flex-column">
+    @if (IsDebug == false)
+    {
       <div class="nav-item px-3">
         <NavLink class="nav-link" href="https://alex-pi.azurewebsites.net/#/tttimer">
-          <span class="bi bi-back-square-fill" aria-hidden="true"></span> 
+          <span class="bi bi-back-square-fill" aria-hidden="true"></span>
           Original TTTimer
         </NavLink>
       </div>
     }
-else
-{
+    else
+    {
       <div class="nav-item px-3">
         <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
           <span class="bi bi-house-door-fill" aria-hidden="true"></span> Home
@@ -56,9 +56,9 @@ else
           <span class="bi bi-list-nested" aria-hidden="true"></span> Weather
         </NavLink>
       </div>
-}
-    </nav>
-  </div>
+    }
+  </nav>
+</div>
 
 @code {
 #if DEBUG
