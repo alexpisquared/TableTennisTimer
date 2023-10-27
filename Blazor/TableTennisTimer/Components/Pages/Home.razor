@@ -109,8 +109,8 @@
     court.JSRuntime = JSRuntime; // keep here: is not working from the ctor!!!
 
     _isWakeLockSupported = await ScreenWakeLockService.IsSupportedAsync(); // Check if the browser supports the screen wake lock API
-    // await SetWakeLockOn();
-    //nogo: nor audio, nor wake lock is working on iPhone from here ==> manual start by user interaction.
+                                                                           // await SetWakeLockOn();
+                                                                           //nogo: nor audio, nor wake lock is working on iPhone from here ==> manual start by user interaction.
   }
 
   WakeLockSentinel? _wakeSentinel;
@@ -252,7 +252,7 @@
 
           if (58 <= secondsLeft && secondsLeft <= 60)
           {
-            await PlayWavFilesAsync("Power", 410, GetLastMinute());
+            await PlayWavFilesAsync("Power", 1410, GetLastMinute());
             await Task.Delay(1_640);
           }
         } // while (now < nextTime)
@@ -261,7 +261,7 @@
         {
           countdownString = "Rotate!";
           StateHasChanged(); // await InvokeAsync(StateHasChanged);
-          await PlayWavFilesAsync("Fanfr", 4_590, GetTimeToChange());
+          await PlayWavFilesAsync("Fanfr", 5_590, GetTimeToChange());
         }
         else
         {
@@ -294,7 +294,12 @@
       if (IsAudible)
       {
         report = $"{filePath}  ++playing...";
-        await JSRuntime.InvokeAsync<string>("PlayAudio", filePath);
+        //     await JSRuntime.InvokeAsync<string>("PlayAudio", filePath);
+        using (await JSRuntime.InvokeAsync<Task>("PlayAudio", filePath))
+        {
+          // Code here will not execute until the audio file has finished playing
+          report = $"{filePath}  ++playing... has finished!";
+        }
       }
       else
       {
