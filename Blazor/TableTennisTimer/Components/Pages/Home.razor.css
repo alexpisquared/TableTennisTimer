@@ -8,6 +8,7 @@
   border: 5px solid #555;
   background-color: #222;
 }
+
 .absolute-top-center {
   justify-content: center;
   align-items: center;
@@ -16,6 +17,7 @@
   width: 100%;
   padding: 16px 0px;
 }
+
 .bottom-div {
   justify-content: center;
   align-items: center;
@@ -24,6 +26,7 @@
   width: 100%;
   bottom: 0;
 }
+
 .bottom-right-div {
   bottom: 0;
   right: 0;
@@ -31,11 +34,7 @@
   border-radius: 8.8px;
   background-color: #0008;
 }
-.progress-bar {
-  height: 100%;
-  background-color: #800;
-  border-radius: 8.8px;
-}
+
 .centered-div {
   display: flex;
   justify-content: center;
@@ -55,18 +54,22 @@
   border-radius: 8.8px;
   border: 1px solid #ddd;
 }
+
 .hidden-div {
   visibility: collapse;
 }
+
 input[type=checkbox] {
-  width:  42px;
+  width: 42px;
   height: 42px;
   margin: 8px;
 }
+
 input[type=radio] {
-  width:  42px;
+  width: 42px;
   height: 42px;
 }
+
 button {
   margin: 10px;
   min-width: 52px;
@@ -74,6 +77,7 @@ button {
   background-color: #0005;
   color: #ccc;
 }
+
 label {
   font-size: 2vw;
 }
@@ -93,44 +97,86 @@ label {
   border: 2px solid #555;
   background-color: #0002;
 }
+
 .row {
   display: flex;
   flex-direction: row;
 }
+
 .top, .bottom {
   min-height: max-content;
 }
+
 .center {
   flex-grow: 1;
 }
+
 .left {
-  width: 300px;
+  width: 400px;
 }
+
 .middle {
-  width: calc(100% - (400px));
-  background-color: #0005;
+  width: calc(100% - (600px));
+  background-color: #0002;
 }
+
 .right {
-  width: 100px;
+  width: 200px;
 }
+
 .center > div, .bottom > div {
   width: 100%;
 }
+
 .center > div {
-  background-color: #0002;
+  background-color: #555;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
   .center > div h1 {
     font-size: 20vw;
     text-align: center;
     word-wrap: break-word;
   }
+
 .bottom > div {
-  background-color: #0002;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #787;
+}
+
+.progress-bar-progress {
+  height: 100%;
+  background-color: #800;
+  border-radius: 8.8px 0px 0px 8.8px;
+}
+
+.progress-bar-regress {
+  height: 100%;
+  background-color: #080;
+  border-radius: 0px 8.8px 8.8px 0px;
+}
+
+.progress-bar2 {
+  background-color: #f3f3f3;
+  border-radius: 20px;
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.progress {
+  background-color: #4CAF50;
+  height: 100%;
+  border-radius: 20px;
+}
+
+.progress-text {
+  width: 100%;
+  text-align: center;
+  line-height: 32px;
 }
 /** >> ****************************************************************/
