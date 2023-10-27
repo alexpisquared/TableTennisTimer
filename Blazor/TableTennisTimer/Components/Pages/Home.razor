@@ -48,7 +48,7 @@
     </div>
 
     <div class="row bottom">
-      <div><span style="color: #ffa">error @court.error</span></div>
+      <div><span style="color: #ffa">@court.error</span></div>
       @if (court.IsDebug)
       {
         <div><span style="color: #afa">@court.report</span></div>
@@ -59,9 +59,6 @@
             <button @onclick="@court.ClickHandlerCs1">1min</button>
             <button @onclick="@court.ClickHandlerCs2">Rota</button>
           }
-
-          <InputCheckbox class="px26x26" style="margin: 10px;" id="example2" checked="@court.IsLooping" @bind-Value="court.IsLooping" />
-          <label for="example2">Is Looping</label>
 
           @if (_isWakeLockSupported == true)
           {
@@ -101,8 +98,8 @@
 @code {
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
-  WakeLockSentinel? _sentinel;
-  bool _isWakeLocked, _isCheck; public bool isCheck { get { return _isCheck; } set { _isCheck = value; } }    //CheckValueStrChanged.InvokeAsync(value.ToString()); // https://stackoverflow.com/questions/74044673/blazor-inputcheckbox-binding-to-string-backing-field
+  WakeLockSentinel? _wakeSentinel;
+  bool _isWakeLocked;
   bool? _isWakeLockSupported = null;
 
   public Home()
@@ -135,7 +132,7 @@
         court.report = "Wake Lock is already active!";
       else
       {
-        _sentinel = await ScreenWakeLockService.RequestWakeLockAsync();
+        _wakeSentinel = await ScreenWakeLockService.RequestWakeLockAsync();
         _isWakeLocked = true;
         court.report = "Wake Lock is active!";
       }
@@ -150,10 +147,10 @@
     {
       if (_isWakeLocked)
       {
-        if (_sentinel is not null)
+        if (_wakeSentinel is not null)
         {
-          await ScreenWakeLockService.ReleaseWakeLockAsync(_sentinel);
-          _sentinel = null;
+          await ScreenWakeLockService.ReleaseWakeLockAsync(_wakeSentinel);
+          _wakeSentinel = null;
         }
         _isWakeLocked = false;
       }
@@ -196,8 +193,12 @@
       {
         selectPeriodInMin = value;
         report = $"{value} min    IsLooping: {IsLooping}";
-        if (IsLooping != true)
-          Task.Run(async () => await MainLoopTask());
+        Task.Run(async () =>
+        {
+          await PlayResource("Intro");
+          if (IsLooping != true)
+            await MainLoopTask();
+        });
       }
     }
 
@@ -225,7 +226,6 @@
 
     public async Task MainLoopTask()
     {
-      await PlayResource("Chirp");
       IsLooping = true;
 
       while (IsLooping)
@@ -254,7 +254,7 @@
 
           if (58 <= secondsLeft && secondsLeft <= 60)
           {
-            await PlayWavFilesAsync("Power", 360, GetLastMinute());
+            await PlayWavFilesAsync("Power", 410, GetLastMinute());
             await Task.Delay(1_640);
           }
         } // while (now < nextTime)
@@ -263,7 +263,7 @@
         {
           countdownString = "Rotate!";
           StateHasChanged(); // await InvokeAsync(StateHasChanged);
-          await PlayWavFilesAsync("Fanfr", 4_500, GetTimeToChange());
+          await PlayWavFilesAsync("Fanfr", 4_590, GetTimeToChange());
         }
         else
         {
@@ -288,7 +288,7 @@
     async Task PlayWavFilesAsync(string name, int delay, string speech)
     {
       await PlayResource(name);
-      await Task.Delay(delay);
+      await Task.Delay(delay); // will not play speech if delay is too short.
       await PlayResource(speech);
     }
     public async Task PlayResource(string filePath)

@@ -59,12 +59,12 @@ label {
 }
 
 .left {
-  width: 300px;
+  width: 240px;
 }
 
 .middle {
-  width: calc(100% - (400px));
-  background-color: #0002;
+  width: calc(100% - 340px);
+  background-color: #fff1;
 }
 
 .right {
@@ -109,7 +109,6 @@ label {
 
 .hCenterParent {
   position: relative;
-  background-color: #00f;
 }
 .hCenterChild {
   position: absolute;
@@ -118,7 +117,7 @@ label {
   width: 96%;
   height: 96%;
   margin: 2%;
-  background-color: #00f5;
+  background-color: #00f2;
 }
 .px26x26 {
   width: 26px;
