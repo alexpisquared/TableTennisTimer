@@ -38,7 +38,7 @@
 
     <div class="row center">
       <div style="position: relative;">
-        <div style="position: absolute; top: 0; left: 0; width: 96%; height: 96%; background-color: #5557; margin: 2%;">
+        <div style="position: absolute; top: 0; left: 0; width: 96%; height: 96%; background-color: #00f5; margin: 2%;">
           <h1 >@court.countdownString</h1>
         </div>
         <div style="width: @court.progress%;" class="progress-bar-progress"></div>
@@ -53,7 +53,7 @@
         <span style="color: #afa">@court.report</span>
       </div>
 
-      <div class="bottom-right-div">
+      <div >
         @if (court.IsAudible)
         {
           <button @onclick="@court.ClickHandlerCs1">1min</button>
@@ -174,10 +174,10 @@
   {
     DateTime nextTime = DateTime.Now;
     object? wakeLock;
-    public string countdownString = "Se↑ect";
+    public string countdownString = "↑Select";
     public string report = "";
     public string error = "";
-    public double progress = 33, regress = 44;
+    public double progress = 0, regress = 0;
     public IJSRuntime JSRuntime { get; set; }
     public string CourtName { get; set; } = "xx";
     int selectPeriodInMin;

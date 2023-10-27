@@ -1,15 +1,4 @@
-﻿.rootBase {
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  width: 100%;
-  height: 20vh;
-  border-radius: 8.8px;
-  border: 5px solid #555;
-  background-color: #222;
-}
-
-.absolute-top-center {
+﻿.absolute-top-center {
   justify-content: center;
   align-items: center;
   position: absolute;
@@ -79,7 +68,7 @@ button {
 }
 
 label {
-  font-size: 2vw;
+  font-size: 16px;
 }
 
 /** << ****************************************************************/
@@ -112,16 +101,16 @@ label {
 }
 
 .left {
-  width: 400px;
+  width: 300px;
 }
 
 .middle {
-  width: calc(100% - (600px));
+  width: calc(100% - (400px));
   background-color: #0002;
 }
 
 .right {
-  width: 200px;
+  width: 100px;
 }
 
 .center > div, .bottom > div {
@@ -146,7 +135,7 @@ label {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #787;
+  background-color: #0f05;
 }
 
 .progress-bar-progress {
@@ -161,23 +150,4 @@ label {
   border-radius: 0px 8.8px 8.8px 0px;
 }
 
-.progress-bar2 {
-  background-color: #f3f3f3;
-  border-radius: 20px;
-  position: relative;
-  height: 100%;
-  width: 100%;
-}
-
-.progress {
-  background-color: #4CAF50;
-  height: 100%;
-  border-radius: 20px;
-}
-
-.progress-text {
-  width: 100%;
-  text-align: center;
-  line-height: 32px;
-}
 /** >> ****************************************************************/
