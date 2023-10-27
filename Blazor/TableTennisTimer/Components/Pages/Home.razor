@@ -98,10 +98,6 @@
 @code {
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
-  WakeLockSentinel? _wakeSentinel;
-  bool _isWakeLocked;
-  bool? _isWakeLockSupported = null;
-
   public Home()
   {
     court = new ModelCourt(StateHasChanged, () => SetWakeLockOn(), JSRuntime);
@@ -113,10 +109,13 @@
     court.JSRuntime = JSRuntime; // keep here: is not working from the ctor!!!
 
     _isWakeLockSupported = await ScreenWakeLockService.IsSupportedAsync(); // Check if the browser supports the screen wake lock API
-    await SetWakeLockOn();
+    // await SetWakeLockOn();
     //nogo: nor audio, nor wake lock is working on iPhone from here ==> manual start by user interaction.
   }
 
+  WakeLockSentinel? _wakeSentinel;
+  bool _isWakeLocked;
+  bool? _isWakeLockSupported = null;
   async Task ToggleWakeLock()
   {
     if (_isWakeLocked)
@@ -163,7 +162,7 @@
 
   public class PlayPeriod
   {
-    public PlayPeriod(int p) { PeriodInMin = p; }
+    public PlayPeriod(int min) { PeriodInMin = min; }
     public int PeriodInMin { get; set; } = 22;
     public bool IsSelected { get; set; }
   }
@@ -195,6 +194,7 @@
         report = $"{value} min    IsLooping: {IsLooping}";
         Task.Run(async () =>
         {
+          SetWakeLockOn.Invoke();
           await PlayResource("Intro");
           if (IsLooping != true)
             await MainLoopTask();
@@ -235,8 +235,6 @@
 
         while (IsLooping && now < nextTime)
         {
-          // SetWakeLockOn.Invoke();
-
           int prev = selectPeriodInMin;
           await Task.Delay(999);
           if (prev != selectPeriodInMin) // if the user changed the time, then reset the timer
@@ -333,7 +331,7 @@
       try
       {
         wakeLock = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
-        report = "Wake Lock is active!";
+        report = "Wake Lock is  active -- !";
       }
       catch (Exception err) { error = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(error); }
     }
