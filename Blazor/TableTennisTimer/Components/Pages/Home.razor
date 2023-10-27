@@ -30,10 +30,8 @@
         </span>
       </div>
       <div class="middle">
-        <InputCheckbox class="px26x26" id="chkDebug" checked="@court.IsAudible" @bind-Value="court.IsDebug" /><label for="chkDebug">Dbg</label>
-      </div>
-      <div class="right">
-        <InputCheckbox class="px26x26" id="chkAudio" checked="@court.IsAudible" @bind-Value="court.IsAudible" /><label for="chkAudio">Audio</label>
+        <InputCheckbox class="px26x26" id="chkAudio" checked="@court.IsAudible" @bind-Value="court.IsAudible" /><label for="chkAudio">Audio &nbsp; &nbsp;</label>
+        <InputCheckbox class="px26x26" id="chkDebug" checked="@court.IsAudible" @bind-Value="court.IsDebug" /><label for="chkDebug">Dbg &nbsp; &nbsp;</label>
       </div>
     </div>
 
@@ -175,7 +173,7 @@
   {
     DateTime nextTime = DateTime.Now;
     object? wakeLock_OLD;
-    public string countdownString = "↑Select";
+    public string countdownString = "↑ Select";
     public string report = "";
     public string error = "";
     public double progress = 0, regress = 0;
@@ -206,7 +204,7 @@
       }
     }
 
-    public List<PlayPeriod> PlayPeriods { get; set; } = new List<PlayPeriod>() { new PlayPeriod(02), new PlayPeriod(15), new PlayPeriod(30) };
+    public List<PlayPeriod> PlayPeriods { get; set; } = new List<PlayPeriod>() { new PlayPeriod(10), new PlayPeriod(15), new PlayPeriod(30) };
 
     [Parameter] public bool IsAudible { get; set; } = true;
     [Parameter] public bool IsLooping { get; set; }
