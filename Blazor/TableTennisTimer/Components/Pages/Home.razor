@@ -195,7 +195,9 @@
         Task.Run(async () =>
         {
           SetWakeLockOn.Invoke();
-          await PlayResource("Intro");
+          await PlayResource("Intro", 1.0); await Task.Delay(999);
+          await PlayResource("Power", 0.1); await Task.Delay(999);
+          await PlayResource("Fanfr", 0.1); await Task.Delay(999);
           if (IsLooping != true)
             await MainLoopTask();
         });
@@ -259,7 +261,7 @@
 
         if (IsLooping)
         {
-          countdownString = "Rotate!";
+          countdownString = "Rotate";
           StateHasChanged(); // await InvokeAsync(StateHasChanged);
           await PlayWavFilesAsync("Fanfr", 5_590, GetTimeToChange());
         }
@@ -272,7 +274,7 @@
 
       await Task.Delay(250); // collides with the "Wake Lock released" sound. ...on NG.
 
-      await PlayResource("Chirp");
+      await PlayResource("Chirp", .5);
     }
 
     void SetAndShowNextTime()
@@ -289,17 +291,19 @@
       await Task.Delay(delay); // will not play speech if delay is too short.
       await PlayResource(speech);
     }
-    public async Task PlayResource(string filePath)
+    public async Task PlayResource(string filePath, double volume = 1.0)
     {
       if (IsAudible)
       {
         report = $"{filePath}  ++playing...";
         //     await JSRuntime.InvokeAsync<string>("PlayAudio", filePath);
+        // using (await JSRuntime.InvokeAsync<Task>("PlayAudio", $"<audio controls volume=\"{volume}\"><source src=\"{filePath}\" type=\"audio/mpeg\"></audio>"))
         using (await JSRuntime.InvokeAsync<Task>("PlayAudio", filePath))
         {
           // Code here will not execute until the audio file has finished playing
           report = $"{filePath}  ++playing... has finished!";
         }
+          report = $"{filePath}  ++playing... has finished! +++++++++++++++++";
       }
       else
       {

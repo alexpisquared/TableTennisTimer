@@ -57,3 +57,42 @@ https://blazor-university.com/forms/editcontext-fieldidentifiers-and-fieldstate/
 
 # 2023-10-26:
 https://whuysentruit.medium.com/blazor-wasm-pwa-adding-a-new-update-available-notification-d9f65c4ad13
+
+# 2023-10-27:
+Blazor's JSInterop doesn't have the ability to wait until audio finishes playing. This is because it doesn't have a mechanism for the JavaScript function to locally "await" something like the `ended` event of the HTML Audio API and then return to the C# code. 
+
+However, you could implement a workaround by encapsulating the audio file in a Promise and asynchronously waiting for the "ended" event in JavaScript. Also, you would need to adjust your JS function to return a Promise that is resolved when the audio finishes playing.
+
+Create `wwwroot/js/audio.js` file with the following JavaScript code:
+
+```js
+window.audioPlayer = {
+    playAudio: function (filePath) {
+        return new Promise((resolve, reject) => {
+            let audio = new Audio(filePath);
+            audio.onended = () => {
+                resolve();
+            };
+            audio.onerror = (e) => {
+                reject(e);
+            };
+            audio.play();
+        });
+    }
+};
+```
+
+In `_Host.cshtml` (or `_Host.razor` if you are using a hosted solution), make sure this JavaScript file is referenced after `_framework/blazor.webassembly.js`:
+
+```html
+<script src="_framework/blazor.webassembly.js"></script>
+<script src="js/audio.js"></script>
+```
+
+Then, in your Razor file, you can call this function:
+
+```csharp
+await JSRuntime.InvokeVoidAsync("audioPlayer.playAudio", filePath);
+```
+
+Now, the `JSRuntime.InvokeVoidAsync` method in your Razor code should wait until the audio finishes playing before proceeding.
