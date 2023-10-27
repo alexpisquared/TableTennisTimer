@@ -1,53 +1,74 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="">Table Tennis Timer</a>
+    <a href="https://alex-pi.azurewebsites.net/#/tttimer" target="_self" title="Back to the original TTTimer">&lt;&lt;</a>
     <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
   </div>
 </div>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-  <nav class="flex-column">
-    <div class="nav-item px-3">
-      <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-        <span class="bi bi-house-door-fill" aria-hidden="true"></span> Home
-      </NavLink>
-    </div>
-    <div class="nav-item px-3">
-      <NavLink class="nav-link" href="counter">
-        <span class="bi bi-plus-square-fill" aria-hidden="true"></span> Counter
-      </NavLink>
-    </div>
-    <div class="nav-item px-3">
-      <NavLink class="nav-link" href="weather">
-        <span class="bi bi-list-nested" aria-hidden="true"></span> Weather
-      </NavLink>
-    </div>
-    <div class="nav-item px-3">
-      <NavLink class="nav-link" href="tennis-timer">
-        <span class="bi bi-list-nested" aria-hidden="true"></span> tennis-timer ▄▀▄
-      </NavLink>
-    </div>
-    <div class="nav-item px-3">
-      <NavLink class="nav-link" href="PlayAudioFromCs">
-        <span class="bi bi-list-nested" aria-hidden="true"></span> PlayAudioFromCs
-      </NavLink>
-    </div>
-    <div class="nav-item px-3">
-      <NavLink class="nav-link" href="LifeCycle">
-        <span class="bi bi-list-nested" aria-hidden="true"></span> LifeCycle
-      </NavLink>
-    </div>
-    <div class="nav-item px-3">
-      <NavLink class="nav-link" href="weather">
-        <span class="bi bi-list-nested" aria-hidden="true"></span> Weather
-      </NavLink>
-    </div>
-  </nav>
-</div>
+  <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+@if (IsDebug)
+{
+      <div class="nav-item px-3">
+        <NavLink class="nav-link" href="https://alex-pi.azurewebsites.net/#/tttimer">
+          <span class="bi bi-back-square-fill" aria-hidden="true"></span> 
+          Original TTTimer
+        </NavLink>
+      </div>
+    }
+else
+{
+      <div class="nav-item px-3">
+        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+          <span class="bi bi-house-door-fill" aria-hidden="true"></span> Home
+        </NavLink>
+      </div>
+      <div class="nav-item px-3">
+        <NavLink class="nav-link" href="counter">
+          <span class="bi bi-plus-square-fill" aria-hidden="true"></span> Counter
+        </NavLink>
+      </div>
+      <div class="nav-item px-3">
+        <NavLink class="nav-link" href="weather">
+          <span class="bi bi-list-nested" aria-hidden="true"></span> Weather
+        </NavLink>
+      </div>
+      <div class="nav-item px-3">
+        <NavLink class="nav-link" href="tennis-timer">
+          <span class="bi bi-list-nested" aria-hidden="true"></span> tennis-timer
+        </NavLink>
+      </div>
+      <div class="nav-item px-3">
+        <NavLink class="nav-link" href="PlayAudioFromCs">
+          <span class="bi bi-list-nested" aria-hidden="true"></span> PlayAudioFromCs
+        </NavLink>
+      </div>
+      <div class="nav-item px-3">
+        <NavLink class="nav-link" href="LifeCycle">
+          <span class="bi bi-list-nested" aria-hidden="true"></span> LifeCycle
+        </NavLink>
+      </div>
+      <div class="nav-item px-3">
+        <NavLink class="nav-link" href="weather">
+          <span class="bi bi-list-nested" aria-hidden="true"></span> Weather
+        </NavLink>
+      </div>
+}
+    </nav>
+  </div>
 
 @code {
+#if DEBUG
+   const bool isDebug = true;
+#else
+  const bool isDebug = false;
+#endif
+
+  [Parameter] public bool IsDebug { get; set; } = isDebug;
+
   private bool collapseNavMenu = true;
 
   private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
