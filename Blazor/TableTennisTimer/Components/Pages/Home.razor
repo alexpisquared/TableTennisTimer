@@ -38,7 +38,9 @@
 
     <div class="row center">
       <div style="position: relative;">
-        <h1 style="position: absolute; top: 0; left: 0;">@court.countdownString</h1>
+        <div style="position: absolute; top: 0; left: 0; width: 96%; height: 96%; background-color: #5557; margin: 2%;">
+          <h1 >@court.countdownString</h1>
+        </div>
         <div style="width: @court.progress%;" class="progress-bar-progress"></div>
         <div style="width: @court.regress%; " class="progress-bar-regress"></div>
       </div>
