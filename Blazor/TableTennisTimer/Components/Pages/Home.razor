@@ -22,24 +22,25 @@
           <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
             @foreach (var option in court.PlayPeriods)
             {
-              <InputRadio Value="option.PeriodInMin" style="width: 26px; height: 26px; margin-left: 26px;" id="@option.PeriodInMin" />
+              <InputRadio Value="option.PeriodInMin" class="px26x26" style="margin-left: 26px;" id="@option.PeriodInMin" />
               <label for="@option.PeriodInMin">@option.PeriodInMin</label>
             }
             <label>&nbsp;min</label>
           </InputRadioGroup>
         </span>
       </div>
-      <div class="middle"></div>
+      <div class="middle">
+        <InputCheckbox class="px26x26" id="chkDebug" checked="@court.IsAudible" @bind-Value="court.IsDebug" /><label for="chkDebug">Debug</label>
+      </div>
       <div class="right">
-        <InputCheckbox style="width: 26px; height: 26px;" id="chkAudio" checked="@court.IsAudible" @bind-Value="court.IsAudible" />
-        <label for="chkAudio">Audio</label>
+        <InputCheckbox class="px26x26" id="chkAudio" checked="@court.IsAudible" @bind-Value="court.IsAudible" /><label for="chkAudio">Audio</label>
       </div>
     </div>
 
     <div class="row center">
-      <div style="position: relative;">
-        <div style="position: absolute; top: 0; left: 0; width: 96%; height: 96%; background-color: #00f5; margin: 2%;">
-          <h1 >@court.countdownString</h1>
+      <div class="hCenterParent">
+        <div class="hCenterChild">
+          <h1>@court.countdownString</h1>
         </div>
         <div style="width: @court.progress%;" class="progress-bar-progress"></div>
         <div style="width: @court.regress%; " class="progress-bar-regress"></div>
@@ -47,36 +48,36 @@
     </div>
 
     <div class="row bottom">
-      <div>
-        <span style="color: #ffa">@court.error</span>
-        <br />
-        <span style="color: #afa">@court.report</span>
-      </div>
+      <div><span style="color: #ffa">error @court.error</span></div>
+      @if (court.IsDebug)
+      {
+        <div><span style="color: #afa">@court.report</span></div>
 
-      <div >
-        @if (court.IsAudible)
-        {
-          <button @onclick="@court.ClickHandlerCs1">1min</button>
-        }
-        <button @onclick="@court.ClickHandlerCs2">Rota</button>
+        <div>
+          @if (court.IsAudible)
+          {
+            <button @onclick="@court.ClickHandlerCs1">1min</button>
+            <button @onclick="@court.ClickHandlerCs2">Rota</button>
+          }
 
-        <InputCheckbox style="width: 26px; height: 26px; margin: 10px;" id="example2" checked="@court.IsLooping" @bind-Value="court.IsLooping" />
-        <label for="example2">Is Looping</label>
+          <InputCheckbox class="px26x26" style="margin: 10px;" id="example2" checked="@court.IsLooping" @bind-Value="court.IsLooping" />
+          <label for="example2">Is Looping</label>
 
-        @if (_isWakeLockSupported == true)
-        {
-          <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "Stop" : "Start") WL</button>
-        }
-        else @if (_isWakeLockSupported == false)
-        {
-          <p style="color: red;">The browser does not support the screen wake lock API.</p>
-        }
-        @* <InputCheckbox style="width: 26px; height: 26px; margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="chkAudio" checked="@court.IsAudible" /> *@
-        @*    <button onclick="document.getElementById('Intro').play()">JS</button> <br />    *@
-      </div>
+          @if (_isWakeLockSupported == true)
+          {
+            <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "Stop" : "Start") WL</button>
+          }
+          else @if (_isWakeLockSupported == false)
+          {
+            <p style="color: red;">The browser does not support the screen wake lock API.</p>
+          }
+          @* <InputCheckbox class="px26x26" style="margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="chkAudio" checked="@court.IsAudible" /> *@
+          @*    <button onclick="document.getElementById('Intro').play()">JS</button> <br />    *@
+        </div>
+      }
     </div>
   </div>
-  <div class="hidden-div ">
+  <div style="visibility: collapse;">
     <audio id="Intro" controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
     <audio id="Power" controls><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
     <audio id="Chirp" controls><source src="Audio/Start - Arcade Chirp Descend.mp3"></audio>
@@ -181,6 +182,12 @@
     public IJSRuntime JSRuntime { get; set; }
     public string CourtName { get; set; } = "xx";
     int selectPeriodInMin;
+#if DEBUG
+   const bool isDebug = true;
+#else
+    const bool isDebug = false;
+#endif
+
 
     public int SelectPeriodInMin
     {
@@ -198,12 +205,7 @@
 
     [Parameter] public bool IsAudible { get; set; } = true;
     [Parameter] public bool IsLooping { get; set; }
-
-#if DEBUG
-  public bool IsDebug { get; set; } = false;
-#else
-    public bool IsDebug { get; set; } = false;
-#endif
+    [Parameter] public bool IsDebug { get; set; } = isDebug;
 
     public ModelCourt(
       Action stateHasChanged,
