@@ -37,7 +37,7 @@ label {
   left: 0;
   width: 100vw;
 */
-  height: 70vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   color: #fff;
@@ -50,8 +50,8 @@ label {
   flex-direction: row;
 }
 
-.top, .bottom {  
-  justify-content: flex-end;  
+.top, .bottom {
+  justify-content: flex-end;
   display: flex;
   align-items: center;
   background-color: #0002;
@@ -84,12 +84,20 @@ label {
 }
 
   .center > div h1 {
-    font-size: 20vw;
+    font-size: 36vw;
     font-weight: 600;
     font-family: Tw Cen MT Condensed;
     text-align: center;
     word-wrap: break-word;
+    margin-top: -26px;
   }
+
+.Initiate {
+  height: 100%;
+  font-size: 80px;
+  font-weight: 600;
+  margin-left: 16px;
+}
 
 .bottom > div {
   display: flex;
@@ -118,6 +126,7 @@ label {
 .hCenterParent {
   position: relative;
 }
+
 .hCenterChild {
   position: absolute;
   top: 0;
@@ -127,6 +136,7 @@ label {
   margin: 2%;
   /*background-color: #0005;*/
 }
+
 .px26x26 {
   width: 26px;
   height: 26px;

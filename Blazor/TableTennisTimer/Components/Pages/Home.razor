@@ -35,15 +35,22 @@
       </div>
     </div>
 
-    <div class="row center">
-      <div class="hCenterParent">
-        <div class="hCenterChild">
-          <h1>@court.countdownString</h1>
+    @if (court.Initiated == false)
+    {
+      <div class="Initiate">↑ ↑ ↑  Select </div>
+    }
+    else
+    {
+      <div class="row center">
+        <div class="hCenterParent">
+          <div class="hCenterChild">
+            <h1>@court.countdownString</h1>
+          </div>
+          <div style="width: @court.progress%;" class="progress-bar-progress"></div>
+          <div style="width: @court.regress%; " class="progress-bar-regress"></div>
         </div>
-        <div style="width: @court.progress%;" class="progress-bar-progress"></div>
-        <div style="width: @court.regress%; " class="progress-bar-regress"></div>
       </div>
-    </div>
+    }
 
     <div class="row bottom" style="min-height: max-content;">
       <div><span style="color: #ffa">@court.error</span></div>
@@ -194,10 +201,11 @@
         report = $"{value} min    IsLooping: {IsLooping}";
         Task.Run(async () =>
         {
+          Initiated = true;
           SetWakeLockOn.Invoke();
           await PlayResource("Intro", 1.0); await Task.Delay(99);
           await PlayResource("Power", 0.1); await Task.Delay(99);
-          await PlayResource("Fanfr", 0.1); 
+          await PlayResource("Fanfr", 0.1);
           if (IsLooping != true)
             await MainLoopTask();
         });
@@ -206,6 +214,7 @@
 
     public List<PlayPeriod> PlayPeriods { get; set; } = new List<PlayPeriod>() { new PlayPeriod(10), new PlayPeriod(15), new PlayPeriod(30) };
 
+    [Parameter] public bool Initiated { get; set; } = false;
     [Parameter] public bool IsAudible { get; set; } = true;
     [Parameter] public bool IsLooping { get; set; }
     [Parameter] public bool IsDebug { get; set; } = isDebug;
@@ -303,7 +312,7 @@
         {
           report = $"{filePath}  ++playing... has finished!";
         }
-          report = $"{filePath}  ++playing... has finished! +++++++++++++++++";
+        report = $"{filePath}  ++playing... has finished! +++++++++++++++++";
       }
       else
       {
