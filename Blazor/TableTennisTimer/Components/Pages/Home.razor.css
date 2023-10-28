@@ -89,7 +89,7 @@ label {
     font-family: Tw Cen MT Condensed;
     text-align: center;
     word-wrap: break-word;
-    margin-top: -26px;
+    margin-top: -8px;
   }
 
 .Initiate {
@@ -107,20 +107,18 @@ label {
 
 .progress-bar-progress {
   height: 100%;
-  border-radius: 18.8px 0px 0px 18.8px;
+  border-radius: 38.8px 0px 0px 38.8px;
   background-color: #700;
   border: 2px solid #777;
-  border-left: 0px;
   border-right: 0px;
 }
 
 .progress-bar-regress {
   height: 100%;
-  border-radius: 0px 18.8px 18.8px 0px;
+  border-radius: 0px 38.8px 38.8px 0px;
   background-color: #070;
   border: 2px solid #777;
   border-left: 0px;
-  border-right: 0px;
 }
 
 .hCenterParent {
