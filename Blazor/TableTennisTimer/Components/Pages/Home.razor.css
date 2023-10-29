@@ -13,7 +13,6 @@
   font-size: 36vw;
   font-weight: 600;
   font-family: Tw Cen MT Condensed;
-  color: #fff;
   border-radius: 8.8px;
   border: 1px solid #ddd;
 }
@@ -28,6 +27,7 @@ button {
 
 label {
   font-size: 16px;
+  color: #ccc;
 }
 
 /** << ****************************************************************/
@@ -40,7 +40,7 @@ label {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  color: #fff;
+  color: #ff5;
   margin: -19px;
   /*background-color: #0005;*/
 }
@@ -107,22 +107,18 @@ label {
 
 .progress-bar {
   height: 100%;
-  border: 2px solid #777;
+  border: 2px solid #aa5;
 }
 
 .progress {
-  height: 100%;
   border-radius: 38.8px 0px 0px 38.8px;
   background-image: linear-gradient(180deg, #d06 1%, #703 99%);
-  border: 2px solid #777;
   border-right: 0px;
 }
 
 .regress {
-  height: 100%;
   border-radius: 0px 38.8px 38.8px 0px;
   background-image: linear-gradient(180deg, #0a4 1%, #041 99%);
-  border: 2px solid #777;
   border-left: 0px;
 }
 
