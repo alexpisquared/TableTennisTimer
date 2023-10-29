@@ -105,18 +105,23 @@ label {
   align-items: center;
 }
 
-.progress-bar-progress {
+.progress-bar {
+  height: 100%;
+  border: 2px solid #777;
+}
+
+.progress {
   height: 100%;
   border-radius: 38.8px 0px 0px 38.8px;
-  background-color: #700;
+  background-image: linear-gradient(180deg, #d06 1%, #703 99%);
   border: 2px solid #777;
   border-right: 0px;
 }
 
-.progress-bar-regress {
+.regress {
   height: 100%;
   border-radius: 0px 38.8px 38.8px 0px;
-  background-color: #070;
+  background-image: linear-gradient(180deg, #0a4 1%, #041 99%);
   border: 2px solid #777;
   border-left: 0px;
 }
