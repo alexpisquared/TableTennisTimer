@@ -1,7 +1,6 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="">Table Tennis Timer</a>
-    <a href="https://alex-pi.azurewebsites.net/#/tttimer" target="_self" title="Back to the original TTTimer">&lt;&lt;</a>
     <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -10,12 +9,21 @@
 
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
   <nav class="flex-column">
-    @if (IsDebug == false)
+    @if (IsDebug != false)
     {
       <div class="nav-item px-3">
         <NavLink class="nav-link" href="https://alex-pi.azurewebsites.net/#/tttimer">
-          <span class="bi bi-back-square-fill" aria-hidden="true"></span>
-          Original TTTimer
+          <span class="bi bi-house-door-fill" aria-hidden="true"></span>Original TTTimer
+        </NavLink>
+      </div>
+      <div class="nav-item px-3">
+        <NavLink class="nav-link" href="https://alex-pi.azurewebsites.net/#/tttimer">
+          <span class="bi bi-plus-square-fill" aria-hidden="true"></span>Original TTTimer
+        </NavLink>
+      </div>
+      <div class="nav-item px-3">
+        <NavLink class="nav-link" href="https://alex-pi.azurewebsites.net/#/tttimer">
+          <span class="bi bi-list-nested" aria-hidden="true"></span>Original TTTimer
         </NavLink>
       </div>
     }

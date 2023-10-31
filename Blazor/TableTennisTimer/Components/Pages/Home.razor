@@ -22,7 +22,7 @@
           <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
             @foreach (var option in court.PlayPeriods)
             {
-              <InputRadio Value="option.PeriodInMin" class="px26x26" style="margin-left: 26px;" id="@option.PeriodInMin" />
+              <InputRadio Value="option.PeriodInMin" class="px26x26" style="margin-left: 28px;" id="@option.PeriodInMin" />
               <label for="@option.PeriodInMin">@option.PeriodInMin</label>
             }
             <label>&nbsp;min</label>
@@ -37,7 +37,10 @@
 
     @if (court.Initiated == false)
     {
-      <div class="Initiate">↑ ↑ ↑  Select </div>
+      <div class="Initiate">↑ ↑ ↑ </div>
+      <div class="Initiate">Select desired play period</div>
+      <div class="Initiate">&nbsp;</div>
+      <div class="Initiate">&nbsp;</div>
     }
     else
     {
