@@ -172,13 +172,34 @@
     catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(SetWakeLockOff)}, {err.Message}"; WriteLine(err); }
   }
 
+  async Task<string> getMemberSince(string pieceOfCake = "LocalStoreTest")
+  {
+    try
+    {
+      var memeberSinceStringKey = await GetCookie(pieceOfCake);
+      if (memeberSinceStringKey == null)
+      {
+        memeberSinceStringKey = DateTimeOffset.Now.ToString();
+        SetCookie(pieceOfCake, memeberSinceStringKey);
+      }
+      return memeberSinceStringKey;
+    }
+    catch (Exception err)
+    {
+      Console.WriteLine($"{err.GetType().Name}, {err.Message}");
+      return ($"ERROR in getMemberSince(): {err.GetType().Name}, {err.Message}");
+    }
+  }
+  async Task SetCookie(string key, string value) { await JSRuntime.InvokeVoidAsync("eval", $"document.cookie = '{key}={value};path=/'"); }
+  async Task<string> GetCookie(string key) { var cookie = await JSRuntime.InvokeAsync<string>("eval", $"document.cookie.split('; ').find(row => row.startsWith('{key}='))?.split('=')[1]"); return cookie; }
+  async Task DeleteCookie(string key) { await JSRuntime.InvokeVoidAsync("eval", $"document.cookie = '{key}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/'"); }
+
   public class PlayPeriod
   {
     public PlayPeriod(int min) { PeriodInMin = min; }
     public int PeriodInMin { get; set; } = 22;
     public bool IsSelected { get; set; }
   }
-
   public class ModelCourt
   {
     DateTime nextTime = DateTime.Now;
