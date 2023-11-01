@@ -1,7 +1,7 @@
 ﻿using Microsoft.JSInterop;
 using System.Collections.Concurrent;
 
-namespace ScreenWakeLockDemo.Services;
+namespace TableTennisTimer.Services;
 
 public class ScreenWakeLockService : IScreenWakeLockService
 {
@@ -22,9 +22,7 @@ public class ScreenWakeLockService : IScreenWakeLockService
     // Check if the browser supports the screen wake lock API
     var isSupported = await IsSupportedAsync();
     if (!isSupported)
-    {
       throw new NotSupportedException("The browser does not support the screen wake lock API.");
-    }
 
     // Request a screen wake lock and get a JS object reference
     var jsObjectReference = await _jsRuntime.InvokeAsync<IJSObjectReference>("navigator.wakeLock.request", "screen");
@@ -42,9 +40,7 @@ public class ScreenWakeLockService : IScreenWakeLockService
   {
     // Check if the sentinel object is valid
     if (sentinel == null || sentinel.JsObjectReference == null)
-    {
       throw new ArgumentNullException(nameof(sentinel));
-    }
 
     // Release the screen wake lock and dispose the JS object reference
     await sentinel.JsObjectReference.InvokeVoidAsync("release");

@@ -5,10 +5,11 @@
 @using System.Threading.Tasks;
 @using System.Timers;
 @using Microsoft.AspNetCore.Components;
-@using ScreenWakeLockDemo.Services
+@using TableTennisTimer.Services
 @using static System.Console;
 @inject IJSRuntime JSRuntime
 @inject IScreenWakeLockService ScreenWakeLockService
+@inject IWebEventLoggerService WebEventLoggerService
 @implements IDisposable
 @implements IAsyncDisposable
 
@@ -123,6 +124,8 @@
     _isWakeLockSupported = await ScreenWakeLockService.IsSupportedAsync(); // Check if the browser supports the screen wake lock API
                                                                            // await SetWakeLockOn();
                                                                            //nogo: nor audio, nor wake lock is working on iPhone from here ==> manual start by user interaction.
+    court.report = await getMemberSince();
+    // WebEventLoggerService.LogEventAsync("memberSince", court.report);
   }
 
   WakeLockSentinel? _wakeSentinel;

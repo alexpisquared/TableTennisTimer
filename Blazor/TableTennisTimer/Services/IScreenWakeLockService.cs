@@ -1,4 +1,4 @@
-﻿namespace ScreenWakeLockDemo.Services;
+﻿namespace TableTennisTimer.Services;
 
 public interface IScreenWakeLockService
 {

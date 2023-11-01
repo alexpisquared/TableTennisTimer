@@ -1,6 +1,4 @@
-﻿using Microsoft.JSInterop;
-
-namespace ScreenWakeLockDemo.Services;
+﻿namespace TableTennisTimer.Services;
 
 public class WakeLockSentinel
 {
