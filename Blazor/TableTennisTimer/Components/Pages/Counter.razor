@@ -31,7 +31,7 @@
     while (true) //todo: PeriodicTimer??
     {
       await Task.Delay(900);
-      ct2 = DateTime.Now.ToString("HH:mm:ss");
+      ct2 = DateTimeOffset.Now.ToString("HH:mm:ss");
       StateHasChanged(); // await InvokeAsync(StateHasChanged);
     }
   }
@@ -40,14 +40,14 @@
     while (true)
     {
       await Task.Delay(800);
-      currentTime = DateTime.Now.ToString("HH:mm:ss");
+      currentTime = DateTimeOffset.Now.ToString("HH:mm:ss");
       await InvokeAsync(StateHasChanged);
     }
   }
 
   private void UpdateTime()
   {
-    currentTime = DateTime.Now.ToString("HH:mm:ss");
+    currentTime = DateTimeOffset.Now.ToString("HH:mm:ss");
     InvokeAsync(StateHasChanged);
   }
 
