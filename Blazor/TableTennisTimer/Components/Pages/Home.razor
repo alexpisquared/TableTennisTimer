@@ -69,6 +69,9 @@
           {
             <p style="color: red;">The browser does not support the screen wake lock API.</p>
           }
+
+          <button @onclick="@GetMemberSinceToReport">Since</button>
+
           @* <InputCheckbox class="px26x26" style="margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="chkAudio" checked="@court.IsAudible" /> *@
           @*    <button onclick="document.getElementById('Intro').play()">JS</button> <br />    *@
         </div>
@@ -116,8 +119,16 @@
     _isWakeLockSupported = await ScreenWakeLockService.IsSupportedAsync(); // Check if the browser supports the screen wake lock API
                                                                            // await SetWakeLockOn();
                                                                            //nogo: nor audio, nor wake lock is working on iPhone from here ==> manual start by user interaction.
+    await GetMemberSinceToReport();
+  }
+
+  async Task GetMemberSinceToReport()
+  {
+    court.report = "Getting...";
+    await Task.Delay(1_000);
     court.report = await getMemberSince();
-    // WebEventLoggerService.LogEventAsync("memberSince", court.report);
+    await Task.Delay(1_000);
+    //nor4wasm: court.report = await WebEventLoggerService.LogEventAsync("memberSince", court.report);
   }
 
   WakeLockSentinel? _wakeSentinel;
@@ -188,7 +199,7 @@
   async Task SetCookie(string key, string value) { await JSRuntime.InvokeVoidAsync("eval", $"document.cookie = '{key}={value};path=/'"); }
   async Task<string> GetCookie(string key) { var cookie = await JSRuntime.InvokeAsync<string>("eval", $"document.cookie.split('; ').find(row => row.startsWith('{key}='))?.split('=')[1]"); return cookie; }
   async Task DeleteCookie(string key) { await JSRuntime.InvokeVoidAsync("eval", $"document.cookie = '{key}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/'"); }
-  
+
   public async ValueTask DisposeAsync()
   {
     WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀  DisposeAsync() ");
