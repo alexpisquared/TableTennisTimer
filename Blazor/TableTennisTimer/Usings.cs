@@ -9,4 +9,5 @@ global using Microsoft.JSInterop;
 global using TableTennisTimer.Components;
 global using TableTennisTimer.Models;
 global using TableTennisTimer.Services;
+global using AlexPiApi.Services;
 global using static System.Console;
