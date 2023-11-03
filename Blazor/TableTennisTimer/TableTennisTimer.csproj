@@ -14,6 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\..\..\Users\alexp\source\repos\alex-pi\AzurePseudoLogger\ITextDbContext.cs" Link="Services\ITextDbContext.cs" />
+    <Compile Include="..\..\..\..\Users\alexp\source\repos\alex-pi\AzurePseudoLogger\PoorMansLogger.cs" Link="Services\PoorMansLogger.cs" />
+    <Compile Include="..\..\..\..\Users\alexp\source\repos\alex-pi\AzurePseudoLogger\TextDbContext.cs" Link="Services\TextDbContext.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Components\Pages\Home.razor.css" />
     <Content Include="Components\Pages\TTTimerPort2.razor.css" />
     <Content Include="Components\App.razor.css" />
@@ -26,6 +32,7 @@
   <ItemGroup>
     <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
     <PackageReference Include="Azure.Identity" Version="1.10.3" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.18.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0-rc.2.23480.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0-rc.2.23480.2" PrivateAssets="all" />
   </ItemGroup>
@@ -36,10 +43,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\Audio\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Users\alexp\source\repos\alex-pi\AzurePseudoLogger\AzurePseudoLogger.csproj" />
   </ItemGroup>
 
   <ItemGroup>

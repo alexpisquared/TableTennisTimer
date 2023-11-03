@@ -126,7 +126,7 @@
   {
     court.report = "Getting...";
     await Task.Delay(1_000);
-    court.report = await getMemberSince();
+    court.report = $"Build: 23-11-02  ·  Member since: {await getMemberSince()}";
     await Task.Delay(1_000);
     //nor4wasm: court.report = await WebEventLoggerService.LogEventAsync("memberSince", court.report);
     // await TextDbContext.AddStringAsync($"{GetType().FullName}.Put({court.report})");
