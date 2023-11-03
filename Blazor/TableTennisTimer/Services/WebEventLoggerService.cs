@@ -1,4 +1,4 @@
-﻿using System.Security.Principal;
+﻿using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
 
 namespace TableTennisTimer.Services;
@@ -7,12 +7,29 @@ public class WebEventLoggerService : IWebEventLoggerService
   readonly HttpClient _httpClient;
   const string _33 = "https://localhost:5001/api/WebEventLogs"; // = isDevMode() ? "https://localhost:5001" : "https://alex-pi-api.azurewebsites.net";
 
-  public WebEventLoggerService(HttpClient httpClient)
+  public WebEventLoggerService(HttpClient httpClient) => _httpClient = httpClient;
+
+  public async Task<string> LogEventAsync(string eventName, string eventData)
   {
-    _httpClient = httpClient;
+    try
+    {
+      var response = await _httpClient.PostAsJsonAsync<WebEventLog>("api/WebEventLogs", new WebEventLog
+      {
+        BrowserSignature = "TableTennisTimer ■ ■ ■",
+        DoneAt = DateTime.Now.AddDays(123)
+      });
+      //var WebEventLogs = await _httpClient.GetFromJsonAsync<WebEventLog[]>("api/WebEventLogs");
+      //Trace.WriteLine($"resp: {response}.  {WebEventLogs?.Length} WEL items returned.");
+
+      return $"Success!!!  {response}\n";
+    }
+    catch (Exception ex)
+    {
+      return $"Failure!!!  {ex.Message}";
+    }
   }
 
-  public async Task<string> LogEventAsync(string eventName, string eventData) //nor4wasm: use AzurePseudoLogger
+  public async Task<string> LogEventAsync_bad(string eventName, string eventData) //bad.
   {
     try
     {
@@ -26,7 +43,7 @@ public class WebEventLoggerService : IWebEventLoggerService
       // For a solution in Blazor WASM, NOT on Serverside, this code snippet     https://stackoverflow.com/questions/64858434/net5-0-blazor-wasm-cors-client-exception /// but: // CORS is a browser feature that needs to be applied by the web servers that a browsers calls. WebAssembly runs in the browser. So you cannot set CORS policies on Blazor WebAssembly. This needs to be allowed on the server application you are calling. – 
 
       var httpRequestMessage = new HttpRequestMessage { RequestUri = new Uri(_33), Method = HttpMethod.Get };
-      WebAssemblyHttpRequestMessageExtensions.SetBrowserRequestMode(httpRequestMessage, BrowserRequestMode.NoCors);
+      _ = WebAssemblyHttpRequestMessageExtensions.SetBrowserRequestMode(httpRequestMessage, BrowserRequestMode.NoCors);
       var response = await client.SendAsync(httpRequestMessage); // .....PostAsync(_33, content);
       if (response.IsSuccessStatusCode)
       {

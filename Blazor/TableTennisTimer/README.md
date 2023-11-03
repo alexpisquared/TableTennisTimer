@@ -104,4 +104,9 @@ Instead, it’s recommended to create a server-side API that securely communicates
 
 It makes no sense for a client browser app to access the key vault. Anyone can get the access keys from the browsers debug tools and access all key vault data. For this reason CORS is not supported.
 
-
+# 2023-11-03  WASM + Web API:
+https://learn.microsoft.com/en-us/aspnet/core/blazor/call-web-api?view=aspnetcore-5.0&pivots=webassembly
+https://docs.microsoft.com/en-us/aspnet/core/blazor/call-web-api?view=aspnetcore-5.0&pivots=webassembly
+apparently, it works in C:\temp\x\Azure2023\BlazorApp_WASM_Net8_CallWebApi\BlazorApp_WASM_Net8_CallWebApi.Client\Pages\Counter.razor but very flaky (shows the correct response ..followed by 404).
+# SOLUTION!!!
+WithOrigins at C:\Users\alexp\source\repos\alex-pi\AlexPiApi\Startup.cs is the culprit: must be updated with ORIGINS, which are the callers (alexpi.ca, ttt, etc.)
