@@ -134,7 +134,7 @@
           DoneAt = DateTime.Now.AddDays(123)
         };
       court.report = "Getting...  · \r\n"; await Task.Delay(250);
-      court.report += $"Build: 23-11-02  ·  Member since: {memberSinceId} · \r\n"; await Task.Delay(250);
+      court.report += $"Build: 23-11-03  ·  Member since: {memberSinceId} · \r\n"; await Task.Delay(250);
       court.report += await WebEventLoggerService.LogEventAsync("memberSince", wel);
       // await TextDbContext.AddStringAsync($"{GetType().FullName}.Put({court.report})");
     }
