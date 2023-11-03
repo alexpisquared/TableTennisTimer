@@ -96,3 +96,12 @@ await JSRuntime.InvokeVoidAsync("audioPlayer.playAudio", filePath);
 ```
 
 Now, the `JSRuntime.InvokeVoidAsync` method in your Razor code should wait until the audio finishes playing before proceeding.
+
+# 2023-11-02  WASM + KeyVault:
+Direct calls from a Blazor WebAssembly (WASM) application to Azure Key Vault are not recommended due to security concerns1. The browser’s CORS policy would block such requests1.
+This is because anyone can access the browser’s debug tools and potentially retrieve sensitive information, such as access keys1. For this reason, CORS is not supported for client-side calls to Azure Key Vault1.
+Instead, it’s recommended to create a server-side API that securely communicates with Azure Key Vault. Your Blazor WASM app can then communicate with this API to retrieve the necessary data1. This way, sensitive information like your Client Secret is not exposed in the client-side code2.
+
+It makes no sense for a client browser app to access the key vault. Anyone can get the access keys from the browsers debug tools and access all key vault data. For this reason CORS is not supported.
+
+
