@@ -9,15 +9,11 @@ public class WebEventLoggerService : IWebEventLoggerService
 
   public WebEventLoggerService(HttpClient httpClient) => _httpClient = httpClient;
 
-  public async Task<string> LogEventAsync(string eventName, string eventData)
+  public async Task<string> LogEventAsync(string eventName, WebEventLog eventData)
   {
     try
     {
-      var response = await _httpClient.PostAsJsonAsync<WebEventLog>("api/WebEventLogs", new WebEventLog
-      {
-        BrowserSignature = "TableTennisTimer ■ ■ ■",
-        DoneAt = DateTime.Now.AddDays(123)
-      });
+      var response = await _httpClient.PostAsJsonAsync<WebEventLog>("api/WebEventLogs", eventData);
       //var WebEventLogs = await _httpClient.GetFromJsonAsync<WebEventLog[]>("api/WebEventLogs");
       //Trace.WriteLine($"resp: {response}.  {WebEventLogs?.Length} WEL items returned.");
 

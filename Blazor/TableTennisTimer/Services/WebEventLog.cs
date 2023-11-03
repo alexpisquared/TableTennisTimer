@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TableTennisTimer.Services;
 
-internal class WebEventLog
+public class WebEventLog
 {
   [NotMapped] public string[] Sub { get; set; }
   [NotMapped] public string BrowserSignature { get; set; } = "Copy";
