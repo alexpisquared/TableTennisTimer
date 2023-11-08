@@ -9,7 +9,8 @@
 
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
   <nav class="flex-column">
-    @if (IsDebug != false)
+      <img src="qrcode_tabletennistimer.azurewebsites.net.png" height="200" width="200" />
+    @if (IsDebug == false)
     {
       <div class="nav-item px-3">
         <NavLink class="nav-link" href="https://alex-pi.azurewebsites.net/#/tttimer">
