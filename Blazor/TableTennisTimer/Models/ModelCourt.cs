@@ -27,10 +27,10 @@ public class ModelCourt
       {
         Initiated = true;
         SetWakeLockOn.Invoke();
-        await PlayResource("Chirp", 0.2); await Task.Delay(99);
+        //await PlayResource("Chirp", 0.2); await Task.Delay(99);
         //await PlayResource("Intro", 1.0); await Task.Delay(99);
-        //await PlayResource("Power", 0.1); await Task.Delay(99);
-        //await PlayResource("Fanfr", 0.1);
+        await PlayResource("LastM", 0.1); await Task.Delay(99);
+        await PlayResource("Rotat", 0.1);
         if (IsLooping != true)
           await MainLoopTask();
       });
@@ -89,7 +89,7 @@ public class ModelCourt
 
         if (secondsLeft is >= 58 and <= 60)
         {
-          await PlayWavFilesAsync("Power", 1410, GetLastMinute());
+          await PlayWavFilesAsync("LastM", 1410, GetLastMinute());
           await Task.Delay(1_640);
         }
       } // while (now < nextTime)
@@ -98,7 +98,7 @@ public class ModelCourt
       {
         countdownString = "Rotate";
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
-        await PlayWavFilesAsync("Fanfr", 5_590, GetTimeToChange());
+        await PlayWavFilesAsync("Rotat", 5_590, GetTimeToChange());
       }
       else
       {
@@ -118,13 +118,20 @@ public class ModelCourt
     nextTime = now.AddMinutes(selectPeriodInMin - now.Minute % selectPeriodInMin).AddSeconds(-now.Second).AddMilliseconds(-now.Millisecond);
   }
 
-  public async void ClickHandlerCs1() => await PlayWavFilesAsync("Power", 360, GetLastMinute());
-  public async void ClickHandlerCs2() => await PlayWavFilesAsync("Fanfr", 4_500, GetTimeToChange());
-  async Task PlayWavFilesAsync(string name, int delay, string speech)
+  public async void PlayIntro() => await PlayWavFilesAsync("Intro", 360);
+  public async void PlayLastM() => await PlayWavFilesAsync("LastM", 0_500);
+  public async void PlayRotat() => await PlayWavFilesAsync("Rotat", 4_500);
+  public async void PlayChirp() => await PlayWavFilesAsync("Chirp", 0_500);
+  public async void PlayIntrQ() => await PlayWavFilesAsync("IntrQ", 0_500);
+  public async void PlayPoweQ() => await PlayWavFilesAsync("PoweQ", 0_500);
+  public async void PlayFanfQ() => await PlayWavFilesAsync("FanfQ", 4_500);
+  public async void PlayChirQ() => await PlayWavFilesAsync("ChirQ", 0_500);
+  async Task PlayWavFilesAsync(string name, int delay, string? speech = null)
   {
     await PlayResource(name);
     await Task.Delay(delay); // will not play speech if delay is too short.
-    await PlayResource(speech);
+    if (speech is not null)
+      await PlayResource(speech);
   }
   public async Task PlayResource(string filePath, double volume = 1.0)
   {

@@ -51,7 +51,7 @@
     <div class="hidden-div ">
       <audio id="sound2" autoplay controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
       <audio id="Intro" controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
-      <audio id="Power" controls><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
+      <audio id="LastM" controls><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
       <audio id="Chirp" controls><source src="Audio/Start - Arcade Chirp Descend.mp3"></audio>
       <audio id="Fanfare" controls><source src="Audio/Good - Fanfare.7.mp3"></audio>
       <audio id="angryLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~angry~Last minute! EQAQJ！.7.mp3"></audio>
@@ -199,7 +199,7 @@
     switch (i)
     {
       case 1:
-        await PlayResourse("Power");
+        await PlayResourse("LastM");
         await Task.Delay(2500);
         await PlayResourse(GetLastMinute());
         await Task.Delay(2000);
