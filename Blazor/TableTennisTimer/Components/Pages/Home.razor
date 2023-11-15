@@ -52,7 +52,7 @@
       <div><span style="color: #ffa">@court.error</span></div>
       @if (court.IsDebug)
       {
-        <div><span style="color: #afa">@court.report</span></div>
+        <div><pre style="color: #afa">@court.report</pre></div>
 
         <div>
           @if (court.IsAudible)
@@ -105,6 +105,7 @@
 </EditForm>
 
 @code {
+  const string id = "eval";
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   public Home()
@@ -117,9 +118,8 @@
     await base.OnInitializedAsync();
     court.JSRuntime = JSRuntime; // keep here: is not working from the ctor!!!
 
-    _isWakeLockSupported = await ScreenWakeLockService.IsSupportedAsync(); // Check if the browser supports the screen wake lock API
-                                                                           // await SetWakeLockOn();
-                                                                           //nogo: nor audio, nor wake lock is working on iPhone from here ==> manual start by user interaction.
+    _isWakeLockSupported = await ScreenWakeLockService.IsSupportedAsync();
+    // await SetWakeLockOn(); //nogo: nor audio, nor wake lock is working on iPhone from here ==> manual start by user interaction.
     await GetMemberSinceToReport();
   }
 
@@ -127,20 +127,41 @@
   {
     try
     {
-      var memberSinceId = await getMemberSince();
       var wel = new WebEventLog
         {
-          BrowserSignature = "TableTennisTimer ■ ■ ■",
-          FirstVisitId = memberSinceId,
-          DoneAt = DateTime.Now.AddDays(123)
+          BrowserSignature = await getBrowserId(),
+          FirstVisitId = await getMemberSince(),
+          DoneAt = DateTime.Now
         };
-      court.report = "Getting...  · \r\n"; await Task.Delay(250);
-      court.report += $"Build: 23-11-07  ·  Member since: {memberSinceId} · \r\n"; await Task.Delay(250);
+      court.report += $"Build: 23-11-14 2026\r\nMember since: {wel.FirstVisitId} \r\n{wel.BrowserSignature} \r\n"; await Task.Delay(250);
       court.report += await WebEventLoggerService.LogEventAsync("memberSince", wel);
       // await TextDbContext.AddStringAsync($"{GetType().FullName}.Put({court.report})");
     }
     catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(GetMemberSinceToReport)}, {err.Message}"; WriteLine(err); }
   }
+
+  async Task<string> getBrowserId()
+  {
+    try
+    {
+      var w = await JSRuntime.InvokeAsync<int>(id, "window.screen.width");
+      var h = await JSRuntime.InvokeAsync<int>(id, "window.screen.height");
+      var d = await JSRuntime.InvokeAsync<int>(id, "window.screen.colorDepth");
+      // var u = await JSRuntime.InvokeAsync<object>(id, "window.screen");
+      
+      var userAgentRAW = await JSRuntime.InvokeAsync<string>(id, "navigator.userAgent");
+      var userAgentArray = userAgentRAW.Split(new[] { "Mozilla/5.0 (", ") AppleWebKit/", "(KHTML, like Gecko)" }, StringSplitOptions.RemoveEmptyEntries);
+      var csv = $"{userAgentArray.FirstOrDefault()?.Trim()}│{userAgentArray[1]?.Trim()}│{userAgentArray.LastOrDefault()?.Trim()}│"
+              + $"{await JSRuntime.InvokeAsync<int>(id, "navigator.hardwareConcurrency")}│"
+              + $"{await JSRuntime.InvokeAsync<string>(id, "navigator.platform")}│"
+              + $"{await JSRuntime.InvokeAsync<string>(id, "navigator.languages.toString()")}│"
+              + $"{w}x{h}x{d}│zone│gpu│gpv│";
+
+      return csv;
+    }
+    catch (Exception ex) { return $"{ex.Message}|{ex.InnerException?.Message}|{ex.InnerException?.InnerException?.Message}"; }
+  }
+
 
   WakeLockSentinel? _wakeSentinel;
   bool _isWakeLocked;
@@ -189,7 +210,8 @@
     catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(SetWakeLockOff)}, {err.Message}"; WriteLine(err); }
   }
 
-  async Task<string> getMemberSince(string pieceOfCake = "LocalStoreTest")
+  async Task<string>
+  getMemberSince(string pieceOfCake = "LocalStoreTest")
   {
     try
     {
@@ -207,9 +229,14 @@
       return ($"ERROR in getMemberSince(): {err.GetType().Name}, {err.Message}");
     }
   }
-  async Task SetCookie(string key, string value) { await JSRuntime.InvokeVoidAsync("eval", $"document.cookie = '{key}={value};path=/'"); }
-  async Task<string> GetCookie(string key) { var cookie = await JSRuntime.InvokeAsync<string>("eval", $"document.cookie.split('; ').find(row => row.startsWith('{key}='))?.split('=')[1]"); return cookie; }
-  async Task DeleteCookie(string key) { await JSRuntime.InvokeVoidAsync("eval", $"document.cookie = '{key}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/'"); }
+  async Task SetCookie(string key, string value) { await JSRuntime.InvokeVoidAsync(id, $"document.cookie = '{key}={value};path=/'"); }
+  async Task<string>
+    GetCookie(string key)
+  {
+    var cookie = await JSRuntime.InvokeAsync<string>
+      (id, $"document.cookie.split('; ').find(row => row.startsWith('{key}='))?.split('=')[1]"); return cookie;
+  }
+  async Task DeleteCookie(string key) { await JSRuntime.InvokeVoidAsync(id, $"document.cookie = '{key}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/'"); }
 
   public async ValueTask DisposeAsync()
   {
