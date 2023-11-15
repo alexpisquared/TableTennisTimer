@@ -20,7 +20,7 @@
 </div>
 <div class="topmost-div">
   <EditForm EditContext="this.editContext">
-    @foreach (var model in tables)
+    @foreach (var model in tables ?? throw new ArgumentNullException("Ex#89787"))
     {
       @* <h3>@model.TableName</h3> *@
       <span title="Play period in minutes" style="color: #00f;">Minutes</span>
@@ -70,22 +70,21 @@
     </div>
 
 @code {
-  private string src = "Audio/Start - Arcade Alarm.mp3";
-  private bool isLooping = true;
-  private int everyXMin = 2;
-  private string progressString = "%";
-  private string countdownString = "··:··";
-  private string report = "";
-  private string error = "no error";
-  private DateTime nextTime = DateTime.Now;
-  private string nextHHMM = "88:88";
-  private int[] playPeriods = new int[] { 2, 10, 15, 20, 30, 999 };
-  private object? wakeLock;
+  bool isLooping = true;
+  int everyXMin = 2;
+  string progressString = "%";
+  string countdownString = "··:··";
+  string report = "";
+  string error = "no error";
+  DateTime nextTime = DateTime.Now;
+  string nextHHMM = "88:88";
+  int[] playPeriods = new int[] { 2, 10, 15, 20, 30, 999 };
+  object? wakeLock;
 
   double progress = 33, regress = 67;
   // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
-  private EditContext editContext;
-  private List<ModelTable> tables;
+  EditContext? editContext;
+  List<ModelTable>? tables;
 
   protected override async Task OnInitializedAsync()
   {
@@ -188,7 +187,7 @@
     await PlayResourse("Chirp");
   }
 
-  private void SetAndShowNextTime()
+  void SetAndShowNextTime()
   {
     DateTime now = DateTime.Now;
     nextTime = now.AddMinutes(everyXMin - now.Minute % everyXMin).AddSeconds(-now.Second).AddMilliseconds(-now.Millisecond);
@@ -273,7 +272,7 @@
     isLooping = false;
     await ReleaseWakeLockAsync();
   }
-  public bool IsDisposed { get; private set; }
+  public bool IsDisposed { get; set; }
   public void Dispose()
   {
     WriteLine($"▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀  Dispose()  IsDisposed: {IsDisposed}");

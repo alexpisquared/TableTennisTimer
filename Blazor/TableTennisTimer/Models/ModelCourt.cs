@@ -1,5 +1,4 @@
-﻿
-namespace TableTennisTimer.Models;
+﻿namespace TableTennisTimer.Models;
 
 public class ModelCourt
 {
@@ -28,10 +27,11 @@ public class ModelCourt
             {
                 Initiated = true;
                 SetWakeLockOn.Invoke();
-                await PlayResource("Intro", 1.0); await Task.Delay(99);
-                await PlayResource("Power", 0.1); await Task.Delay(99);
-                await PlayResource("Fanfr", 0.1);
-                if (IsLooping != true)
+              await PlayResource("Chirp", 0.2); await Task.Delay(99);
+              //await PlayResource("Intro", 1.0); await Task.Delay(99);
+              //await PlayResource("Power", 0.1); await Task.Delay(99);
+              //await PlayResource("Fanfr", 0.1);
+              if (IsLooping != true)
                     await MainLoopTask();
             });
         }

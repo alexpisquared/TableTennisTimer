@@ -23,8 +23,8 @@
         </span>
       </div>
       <div class="middle">
-        <InputCheckbox class="px26x26" id="chkAudio" checked="@court.IsAudible" @bind-Value="court.IsAudible" /><label class="otherColor" for="chkAudio">Audio &nbsp; &nbsp;</label>
-        <InputCheckbox class="px26x26" id="chkDebug" checked="@court.IsAudible" @bind-Value="court.IsDebug" /><label class="otherColor" for="chkDebug">Dbg &nbsp; &nbsp;</label>
+        <InputCheckbox class="px26x26" id="chkAudio" checked="@court.IsAudible" @bind-Value="court.IsAudible" /><label class="otherColor" for="chkAudio">&nbsp;Audio &nbsp; &nbsp; &nbsp; &nbsp;</label>
+        <InputCheckbox class="px26x26" id="chkDebug" checked="@court.IsDebug" @bind-Value="court.IsDebug" /><label class="otherColor" for="chkDebug">&nbsp;Dbg &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</label>
       </div>
     </div>
 
@@ -49,10 +49,10 @@
     }
 
     <div class="row bottom" style="min-height: max-content;">
-      <div><span style="color: #ffa">@court.error</span></div>
+      <div><span style="color: #f80">@court.error</span></div>
       @if (court.IsDebug)
       {
-        <div><pre style="color: #afa">@court.report</pre></div>
+        <div><pre style="color: #00f">@court.report</pre></div>
 
         <div>
           @if (court.IsAudible)
@@ -70,7 +70,7 @@
             <p style="color: red;">The browser does not support the screen wake lock API.</p>
           }
 
-          <button @onclick="@GetMemberSinceToReport">Since</button>
+          <button @onclick="@GetMemberSinceToReport">Get M-Since</button>
 
           @* <InputCheckbox class="px26x26" style="margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="chkAudio" checked="@court.IsAudible" /> *@
           @*    <button onclick="document.getElementById('Intro').play()">JS</button> <br />    *@
@@ -110,7 +110,7 @@
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   public Home()
   {
-    court = new ModelCourt(StateHasChanged, () => SetWakeLockOn(), JSRuntime);
+    court = new ModelCourt(StateHasChanged, async () => await SetWakeLockOn(), JSRuntime);
     editContext = new EditContext(court);
   }
   protected override async Task OnInitializedAsync()
@@ -133,7 +133,7 @@
           FirstVisitId = await getMemberSince(),
           DoneAt = DateTime.Now
         };
-      court.report += $"Build: 23-11-14 2239\r\nMember since: {wel.FirstVisitId} \r\n{wel.BrowserSignature} \r\n"; await Task.Delay(250);
+      court.report += $"Build: 23-11-15\r\nMember since: {wel.FirstVisitId} \r\n{wel.BrowserSignature} \r\n"; await Task.Delay(250);
       court.report += await WebEventLoggerService.LogEventAsync("memberSince", wel);
       // await TextDbContext.AddStringAsync($"{GetType().FullName}.Put({court.report})");
     }
@@ -148,7 +148,7 @@
       var h = await JSRuntime.InvokeAsync<int>(id, "window.screen.height");
       var d = await JSRuntime.InvokeAsync<int>(id, "window.screen.colorDepth");
       // var u = await JSRuntime.InvokeAsync<object>(id, "window.screen");
-      
+
       var userAgentRAW = await JSRuntime.InvokeAsync<string>(id, "navigator.userAgent");
       var userAgentArray = userAgentRAW.Split(new[] { "Mozilla/5.0 (", ") AppleWebKit/", "(KHTML, like Gecko)" }, StringSplitOptions.RemoveEmptyEntries);
       var csv = $"{userAgentArray.FirstOrDefault()?.Trim()}│{userAgentArray[1]?.Trim()}│{userAgentArray.LastOrDefault()?.Trim()}│"
@@ -161,7 +161,6 @@
     }
     catch (Exception ex) { return $"{ex.Message}|{ex.InnerException?.Message}|{ex.InnerException?.InnerException?.Message}"; }
   }
-
 
   WakeLockSentinel? _wakeSentinel;
   bool _isWakeLocked;
@@ -210,8 +209,7 @@
     catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(SetWakeLockOff)}, {err.Message}"; WriteLine(err); }
   }
 
-  async Task<string>
-  getMemberSince(string pieceOfCake = "LocalStoreTest")
+  async Task<string> getMemberSince(string pieceOfCake = "LocalStoreTest")
   {
     try
     {
@@ -219,7 +217,7 @@
       if (memeberSinceStringKey == null)
       {
         memeberSinceStringKey = DateTimeOffset.Now.ToString();
-        SetCookie(pieceOfCake, memeberSinceStringKey);
+        await SetCookie(pieceOfCake, memeberSinceStringKey);
       }
       return memeberSinceStringKey;
     }
@@ -230,8 +228,7 @@
     }
   }
   async Task SetCookie(string key, string value) { await JSRuntime.InvokeVoidAsync(id, $"document.cookie = '{key}={value};path=/'"); }
-  async Task<string>
-    GetCookie(string key)
+  async Task<string> GetCookie(string key)
   {
     var cookie = await JSRuntime.InvokeAsync<string>
       (id, $"document.cookie.split('; ').find(row => row.startsWith('{key}='))?.split('=')[1]"); return cookie;
@@ -245,14 +242,14 @@
     await SetWakeLockOff();
   }
   public bool IsDisposed { get; private set; }
-  public void Dispose()
+  public async void Dispose()
   {
     WriteLine($"▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀  Dispose()  IsDisposed: {IsDisposed}");
     if (IsDisposed)
       return;
 
     court.IsLooping = false;
-    SetWakeLockOff();
+    await SetWakeLockOff();
 
     IsDisposed = true;
   }
