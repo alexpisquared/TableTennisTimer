@@ -133,13 +133,15 @@
   {
     try
     {
+      var build = "23-11-15 1538";
       var wel = new WebEventLog
         {
           BrowserSignature = await getBrowserId(),
           FirstVisitId = await getMemberSince(),
+          EventName = build,
           DoneAt = DateTime.Now
         };
-      court.report += $"Build: 23-11-15 1600\r\nMember since: {wel.FirstVisitId} \r\n{wel.BrowserSignature} \r\n"; await Task.Delay(250);
+      court.report += $"Build: {build}\r\nMember since: {wel.FirstVisitId} \r\n{wel.BrowserSignature} \r\n"; await Task.Delay(250);
       court.report += await WebEventLoggerService.LogEventAsync("memberSince", wel);
       // await TextDbContext.AddStringAsync($"{GetType().FullName}.Put({court.report})");
     }
