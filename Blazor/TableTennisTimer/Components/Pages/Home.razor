@@ -133,7 +133,7 @@
           FirstVisitId = await getMemberSince(),
           DoneAt = DateTime.Now
         };
-      court.report += $"Build: 23-11-15\r\nMember since: {wel.FirstVisitId} \r\n{wel.BrowserSignature} \r\n"; await Task.Delay(250);
+      court.report += $"Build: 23-11-15 1500\r\nMember since: {wel.FirstVisitId} \r\n{wel.BrowserSignature} \r\n"; await Task.Delay(250);
       court.report += await WebEventLoggerService.LogEventAsync("memberSince", wel);
       // await TextDbContext.AddStringAsync($"{GetType().FullName}.Put({court.report})");
     }
@@ -213,13 +213,13 @@
   {
     try
     {
-      var memeberSinceStringKey = await GetCookie(pieceOfCake);
-      if (memeberSinceStringKey == null)
+      var memberSinceStringKey = await GetCookie(pieceOfCake);
+      if (memberSinceStringKey == null)
       {
-        memeberSinceStringKey = DateTimeOffset.Now.ToString();
-        await SetCookie(pieceOfCake, memeberSinceStringKey);
+        memberSinceStringKey = DateTimeOffset.Now.ToString();
+        await SetCookie(pieceOfCake, memberSinceStringKey);
       }
-      return memeberSinceStringKey;
+      return memberSinceStringKey;
     }
     catch (Exception err)
     {
@@ -238,7 +238,7 @@
   public async ValueTask DisposeAsync()
   {
     WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀  DisposeAsync() ");
-    court.IsLooping = false;
+    court.SetIsLooping (false);
     await SetWakeLockOff();
   }
   public bool IsDisposed { get; private set; }
@@ -248,7 +248,7 @@
     if (IsDisposed)
       return;
 
-    court.IsLooping = false;
+    court.SetIsLooping(false);
     await SetWakeLockOff();
 
     IsDisposed = true;
