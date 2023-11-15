@@ -133,7 +133,7 @@
           FirstVisitId = await getMemberSince(),
           DoneAt = DateTime.Now
         };
-      court.report += $"Build: 23-11-14 2026\r\nMember since: {wel.FirstVisitId} \r\n{wel.BrowserSignature} \r\n"; await Task.Delay(250);
+      court.report += $"Build: 23-11-14 2239\r\nMember since: {wel.FirstVisitId} \r\n{wel.BrowserSignature} \r\n"; await Task.Delay(250);
       court.report += await WebEventLoggerService.LogEventAsync("memberSince", wel);
       // await TextDbContext.AddStringAsync($"{GetType().FullName}.Put({court.report})");
     }
