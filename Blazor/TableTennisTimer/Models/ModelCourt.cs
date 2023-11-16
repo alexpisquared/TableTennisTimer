@@ -27,8 +27,8 @@ public class ModelCourt
       {
         Initiated = true;
         SetWakeLockOn.Invoke();
-        //await PlayResource("Chirp", 0.2); await Task.Delay(99);
-        //await PlayResource("Intro", 1.0); await Task.Delay(99);
+        await PlayResource("LastQ", 0.1); await Task.Delay(99);
+        await PlayResource("RotaQ", 0.1);
         await PlayResource("LastM", 0.1); await Task.Delay(99);
         await PlayResource("Rotat", 0.1);
         if (IsLooping != true)
@@ -123,8 +123,8 @@ public class ModelCourt
   public async void PlayRotat() => await PlayWavFilesAsync("Rotat", 4_500);
   public async void PlayChirp() => await PlayWavFilesAsync("Chirp", 0_500);
   public async void PlayIntrQ() => await PlayWavFilesAsync("IntrQ", 0_500);
-  public async void PlayPoweQ() => await PlayWavFilesAsync("PoweQ", 0_500);
-  public async void PlayFanfQ() => await PlayWavFilesAsync("FanfQ", 4_500);
+  public async void PlayLastQ() => await PlayWavFilesAsync("LastQ", 0_500);
+  public async void PlayRotaQ() => await PlayWavFilesAsync("RotaQ", 4_500);
   public async void PlayChirQ() => await PlayWavFilesAsync("ChirQ", 0_500);
   async Task PlayWavFilesAsync(string name, int delay, string? speech = null)
   {

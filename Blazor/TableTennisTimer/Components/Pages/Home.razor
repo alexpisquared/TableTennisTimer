@@ -62,8 +62,8 @@
             <button @onclick="@court.PlayRotat">Rotat</button>
             <button @onclick="@court.PlayChirp">Chirp</button>
             <button @onclick="@court.PlayIntrQ">IntrQ</button>
-            <button @onclick="@court.PlayPoweQ">PoweQ</button>
-            <button @onclick="@court.PlayFanfQ">FanfQ</button>
+            <button @onclick="@court.PlayLastQ">LastQ</button>
+            <button @onclick="@court.PlayRotaQ">RotaQ</button>
             <button @onclick="@court.PlayChirQ">ChirQ</button>
           }
 
@@ -90,10 +90,10 @@
     <audio id="LastM" controls><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
     <audio id="Rotat" controls><source src="Audio/Good - Fanfare.7.mp3"></audio>
     <audio id="Chirp" controls><source src="Audio/Start - Arcade Chirp Descend.mp3"></audio>
-    <audio id="IntrQ" controls :volume="0.1"><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
-    <audio id="PoweQ" controls  volume="0.1"><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
-    <audio id="FanfQ" controls :volume="0.1"><source src="Audio/Good - Fanfare.7.mp3"></audio>
-    <audio id="ChirQ" controls :volume="0.1"><source src="Audio/Start - Arcade Chirp Descend.mp3"></audio>
+    <audio id="IntrQ" controls muted><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
+    <audio id="LastQ" controls muted><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
+    <audio id="RotaQ" controls muted><source src="Audio/Good - Fanfare.7.mp3"></audio>
+    <audio id="ChirQ" controls muted><source src="Audio/Start - Arcade Chirp Descend.mp3"></audio>
     <audio id="angryLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~angry~Last minute! EQAQJ！.7.mp3"></audio>
     <audio id="calmLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~calm~Last minute! EQAQJ！.7.mp3"></audio>
     <audio id="cheerfulLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~cheerful~Last minute! EQAQJ！.7.mp3"></audio>
@@ -133,7 +133,7 @@
   {
     try
     {
-      var build = "1115.1758";
+      var build = "1115.2222";
       var wel = new WebEventLog
         {
           BrowserSignature = await getBrowserId(),
