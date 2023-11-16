@@ -110,3 +110,6 @@ https://docs.microsoft.com/en-us/aspnet/core/blazor/call-web-api?view=aspnetcore
 apparently, it works in C:\temp\x\Azure2023\BlazorApp_WASM_Net8_CallWebApi\BlazorApp_WASM_Net8_CallWebApi.Client\Pages\Counter.razor but very flaky (shows the correct response ..followed by 404).
 # SOLUTION!!!
 WithOrigins at C:\Users\alexp\source\repos\alex-pi\AlexPiApi\Startup.cs is the culprit: must be updated with ORIGINS, which are the callers (alexpi.ca, ttt, etc.)
+
+# 2023-11-16: downloadable ICONs: https://icon-icons.com/download/12566/ICO/512/
+

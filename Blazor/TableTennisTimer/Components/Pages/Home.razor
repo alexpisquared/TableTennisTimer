@@ -29,15 +29,15 @@
     </div>
 
     @if (court.Initiated == false)
-    {
-      <div class="Initiate">↑ ↑ ↑ </div>
-      <div class="Initiate">Select desired play period</div>
-      <div class="Initiate">&nbsp;</div>
+{
+      <div class="Initiate">↑ ↑ ↑ </div>    
+      <div class="Initiate" style="font-size: 56px;">Select play period...</div>
+      <div class="Initiate" style="font-size: 56px;">...adjust the volume</div>
       <div class="Initiate">&nbsp;</div>
     }
     else
     {
-      <div class="row center">
+    <div class="row center">
         <div class="hCenterParent">
           <div class="hCenterChild">
             <h1>@court.countdownString</h1>
@@ -46,11 +46,11 @@
           <div style="width: @court.regress%; " class="progress-bar regress "></div>
         </div>
       </div>
-    }
+      }
 
-    <div class="row bottom" style="min-height: max-content;">
-      <div><span style="color: #f30">@court.error</span></div>
-      @if (court.IsDebug)
+      <div class="row bottom" style="min-height: max-content;">
+        <div><span style="color: #f30">@court.error</span></div>
+        @if (court.IsDebug)
       {
         <div><pre style="color: #f00">@court.report</pre></div>
 
@@ -133,7 +133,7 @@
   {
     try
     {
-      var build = "1116.0826";
+      var build = "1116.1020";
       var wel = new WebEventLog
         {
           BrowserSignature = await getBrowserId(),
@@ -246,7 +246,7 @@
   public async ValueTask DisposeAsync()
   {
     WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀  DisposeAsync() ");
-    court.SetIsLooping (false);
+    court.SetIsLooping(false);
     await SetWakeLockOff();
   }
   public bool IsDisposed { get; private set; }
