@@ -10,34 +10,34 @@
 
   <div class="mainRoot">
     <div class="row top" style="height: 3.5rem;">
-      <div class="left">
+      <div class="left3">
         <span title="Play period in minutes">
           <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
             @foreach (var option in court.PlayPeriods)
             {
-              <InputRadio Value="option.PeriodInMin" class="px26x26" style="margin-left: 28px;" id="@option.PeriodInMin" />
+              <InputRadio Value="option.PeriodInMin" class="px26x26" style="margin-left: 26px;margin-right: 1px;" id="@option.PeriodInMin" />
               <label for="@option.PeriodInMin">@option.PeriodInMin</label>
             }
             <label>&nbsp;min</label>
           </InputRadioGroup>
         </span>
       </div>
-      <div class="middle">
+      <div class="right3">
         <InputCheckbox class="px26x26" id="chkAudio" checked="@court.IsAudible" @bind-Value="court.IsAudible" /><label class="otherColor" for="chkAudio">&nbsp;Audio &nbsp; &nbsp; &nbsp; &nbsp;</label>
-        <InputCheckbox class="px26x26" id="chkDebug" checked="@court.IsDebug" @bind-Value="court.IsDebug" /><label class="otherColor" for="chkDebug">&nbsp;Dbg &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</label>
+        <InputCheckbox class="px26x26" id="chkDebug" checked="@court.IsDebug" @bind-Value="court.IsDebug" /><label class="otherColor" for="chkDebug">&nbsp;Dbg &nbsp; </label>
       </div>
     </div>
 
     @if (court.Initiated == false)
-{
-      <div class="Initiate">↑ ↑ ↑ </div>    
+
+    {
+      <div class="Initiate">↑ ↑ ↑ </div>
       <div class="Initiate" style="font-size: 56px;">Select play period...</div>
       <div class="Initiate" style="font-size: 56px;">...adjust the volume</div>
       <div class="Initiate">&nbsp;</div>
-    }
-    else
+    } else
     {
-    <div class="row center">
+      <div class="row center">
         <div class="hCenterParent">
           <div class="hCenterChild">
             <h1>@court.countdownString</h1>
@@ -46,11 +46,11 @@
           <div style="width: @court.regress%; " class="progress-bar regress "></div>
         </div>
       </div>
-      }
+    }
 
-      <div class="row bottom" style="min-height: max-content;">
-        <div><span style="color: #f30">@court.error</span></div>
-        @if (court.IsDebug)
+    <div class="row bottom" style="min-height: max-content;">
+      <div><span style="color: #f30">@court.error</span></div>
+      @if (court.IsDebug)
       {
         <div><pre style="color: #f00">@court.report</pre></div>
 
@@ -70,13 +70,14 @@
           @if (_isWakeLockSupported == true)
           {
             <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "Stop" : "Start") WL</button>
-          }
-          else @if (_isWakeLockSupported == false)
+          } else @if (_isWakeLockSupported == false)
           {
             <p style="color: red;">The browser does not support the screen wake lock API.</p>
           }
 
+          <img src="icon-512.png" height="36" width="36" /> &nbsp;
           <button @onclick="@GetMemberSinceToReport">Get M-Since</button>
+          <img src="icon-192.png" height="36" width="36" /> &nbsp;
 
           @* <InputCheckbox class="px26x26" style="margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="chkAudio" checked="@court.IsAudible" /> *@
           @*    <button onclick="document.getElementById('Intro').play()">JS</button> <br />    *@
@@ -133,7 +134,7 @@
   {
     try
     {
-      var build = "1212.1233";
+      var build = "1212.1851";
       var wel = new WebEventLog
         {
           BrowserSignature = await getBrowserId(),
@@ -144,8 +145,7 @@
       court.report += $"Build: {build}\r\nMember since: {wel.FirstVisitId} \r\n{wel.BrowserSignature} \r\n"; await Task.Delay(250);
       court.report += await WebEventLoggerService.LogEventAsync("memberSince", wel);
       // await TextDbContext.AddStringAsync($"{GetType().FullName}.Put({court.report})");
-    }
-    catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(GetMemberSinceToReport)}, {err.Message}"; WriteLine(err); }
+    } catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(GetMemberSinceToReport)}, {err.Message}"; WriteLine(err); }
   }
 
   async Task<string> getBrowserId()
@@ -166,8 +166,7 @@
               + $"{w}x{h}x{d}│zone│gpu│gpv│";
 
       return csv;
-    }
-    catch (Exception ex) { return $"{ex.Message}|{ex.InnerException?.Message}|{ex.InnerException?.InnerException?.Message}"; }
+    } catch (Exception ex) { return $"{ex.Message}|{ex.InnerException?.Message}|{ex.InnerException?.InnerException?.Message}"; }
   }
 
   WakeLockSentinel? _wakeSentinel;
@@ -194,8 +193,7 @@
       }
 
       court.error = "";
-    }
-    catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(SetWakeLockOn)}, {err.Message}"; WriteLine(err); }
+    } catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(SetWakeLockOn)}, {err.Message}"; WriteLine(err); }
   }
   async Task SetWakeLockOff()
   {
@@ -213,8 +211,7 @@
 
       court.error = "";
       court.report = "Wake Lock is released.";
-    }
-    catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(SetWakeLockOff)}, {err.Message}"; WriteLine(err); }
+    } catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(SetWakeLockOff)}, {err.Message}"; WriteLine(err); }
   }
 
   async Task<string> getMemberSince(string pieceOfCake = "LocalStoreTest")
@@ -228,8 +225,7 @@
         await SetCookie(pieceOfCake, memberSinceStringKey);
       }
       return memberSinceStringKey;
-    }
-    catch (Exception err)
+    } catch (Exception err)
     {
       Console.WriteLine($"{err.GetType().Name}, {err.Message}");
       return ($"ERROR in getMemberSince(): {err.GetType().Name}, {err.Message}");
