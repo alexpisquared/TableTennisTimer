@@ -3,16 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TTT.MAUI.TttView">
   <Frame CornerRadius="32">
-    <VerticalStackLayout>
-      <Label Text="88:88" Style="{StaticResource Headline}" SemanticProperties.HeadingLevel="Level1" />
-      <ProgressBar Progress="0.3" />
-      <ProgressBar Progress="0.3" />
-      <ProgressBar Progress="0.3" />
-      <ProgressBar Progress="0.3" />
-      <ProgressBar Progress="0.3" HeightRequest="20" />
-      <Rectangle HeightRequest="111" WidthRequest="111" BackgroundColor="#333" Stroke="#888" />
-
-      <Label Text=".NET MAUI!" VerticalOptions="Center" HorizontalOptions="Center" />
-    </VerticalStackLayout>
+    <Grid BackgroundColor="#50505050" >
+      <Rectangle WidthRequest="33" HeightRequest="33" BackgroundColor="#50505050" Stroke="#888" VerticalOptions="End" HorizontalOptions="End" />
+      <Rectangle WidthRequest="22" HeightRequest="22" BackgroundColor="#50505050" Stroke="#888" VerticalOptions="End" HorizontalOptions="End" />
+      <Rectangle WidthRequest="11" BackgroundColor="#50505050" Stroke="#888" HorizontalOptions="StartAndExpand" />
+      <VerticalStackLayout VerticalOptions="Center">
+        <ProgressBar Progress="0.3" />
+        <ProgressBar Progress="0.3" />
+      </VerticalStackLayout>
+      <Label Text="88:88" Style="{StaticResource Headline}" SemanticProperties.HeadingLevel="Level1" FontSize="188" />
+    </Grid>
   </Frame>
 </ContentView>
