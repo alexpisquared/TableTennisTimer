@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableTennisTimer", "TableTe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzurePseudoLogger", "..\..\..\..\Users\alexp\source\repos\alex-pi\AzurePseudoLogger\AzurePseudoLogger.csproj", "{5C8D9E77-4E68-4ED2-893C-0CC7117872E0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TTT.MAUI", "..\TTT.MAUI\TTT.MAUI.csproj", "{0317FD5A-85A7-47A1-9C62-0C4D0F701FEC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,12 @@ Global
 		{5C8D9E77-4E68-4ED2-893C-0CC7117872E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C8D9E77-4E68-4ED2-893C-0CC7117872E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C8D9E77-4E68-4ED2-893C-0CC7117872E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0317FD5A-85A7-47A1-9C62-0C4D0F701FEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0317FD5A-85A7-47A1-9C62-0C4D0F701FEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0317FD5A-85A7-47A1-9C62-0C4D0F701FEC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{0317FD5A-85A7-47A1-9C62-0C4D0F701FEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0317FD5A-85A7-47A1-9C62-0C4D0F701FEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0317FD5A-85A7-47A1-9C62-0C4D0F701FEC}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
