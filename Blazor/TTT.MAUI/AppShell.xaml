@@ -8,7 +8,7 @@
     Title="TTT.MAUI">
 
     <ShellContent
-        Title="Home"
+        Title="Table Tennis Timer"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
 
