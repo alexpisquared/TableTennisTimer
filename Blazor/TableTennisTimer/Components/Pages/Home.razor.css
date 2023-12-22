@@ -135,7 +135,7 @@ label {
   width: 99.88%;
   height: 96%;
   margin-top: 2%;
-  margin-left: -21px;
+  margin-left: -0px; /* -11px was OK for fitting the whole Rotate word ...but biting the leftmost pixels off.*/
   margin-right: -21px;
   /*background-color: #0005;*/
 }
