@@ -56,3 +56,9 @@ public class ScreenWakeLockService : IScreenWakeLockService
     return await _jsRuntime.InvokeAsync<bool>("eval", "typeof navigator.wakeLock !== 'undefined'");
   }
 }
+
+/// this is this:
+/// https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
+///todo: also, see for PWA:
+/// https://stackoverflow.com/questions/59917660/wake-lock-works-in-browser-but-not-as-pwa
+/// https://reillyeon.github.io/scraps/wakelock.html
