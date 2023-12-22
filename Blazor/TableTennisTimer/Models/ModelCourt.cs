@@ -18,27 +18,28 @@ public class ModelCourt
 
   public int SelectPeriodInMin
   {
-    get { return selectPeriodInMin; }
+    get => selectPeriodInMin;
     set
     {
       selectPeriodInMin = value;
       report = $"{value} min    IsLooping: {IsLooping}";
-      Task.Run(async () =>
+      _ = Task.Run(async () =>
       {
         Initiated = true;
         SetWakeLockOn.Invoke();
-        ////await PlayResource("LastQ", 0.1); await Task.Delay(99);
-        ////await PlayResource("RotaQ", 0.1);
-        //await PlayResource("LastM", 0.1); await Task.Delay(99);
-        //await PlayResource("Rotat", 0.1);
-        await PlayResource("Intro", 0.1);
+        //await PlayResource("LastQ", 0.1); await Task.Delay(99);
+        //await PlayResource("RotaQ", 0.1);
+        await PlayResource("LastM", 0.1);
+        await PlayResource("Rotat", 0.1);
+        //still need this? await Task.Delay(10);
+        await PlayResource("Intro");
         if (IsLooping != true)
           await MainLoopTask();
       });
     }
   }
 
-  public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(15), new(30)];
+  public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(15), new(2)];
 
   [Parameter] public bool Initiated { get; set; } = false;
   [Parameter] public bool IsAudible { get; set; } = true;
@@ -73,7 +74,7 @@ public class ModelCourt
 
       while (IsLooping && now < nextTime)
       {
-        int prev = selectPeriodInMin;
+        var prev = selectPeriodInMin;
         await Task.Delay(999);
         if (prev != selectPeriodInMin) // if the user changed the time, then reset the timer
         {
@@ -81,9 +82,9 @@ public class ModelCourt
         }
 
         now = DateTimeOffset.Now;
-        double secondsLeft = (nextTime - now).TotalSeconds;
-        countdownString = $"{(nextTime - now):m\\:ss}";
-        progress = ((100 * (selectPeriodInMin * 60 - secondsLeft) / (selectPeriodInMin * 60)));
+        var secondsLeft = (nextTime - now).TotalSeconds;
+        countdownString = $"{nextTime - now:m\\:ss}";
+        progress = 100 * ((selectPeriodInMin * 60) - secondsLeft) / (selectPeriodInMin * 60);
         regress = 100 - progress;
 
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
@@ -100,8 +101,7 @@ public class ModelCourt
         countdownString = "Rotate";
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
         await PlayWavFilesAsync("Rotat", 5_590, GetTimeToChange());
-      }
-      else
+      } else
       {
         countdownString = "■ ■";
         error = "·";
@@ -116,7 +116,7 @@ public class ModelCourt
   void SetAndShowNextTime()
   {
     var now = DateTimeOffset.Now;
-    nextTime = now.AddMinutes(selectPeriodInMin - now.Minute % selectPeriodInMin).AddSeconds(-now.Second).AddMilliseconds(-now.Millisecond);
+    nextTime = now.AddMinutes(selectPeriodInMin - (now.Minute % selectPeriodInMin)).AddSeconds(-now.Second).AddMilliseconds(-now.Millisecond);
   }
 
   public async void PlayIntro() => await PlayWavFilesAsync("Intro", 360);
@@ -138,17 +138,22 @@ public class ModelCourt
   {
     if (IsAudible)
     {
-      report = $"{filePath}  ++playing...";
+      report = $"{DateTime.Now:mm:ss.fff}  {filePath}  playing...\n";
       //     await JSRuntime.InvokeAsync<string>("PlayAudio", filePath);
       // using (await JSRuntime.InvokeAsync<Task>("PlayAudio", $"<audio controls volume=\"{volume}\"><source src=\"{filePath}\" type=\"audio/mpeg\"></audio>"))
       // await JSRuntime.InvokeVoidAsync("setVolume", filePath, volume);
-      using (await JSRuntime.InvokeAsync<Task>("PlayAudio", filePath, volume))
-      {
-        report = $"{filePath}  ++playing... has finished!";
-      }
-      report = $"{filePath}  ++playing... has finished! +++++++++++++++++";
-    }
-    else
+      _ = await JSRuntime.InvokeAsync<Task>("PlayAudio", filePath, volume); //todo: volume does not work here.
+
+      report += $"{DateTime.Now:mm:ss.fff} ...\n";
+
+      if (volume == 1.0) return;
+
+      await Task.Delay(10);
+      _ = await JSRuntime.InvokeAsync<Task>("PauseAudio", filePath);
+
+      report += $"{DateTime.Now:mm:ss.fff} ...\n";
+
+    } else
     {
       report = $"{filePath} ...but Audio is off.";
     }
@@ -184,7 +189,6 @@ public class ModelCourt
     {
       wakeLock_OLD = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
       report = "Wake Lock is  active -- !";
-    }
-    catch (Exception err) { error = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(error); }
+    } catch (Exception err) { error = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(error); }
   }
 }

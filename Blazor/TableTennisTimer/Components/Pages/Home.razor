@@ -57,7 +57,7 @@
       <div><span style="color: #f30">@court.error</span></div>
       @if (court.IsDebug)
       {
-        <div><pre style="color: #f00">@court.report</pre></div>
+        <div><pre style="color: #fa0">@court.report</pre></div>
 
         <div>
           @if (court.IsAudible)
@@ -139,7 +139,7 @@
   {
     try
     {
-      var build = "1222.1202";
+      var build = "1222.1658";
       var wel = new WebEventLog
         {
           BrowserSignature = await getBrowserId(),
@@ -189,12 +189,12 @@
     try
     {
       if (_isWakeLocked)
-        court.report = "Wake Lock is already active!";
+        court.report += "Wake Lock is already active!";
       else
       {
         _wakeSentinel = await ScreenWakeLockService.RequestWakeLockAsync();
         _isWakeLocked = true;
-        court.report = "Ver 1222.1202         Wake Lock is active!";
+        court.report += "Ver 1222.1658         Wake Lock is active!";
       }
 
       court.error = "";

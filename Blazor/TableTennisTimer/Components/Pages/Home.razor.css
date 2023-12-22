@@ -86,7 +86,7 @@ label {
 }
 
   .center > div h1 {
-    font-size: 36vw;
+    font-size: 35vw;
     font-weight: 600;
     font-family: Tw Cen MT Condensed;
     text-align: center;
@@ -132,9 +132,11 @@ label {
   position: absolute;
   top: 0;
   left: 0;
-  width: 96%;
+  width: 99.88%;
   height: 96%;
-  margin: 2%;
+  margin-top: 2%;
+  margin-left: -21px;
+  margin-right: -21px;
   /*background-color: #0005;*/
 }
 
