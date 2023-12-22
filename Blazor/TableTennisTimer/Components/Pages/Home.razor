@@ -33,7 +33,12 @@
     {
       <div class="Initiate">↑ ↑ ↑ </div>
       <div class="Initiate" style="font-size: 56px;">Select play period...</div>
-      <div class="Initiate" style="font-size: 56px;">...adjust the volume</div>
+      <div class="Initiate" >
+        <div style="font-size: 13px;">...Selecting: </div>
+        <div style="font-size: 13px;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="font-size: 16px;"><b>10</b></span> min triggers rotation at <span style="font-size: 16px;"><b>00, 10, 20, 30, 40, 50</b></span> ...</div>
+        <div style="font-size: 13px;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="font-size: 16px;"><b>15</b></span> min triggers rotation at <span style="font-size: 16px;"><b>00, 15, 30, 45</b></span> ...</div>
+        <div style="font-size: 13px;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="font-size: 16px;"><b>30</b></span> min triggers rotation at <span style="font-size: 16px;"><b>00 </b>and<b> 30</b></span> minutes past the hour.</div>
+      </div>
       <div class="Initiate">&nbsp;</div>
     } else
     {
@@ -134,7 +139,7 @@
   {
     try
     {
-      var build = "1212.1851";
+      var build = "1222.1202";
       var wel = new WebEventLog
         {
           BrowserSignature = await getBrowserId(),
@@ -189,7 +194,7 @@
       {
         _wakeSentinel = await ScreenWakeLockService.RequestWakeLockAsync();
         _isWakeLocked = true;
-        court.report = "Wake Lock is active!";
+        court.report = "Ver 1222.1202         Wake Lock is active!";
       }
 
       court.error = "";

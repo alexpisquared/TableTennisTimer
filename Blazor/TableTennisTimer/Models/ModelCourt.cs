@@ -27,10 +27,11 @@ public class ModelCourt
       {
         Initiated = true;
         SetWakeLockOn.Invoke();
-        //await PlayResource("LastQ", 0.1); await Task.Delay(99);
-        //await PlayResource("RotaQ", 0.1);
-        await PlayResource("LastM", 0.1); await Task.Delay(99);
-        await PlayResource("Rotat", 0.1);
+        ////await PlayResource("LastQ", 0.1); await Task.Delay(99);
+        ////await PlayResource("RotaQ", 0.1);
+        //await PlayResource("LastM", 0.1); await Task.Delay(99);
+        //await PlayResource("Rotat", 0.1);
+        await PlayResource("Intro", 0.1);
         if (IsLooping != true)
           await MainLoopTask();
       });

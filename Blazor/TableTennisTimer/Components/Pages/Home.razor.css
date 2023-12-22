@@ -108,19 +108,19 @@ label {
 }
 
 .progress-bar {
-  height: 100%;
+  height: 80vh;
   border: 2px solid #aa5;
 }
 
 .progress {
   border-radius: 38.8px 0px 0px 38.8px;
-  background-image: linear-gradient(180deg, #d06 1%, #703 99%);
+  background-image: linear-gradient(180deg, #d08 1%, #503 99%);
   border-right: 0px;
 }
 
 .regress {
   border-radius: 0px 38.8px 38.8px 0px;
-  background-image: linear-gradient(180deg, #0a4 1%, #041 99%);
+  background-image: linear-gradient(180deg, #082 1%, #021 99%);
   border-left: 0px;
 }
 
