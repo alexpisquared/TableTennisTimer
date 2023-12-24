@@ -19,8 +19,7 @@ public class ModelCourt
   public int SelectPeriodInMin
   {
     get => selectPeriodInMin;
-    set
-    {
+    set {
       selectPeriodInMin = value;
       report = $"{value} min    IsLooping: {IsLooping}";
       _ = Task.Run(async () =>
@@ -29,8 +28,8 @@ public class ModelCourt
         SetWakeLockOn.Invoke();
         //await PlayResource("LastQ", 0.1); await Task.Delay(99);
         //await PlayResource("RotaQ", 0.1);
-        await PlayResource("LastM", 0.1);
-        await PlayResource("Rotat", 0.1);
+        await PlayResource("LastM", 10);
+        await PlayResource("Rotat", 10);
         //still need this? await Task.Delay(10);
         await PlayResource("Intro");
         if (IsLooping != true)
@@ -55,7 +54,7 @@ public class ModelCourt
     StateHasChanged = stateHasChanged;
     SetWakeLockOn = setWakeLockOn;
     JSRuntime = jsRuntime;
-    IsAudible = !IsDebug;
+    IsAudible = true; // !IsDebug;
   }
 
   readonly Action SetWakeLockOn;
@@ -75,7 +74,7 @@ public class ModelCourt
       while (IsLooping && now < nextTime)
       {
         var prev = selectPeriodInMin;
-        await Task.Delay(999);
+        await Task.Delay(991);
         if (prev != selectPeriodInMin) // if the user changed the time, then reset the timer
         {
           SetAndShowNextTime();
@@ -89,10 +88,14 @@ public class ModelCourt
 
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
 
-        if (secondsLeft is >= 58 and <= 60)
+        if (secondsLeft is >= 59 and <= 61)
         {
           await PlayWavFilesAsync("LastM", 1410, GetLastMinute());
           await Task.Delay(1_640);
+        }
+        else if (secondsLeft > 60 && ((int)secondsLeft) % 60 == 0)
+        {
+          await PlayResource("Intro", 100); // audible only on PC. Phone is silent but seems to ward off the screen lock.
         }
       } // while (now < nextTime)
 
@@ -101,7 +104,8 @@ public class ModelCourt
         countdownString = "Rotate";
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
         await PlayWavFilesAsync("Rotat", 5_590, GetTimeToChange());
-      } else
+      }
+      else
       {
         countdownString = "■ ■";
         error = "·";
@@ -110,7 +114,7 @@ public class ModelCourt
 
     await Task.Delay(250); // collides with the "Wake Lock released" sound. ...on NG.
 
-    await PlayResource("Chirp", .5);
+    await PlayResource("Chirp", 500);
   }
 
   void SetAndShowNextTime()
@@ -134,26 +138,20 @@ public class ModelCourt
     if (speech is not null)
       await PlayResource(speech);
   }
-  public async Task PlayResource(string filePath, double volume = 1.0)
+  public async Task PlayResource(string filePath, int pauseAtMs = 0)
   {
     if (IsAudible)
     {
-      report = $"{DateTime.Now:mm:ss.fff}  {filePath}  playing...\n";
-      //     await JSRuntime.InvokeAsync<string>("PlayAudio", filePath);
-      // using (await JSRuntime.InvokeAsync<Task>("PlayAudio", $"<audio controls volume=\"{volume}\"><source src=\"{filePath}\" type=\"audio/mpeg\"></audio>"))
-      // await JSRuntime.InvokeVoidAsync("setVolume", filePath, volume);
-      _ = await JSRuntime.InvokeAsync<Task>("PlayAudio", filePath, volume); //todo: volume does not work here.
+      _ = await JSRuntime.InvokeAsync<Task>("PlayAudio", filePath);  //, volume); //todo: volume does not work here.
 
-      report += $"{DateTime.Now:mm:ss.fff} ...\n";
+      report = $"{DateTime.Now:mm:ss.fff}  {filePath}  played";
 
-      if (volume == 1.0) return;
+      if (pauseAtMs == 0) return;
 
-      await Task.Delay(10);
+      await Task.Delay(pauseAtMs);
       _ = await JSRuntime.InvokeAsync<Task>("PauseAudio", filePath);
-
-      report += $"{DateTime.Now:mm:ss.fff} ...\n";
-
-    } else
+    }
+    else
     {
       report = $"{filePath} ...but Audio is off.";
     }
@@ -189,6 +187,7 @@ public class ModelCourt
     {
       wakeLock_OLD = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
       report = "Wake Lock is  active -- !";
-    } catch (Exception err) { error = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(error); }
+    }
+    catch (Exception err) { error = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(error); }
   }
 }
