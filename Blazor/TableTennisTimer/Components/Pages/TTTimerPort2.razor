@@ -75,7 +75,7 @@
   string progressString = "%";
   string countdownString = "··:··";
   string report = "";
-  string error = "no error";
+  string error = "no Error";
   DateTime nextTime = DateTime.Now;
   string nextHHMM = "88:88";
   int[] playPeriods = new int[] { 2, 10, 15, 20, 30, 999 };
@@ -159,7 +159,7 @@
         regress = 100 - progress;
         progressString = $"{progress:N1}";
 
-        if (secondsLeft <= 60 && secondsLeft > 56) // a sound when there is 1 minute regress
+        if (secondsLeft <= 60 && secondsLeft > 56) // a sound when there is 1 minute Regress
         {
           countdownString = "Last·minute";
           StateHasChanged(); // await InvokeAsync(StateHasChanged);
@@ -167,7 +167,7 @@
         }
 
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
-      } // while (now < nextTime)
+      } // while (now < _nextTime)
 
       if (isLooping)
       {

@@ -45,19 +45,19 @@
       <div class="row center">
         <div class="hCenterParent">
           <div class="hCenterChild">
-            <h1>@court.countdownString</h1>
+            <h1>@court.CountdownString</h1>
           </div>
-          <div style="width: @court.progress%;" class="progress-bar progress"></div>
-          <div style="width: @court.regress%; " class="progress-bar regress "></div>
+          <div style="width: @court.Progress%;" class="progress-bar progress"></div>
+          <div style="width: @court.Regress%; " class="progress-bar regress "></div>
         </div>
       </div>
     }
 
     <div class="row bottom" style="min-height: max-content;">
-      <div><span style="color: #f30">@court.error</span></div>
+      <div><span style="color: #f30">@court.Error</span></div>
       @if (court.IsDebug)
       {
-        <div><pre style="color: #fa0">@court.report</pre></div>
+        <div><pre style="color: #fa0">@court.Report</pre></div>
 
         <div>
           @if (court.IsAudible)
@@ -81,7 +81,7 @@
           }
 
           <img src="icon-512.png" height="36" width="36" /> &nbsp;
-          <button @onclick="@GetMemberSinceToReport">Get M-Since</button>
+          @* <button @onclick="@GetMemberSinceToReport">Get M-Since</button> *@
           <img src="icon-192.png" height="36" width="36" /> &nbsp;
 
           @* <InputCheckbox class="px26x26" style="margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="chkAudio" checked="@court.IsAudible" /> *@
@@ -117,40 +117,41 @@
 </EditForm>
 
 @code {
-  const string id = "eval";
+  const string id = "eval", version = "1224.1128";
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   public Home()
   {
-    court = new ModelCourt(StateHasChanged, async () => await SetWakeLockOn(), JSRuntime);
+    court = new ModelCourt(StateHasChanged, async () => await SetWakeLockOn());
     editContext = new EditContext(court);
   }
   protected override async Task OnInitializedAsync()
   {
     await base.OnInitializedAsync();
     court.JSRuntime = JSRuntime; // keep here: is not working from the ctor!!!
+    court.WebEventLoggerService = WebEventLoggerService; // keep here: is not working from the ctor!!!
 
     _isWakeLockSupported = await ScreenWakeLockService.IsSupportedAsync();
     // await SetWakeLockOn(); //nogo: nor audio, nor wake lock is working on iPhone from here ==> manual start by user interaction.
-    await GetMemberSinceToReport();
+    await GetMemberSinceToReport(version);
   }
 
-  async Task GetMemberSinceToReport()
+  async Task GetMemberSinceToReport(string evName)
   {
     try
     {
-      var build = "1223.2146";
-      var wel = new WebEventLog
+      court.WebEventLog = new WebEventLog
         {
           BrowserSignature = await getBrowserId(),
           FirstVisitId = await getMemberSince(),
-          EventName = build,
+          EventName = $"ttt{evName}",
           DoneAt = DateTime.Now
         };
-      court.report += $"Build: {build}\r\nMember since: {wel.FirstVisitId} \r\n{wel.BrowserSignature} \r\n"; await Task.Delay(250);
-      court.report += await WebEventLoggerService.LogEventAsync("memberSince", wel);
-      // await TextDbContext.AddStringAsync($"{GetType().FullName}.Put({court.report})");
-    } catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(GetMemberSinceToReport)}, {err.Message}"; WriteLine(err); }
+      court.Report += $"Ver: {version}\r\nMember since: {court.WebEventLog.FirstVisitId} \r\n{court.WebEventLog.BrowserSignature} \r\n"; 
+      //? await Task.Delay(250);
+      court.Report += await WebEventLoggerService.LogEventAsync("memberSince", court.WebEventLog);
+      // await TextDbContext.AddStringAsync($"{GetType().FullName}.Put({court.Report})");
+    } catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(GetMemberSinceToReport)}, {err.Message}"; WriteLine(err); }
   }
 
   async Task<string> getBrowserId()
@@ -189,16 +190,16 @@
     try
     {
       if (_isWakeLocked)
-        court.report += "Wake Lock is already active!";
+        court.Report += "Wake Lock is already active!";
       else
       {
         _wakeSentinel = await ScreenWakeLockService.RequestWakeLockAsync();
         _isWakeLocked = true;
-        court.report += "Ver 1223.2146         Wake Lock is active!";
+        court.Report +=  $"{version}         Wake Lock is active!";
       }
 
-      court.error = "";
-    } catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(SetWakeLockOn)}, {err.Message}"; WriteLine(err); }
+      court.Error = "";
+    } catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(SetWakeLockOn)}, {err.Message}"; WriteLine(err); }
   }
   async Task SetWakeLockOff()
   {
@@ -214,9 +215,9 @@
         _isWakeLocked = false;
       }
 
-      court.error = "";
-      court.report = "Wake Lock is released.";
-    } catch (Exception err) { court.error = $"{err.GetType().Name}.{nameof(SetWakeLockOff)}, {err.Message}"; WriteLine(err); }
+      court.Error = "";
+      court.Report = "Wake Lock is released.";
+    } catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(SetWakeLockOff)}, {err.Message}"; WriteLine(err); }
   }
 
   async Task<string> getMemberSince(string pieceOfCake = "LocalStoreTest")

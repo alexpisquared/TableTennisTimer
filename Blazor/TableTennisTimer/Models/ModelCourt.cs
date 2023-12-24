@@ -1,14 +1,20 @@
-﻿namespace TableTennisTimer.Models;
+﻿using System.Xml.Linq;
+
+namespace TableTennisTimer.Models;
 
 public class ModelCourt
 {
-  DateTimeOffset nextTime = DateTimeOffset.Now;
+  DateTimeOffset _nextTime = DateTimeOffset.Now;
   object? wakeLock_OLD;
-  public string countdownString = "↑ Select";
-  public string report = "";
-  public string error = "";
-  public double progress = 0, regress = 0;
+  public string CountdownString = "↑ Select";
+  public string Report = "";
+  public string Error = "";
+  public double Progress = 0, Regress = 0;
+
   public IJSRuntime JSRuntime { get; set; }
+  public IWebEventLoggerService WebEventLoggerService { get; set; }
+  public WebEventLog WebEventLog { get; set; }
+
   int selectPeriodInMin;
 #if DEBUG
   const bool isDebug = true;
@@ -21,7 +27,7 @@ public class ModelCourt
     get => selectPeriodInMin;
     set {
       selectPeriodInMin = value;
-      report = $"{value} min    IsLooping: {IsLooping}";
+      Report = $"{value} min    IsLooping: {IsLooping}";
       _ = Task.Run(async () =>
       {
         Initiated = true;
@@ -46,21 +52,17 @@ public class ModelCourt
   [Parameter] public bool IsDebug { get; set; } = isDebug;
 
   public void SetIsLooping(bool val) => IsLooping = val;
-  public ModelCourt(
-    Action stateHasChanged,
-    Action setWakeLockOn,
-    IJSRuntime jsRuntime)
+  public ModelCourt(Action stateHasChanged, Action setWakeLockOn)
   {
     StateHasChanged = stateHasChanged;
     SetWakeLockOn = setWakeLockOn;
-    JSRuntime = jsRuntime;
     IsAudible = true; // !IsDebug;
   }
 
   readonly Action SetWakeLockOn;
   readonly Action StateHasChanged;
 
-  public void CheckboxChanged(bool e) => report = $"Audio is {((IsAudible = e) ? "ON" : "Off")}.";
+  public void CheckboxChanged(bool e) => Report = $"Audio is {((IsAudible = e) ? "ON" : "Off")}.";
 
   public async Task MainLoopTask()
   {
@@ -69,22 +71,22 @@ public class ModelCourt
     while (IsLooping)
     {
       var now = DateTimeOffset.Now;
-      SetAndShowNextTime();
+      _nextTime = SetAndShowNextTime();
 
-      while (IsLooping && now < nextTime)
+      while (IsLooping && now < _nextTime)
       {
         var prev = selectPeriodInMin;
         await Task.Delay(991);
         if (prev != selectPeriodInMin) // if the user changed the time, then reset the timer
         {
-          SetAndShowNextTime();
+          _nextTime = SetAndShowNextTime();
         }
 
         now = DateTimeOffset.Now;
-        var secondsLeft = (nextTime - now).TotalSeconds;
-        countdownString = $"{nextTime - now:m\\:ss}";
-        progress = 100 * ((selectPeriodInMin * 60) - secondsLeft) / (selectPeriodInMin * 60);
-        regress = 100 - progress;
+        var secondsLeft = (_nextTime - now).TotalSeconds;
+        CountdownString = $"{_nextTime - now:m\\:ss}";
+        Progress = 100 * ((selectPeriodInMin * 60) - secondsLeft) / (selectPeriodInMin * 60);
+        Regress = 100 - Progress;
 
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
 
@@ -93,22 +95,26 @@ public class ModelCourt
           await PlayWavFilesAsync("LastM", 1410, GetLastMinute());
           await Task.Delay(1_640);
         }
-        else if (secondsLeft > 60 && ((int)secondsLeft) % 60 == 0)
+        else if (secondsLeft > 60 && ((int)secondsLeft) % 60 == 0) // workaround for PWA mode, where the screen lock is not available.
         {
           await PlayResource("Intro", 100); // audible only on PC. Phone is silent but seems to ward off the screen lock.
         }
-      } // while (now < nextTime)
+      } // while (now < _nextTime)
 
       if (IsLooping)
       {
-        countdownString = "Rotate";
+        CountdownString = "Rotate";
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
         await PlayWavFilesAsync("Rotat", 5_590, GetTimeToChange());
+
+        WebEventLog.EventName = "tttRotation";
+        WebEventLog.DoneAt = DateTime.Now;
+        Report += await WebEventLoggerService.LogEventAsync("memberSince", WebEventLog);
       }
       else
       {
-        countdownString = "■ ■";
-        error = "·";
+        CountdownString = "■ ■";
+        Error = "·";
       }
     } // while (IsLooping)
 
@@ -117,10 +123,10 @@ public class ModelCourt
     await PlayResource("Chirp", 500);
   }
 
-  void SetAndShowNextTime()
+  DateTimeOffset SetAndShowNextTime()
   {
     var now = DateTimeOffset.Now;
-    nextTime = now.AddMinutes(selectPeriodInMin - (now.Minute % selectPeriodInMin)).AddSeconds(-now.Second).AddMilliseconds(-now.Millisecond);
+    return now.AddMinutes(selectPeriodInMin - (now.Minute % selectPeriodInMin)).AddSeconds(-now.Second).AddMilliseconds(-now.Millisecond);
   }
 
   public async void PlayIntro() => await PlayWavFilesAsync("Intro", 360);
@@ -144,7 +150,7 @@ public class ModelCourt
     {
       _ = await JSRuntime.InvokeAsync<Task>("PlayAudio", filePath);  //, volume); //todo: volume does not work here.
 
-      report = $"{DateTime.Now:mm:ss.fff}  {filePath}  played";
+      Report = $"{DateTime.Now:mm:ss.fff}  {filePath}  played";
 
       if (pauseAtMs == 0) return;
 
@@ -153,7 +159,7 @@ public class ModelCourt
     }
     else
     {
-      report = $"{filePath} ...but Audio is off.";
+      Report = $"{filePath} ...but Audio is off.";
     }
   }
 
@@ -186,8 +192,8 @@ public class ModelCourt
     try
     {
       wakeLock_OLD = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
-      report = "Wake Lock is  active -- !";
+      Report = "Wake Lock is  active -- !";
     }
-    catch (Exception err) { error = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(error); }
+    catch (Exception err) { Error = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(Error); }
   }
 }
