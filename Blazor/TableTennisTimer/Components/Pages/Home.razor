@@ -117,7 +117,7 @@
 </EditForm>
 
 @code {
-  const string id = "eval", version = "1224.1128";
+  const string id = "eval", version = "1224.1132";
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   public Home()
@@ -144,7 +144,7 @@
         {
           BrowserSignature = await getBrowserId(),
           FirstVisitId = await getMemberSince(),
-          EventName = $"ttt{evName}",
+          EventName = $"ttt-{evName}",
           DoneAt = DateTime.Now
         };
       court.Report += $"Ver: {version}\r\nMember since: {court.WebEventLog.FirstVisitId} \r\n{court.WebEventLog.BrowserSignature} \r\n"; 

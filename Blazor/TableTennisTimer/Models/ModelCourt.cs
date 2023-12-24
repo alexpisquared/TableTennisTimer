@@ -107,7 +107,7 @@ public class ModelCourt
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
         await PlayWavFilesAsync("Rotat", 5_590, GetTimeToChange());
 
-        WebEventLog.EventName = "tttRotation";
+        WebEventLog.EventName = "ttt-Rotation";
         WebEventLog.DoneAt = DateTime.Now;
         Report += await WebEventLoggerService.LogEventAsync("memberSince", WebEventLog);
       }
