@@ -11,9 +11,9 @@ public class ModelCourt
   public string Error = "";
   public double Progress = 0, Regress = 0;
 
-  public IJSRuntime JSRuntime { get; set; }
-  public IWebEventLoggerService WebEventLoggerService { get; set; }
-  public WebEventLog WebEventLog { get; set; }
+  public IJSRuntime? JSRuntime { get; set; }
+  public IWebEventLoggerService? WebEventLoggerService { get; set; }
+  public WebEventLog? WebEventLog { get; set; }
 
   int selectPeriodInMin;
 #if DEBUG
@@ -44,7 +44,7 @@ public class ModelCourt
     }
   }
 
-  public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(15), new(2)];
+  public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(15), new(30)];
 
   [Parameter] public bool Initiated { get; set; } = false;
   [Parameter] public bool IsAudible { get; set; } = true;
@@ -107,8 +107,11 @@ public class ModelCourt
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
         await PlayWavFilesAsync("Rotat", 5_590, GetTimeToChange());
 
+        ArgumentNullException.ThrowIfNull(WebEventLog, "@26");
         WebEventLog.EventName = "ttt-Rotation";
         WebEventLog.DoneAt = DateTime.Now;
+
+        ArgumentNullException.ThrowIfNull(WebEventLoggerService, "@22");
         Report += await WebEventLoggerService.LogEventAsync("memberSince", WebEventLog);
       }
       else
@@ -148,9 +151,11 @@ public class ModelCourt
   {
     if (IsAudible)
     {
+      ArgumentNullException.ThrowIfNull(JSRuntime, "@21");
+
       _ = await JSRuntime.InvokeAsync<Task>("PlayAudio", filePath);  //, volume); //todo: volume does not work here.
 
-      Report = $"{DateTime.Now:mm:ss.fff}  {filePath}  played";
+      Report = $"{DateTime.Now:HH:mm:ss.fff}  {filePath}  played";
 
       if (pauseAtMs == 0) return;
 
@@ -191,6 +196,7 @@ public class ModelCourt
   {
     try
     {
+      ArgumentNullException.ThrowIfNull(JSRuntime, "@20");
       wakeLock_OLD = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
       Report = "Wake Lock is  active -- !";
     }

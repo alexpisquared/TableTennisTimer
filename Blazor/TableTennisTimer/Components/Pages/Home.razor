@@ -58,7 +58,6 @@
       @if (court.IsDebug)
       {
         <div><pre style="color: #fa0">@court.Report</pre></div>
-
         <div>
           @if (court.IsAudible)
           {
@@ -87,6 +86,10 @@
           @* <InputCheckbox class="px26x26" style="margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="chkAudio" checked="@court.IsAudible" /> *@
           @*    <button onclick="document.getElementById('Intro').play()">JS</button> <br />    *@
         </div>
+      }
+      else
+      {
+        <div><span>&nbsp;</span></div>
       }
     </div>
   </div>
@@ -117,7 +120,7 @@
 </EditForm>
 
 @code {
-  const string id = "eval", version = "1224.1200";
+  const string id = "eval", version = "108.1159";
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   public Home()
