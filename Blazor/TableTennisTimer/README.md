@@ -113,3 +113,4 @@ WithOrigins at C:\Users\alexp\source\repos\alex-pi\AlexPiApi\Startup.cs is the c
 
 # 2023-11-16: downloadable ICONs: https://icon-icons.com/download/12566/ICO/512/
 
+# 2021-01-08: Cannot run/debug :cert problem => use publish to develop.
