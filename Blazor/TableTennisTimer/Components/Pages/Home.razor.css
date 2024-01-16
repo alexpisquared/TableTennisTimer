@@ -144,7 +144,38 @@ label {
   width: 26px;
   height: 26px;
 }
+
 .otherColor {
   color: #ccc;
 }
 /** >> ****************************************************************/
+
+.flex-container {
+  margin-top: 12px;
+  display: flex;
+}
+
+.foreground {
+  position: absolute;
+  display: flex;
+  height: 85vh;
+  width: 97vw;
+}
+
+.vc {
+  align-self: center;
+  flex: 1;
+}
+
+.hc {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+}
+
+.h1 {
+  font-size: 45vw;
+  font-weight: 600;
+  font-family: Tw Cen MT Condensed;
+  word-wrap: break-word;
+}

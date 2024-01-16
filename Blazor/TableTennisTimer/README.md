@@ -113,7 +113,7 @@ WithOrigins at C:\Users\alexp\source\repos\alex-pi\AlexPiApi\Startup.cs is the c
 
 # 2023-11-16: downloadable ICONs: https://icon-icons.com/download/12566/ICO/512/
 
-# 2024-01-08: Cannot run/debug :cert problem => use publish to develop.
+# 2024-01-08: Cannot run/debug :cert problem => use publish to develop.  2024-01-16: HEALED!?!?!?!
 
 # 2024-01-15: //todo: flexbox for the timer layout: https://www.youtube.com/watch?v=fYq5PXgSsbE
 

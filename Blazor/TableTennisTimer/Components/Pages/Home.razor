@@ -7,9 +7,8 @@
 
 <PageTitle>Main</PageTitle>
 <EditForm EditContext="this.editContext">
-
   <div class="mainRoot">
-    <div class="row top" style="height: 3.5rem;">
+    <div class="row top" style="height: 3.5rem; z-index: 1;">
       <div class="left3">
         <span title="Play period in minutes">
           <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
@@ -23,13 +22,10 @@
         </span>
       </div>
       <div class="right3">
-        <InputCheckbox class="px26x26" id="chkAudio" checked="@court.IsAudible" @bind-Value="court.IsAudible" /><label class="otherColor" for="chkAudio">&nbsp;Audio &nbsp; &nbsp; &nbsp; &nbsp;</label>
-        <InputCheckbox class="px26x26" id="chkDebug" checked="@court.IsDebug" @bind-Value="court.IsDebug" /><label class="otherColor" for="chkDebug">&nbsp;Dbg &nbsp; </label>
       </div>
     </div>
-
-    @if (court.Initiated == false)
-
+  
+  @if (court.Initiated == false)
     {
       <div class="Initiate">↑ ↑ ↑ </div>
       <div class="Initiate" style="font-size: 56px;">Select play period...</div>
@@ -42,16 +38,20 @@
       <div class="Initiate">&nbsp;</div>
     } else
     {
-      <div class="row center">
-        <div class="hCenterParent">
-          <div class="hCenterChild">
-            <h1>@court.CountdownString</h1>
+      <div class="flex-container">
+        <div class="foreground">
+          <div class="vc">
+            <div class="hc">
+              <div class="h1">
+                @court.CountdownString
+              </div>
+            </div>
           </div>
-          <div style="width: @court.Progress%;" class="progress-bar progress"></div>
-          <div style="width: @court.Regress%; " class="progress-bar regress "></div>
         </div>
+        <div style="width: @court.Progress%;" class="progress-bar progress"></div>
+        <div style="width: @court.Regress%; " class="progress-bar regress "></div>
       </div>
-    }
+    }      
 
     <div class="row bottom" style="min-height: max-content;">
       <div><span style="color: #f30">@court.Error</span></div>
@@ -92,6 +92,11 @@
         <div><span>&nbsp;</span></div>
       }
     </div>
+          <div class="right3"  style="height: 3.5rem; z-index: 1;">
+        <InputCheckbox class="px26x26" id="chkAudio" checked="@court.IsAudible" @bind-Value="court.IsAudible" /><label class="otherColor" for="chkAudio">&nbsp;Audio &nbsp; &nbsp; &nbsp; &nbsp;</label>
+        <InputCheckbox class="px26x26" id="chkDebug" checked="@court.IsDebug" @bind-Value="court.IsDebug" /><label class="otherColor" for="chkDebug">&nbsp;Dbg &nbsp; </label>
+      </div>
+
   </div>
   <div><br /><br /><br /><br /><h1> Scan to share me:</h1>  <img src="qrcode_tabletennistimer.azurewebsites.net.png" height="360" style="align-content: center; align-self: center;" />    </div>
   <div style="visibility: collapse;">
