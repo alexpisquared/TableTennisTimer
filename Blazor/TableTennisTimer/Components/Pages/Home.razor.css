@@ -149,10 +149,9 @@ label {
   color: #ccc;
 }
 /** >> ****************************************************************/
-
 .flex-container {
-  margin-top: 12px;
   display: flex;
+  margin-top: 12px;
 }
 
 .foreground {
@@ -165,6 +164,7 @@ label {
 .vc {
   align-self: center;
   flex: 1;
+  flex-shrink: 0; /* prevent wrapping of all items vertically on TTT.com */
 }
 
 .hc {
@@ -174,7 +174,7 @@ label {
 }
 
 .h1 {
-  font-size: 45vw;
+  font-size: 42vw;
   font-weight: 600;
   font-family: Tw Cen MT Condensed;
   word-wrap: break-word;
