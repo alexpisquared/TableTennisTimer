@@ -92,13 +92,20 @@
         <div><span>&nbsp;</span></div>
       }
     </div>
-          <div class="right3"  style="height: 3.5rem; z-index: 1;">
-        <InputCheckbox class="px26x26" id="chkAudio" checked="@court.IsAudible" @bind-Value="court.IsAudible" /><label class="otherColor" for="chkAudio">&nbsp;Audio &nbsp; &nbsp; &nbsp; &nbsp;</label>
-        <InputCheckbox class="px26x26" id="chkDebug" checked="@court.IsDebug" @bind-Value="court.IsDebug" /><label class="otherColor" for="chkDebug">&nbsp;Dbg &nbsp; </label>
-      </div>
-
+          
+    <div class="left3"></div>
+    <div class="right3"  style="height: 3.5rem; z-index: 1;">
+      <InputCheckbox class="px26x26" id="chkAudio" checked="@court.IsAudible" @bind-Value="court.IsAudible" /><label class="otherColor" for="chkAudio">&nbsp;Audio &nbsp; &nbsp; &nbsp; &nbsp;</label>
+      <InputCheckbox class="px26x26" id="chkDebug" checked="@court.IsDebug" @bind-Value="court.IsDebug" /><label class="otherColor" for="chkDebug">&nbsp;Dbg &nbsp; </label>
+    </div>
   </div>
-  <div><br /><br /><br /><br /><h1> Scan to share me:</h1>  <img src="qrcode_tabletennistimer.azurewebsites.net.png" height="360" style="align-content: center; align-self: center;" />    </div>
+    
+  <div class="flex-container">
+    <div class="hc">
+      <div><br /><br /><h1> Scan to share me:</h1>  <img src="qrcode_tabletennistimer.azurewebsites.net.png" height="360" /></div>
+    </div>
+  </div>
+
   <div style="visibility: collapse;">
     <audio id="Intro" controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
     <audio id="LastM" controls><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
