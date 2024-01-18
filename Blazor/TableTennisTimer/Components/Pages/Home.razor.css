@@ -32,16 +32,10 @@ label {
 
 /** << ****************************************************************/
 .mainRoot {
-  /*  
-    position: absolute;
-  left: 0;
-  width: 100vw;
-*/
-  height: 100vh;
   display: flex;
   flex-direction: column;
   color: #ff5;
-  margin: -19px;
+  margin: -18px;
   /*background-color: #0005;*/
 }
 
@@ -108,7 +102,8 @@ label {
 }
 
 .progress-bar {
-  height: 80vh;
+  height: calc(100vh - 16px);
+  height: calc(100dvh - 16px);
   border: 2px solid #aa5;
 }
 
@@ -126,18 +121,6 @@ label {
 
 .hCenterParent {
   position: relative;
-}
-
-.hCenterChild {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 99.88%;
-  height: 96%;
-  margin-top: 2%;
-  margin-left: 5px; /* 0px was OK for fitting the whole Rotate word ...but biting the leftmost pixels off.*/
-  margin-right: -21px;
-  /*background-color: #0005;*/
 }
 
 .px26x26 {
@@ -158,9 +141,10 @@ label {
 .foreground {
   position: absolute;
   display: flex;
-  height: 85vh;
-  width: 97vw;
-  margin-top: -10px;
+  height: calc(100vh - 16px);
+  height: calc(100dvh - 16px);
+  width: 96vw;
+  margin-top: 10px;
 }
 
 .vc {

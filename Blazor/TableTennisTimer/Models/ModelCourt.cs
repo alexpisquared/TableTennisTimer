@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace TableTennisTimer.Models;
+﻿namespace TableTennisTimer.Models;
 
 public class ModelCourt
 {
@@ -47,16 +45,16 @@ public class ModelCourt
   public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(15), new(30)];
 
   [Parameter] public bool Initiated { get; set; } = false;
-  [Parameter] public bool IsAudible { get; set; } = true;
   [Parameter] public bool IsLooping { get; set; }
-  [Parameter] public bool IsDebug { get; set; } = isDebug;
+  public bool IsAudible { get; set; } = true;
+  public bool IsDebug { get; set; } = isDebug;
 
   public void SetIsLooping(bool val) => IsLooping = val;
   public ModelCourt(Action stateHasChanged, Action setWakeLockOn)
   {
     StateHasChanged = stateHasChanged;
     SetWakeLockOn = setWakeLockOn;
-    IsAudible = true; // !IsDebug;
+    //IsAudible = true; // !IsDebug;
   }
 
   readonly Action SetWakeLockOn;

@@ -93,10 +93,9 @@
       }
     </div>
           
-    <div class="left3"></div>
-    <div class="right3"  style="height: 3.5rem; z-index: 1;">
-      <InputCheckbox class="px26x26" id="chkAudio" checked="@court.IsAudible" @bind-Value="court.IsAudible" /><label class="otherColor" for="chkAudio">&nbsp;Audio &nbsp; &nbsp; &nbsp; &nbsp;</label>
-      <InputCheckbox class="px26x26" id="chkDebug" checked="@court.IsDebug" @bind-Value="court.IsDebug" /><label class="otherColor" for="chkDebug">&nbsp;Dbg &nbsp; </label>
+    <div class="right3" style="height: 3.5rem; z-index: 1;">
+      <InputCheckbox class="px26x26" id="chkAudio" @bind-Value="court.IsAudible" /><label class="otherColor" for="chkAudio">&nbsp;Audio &nbsp; &nbsp; &nbsp; &nbsp;</label>
+      <InputCheckbox class="px26x26" id="chkDebug" @bind-Value="court.IsDebug" /><label class="otherColor" for="chkDebug">&nbsp;Dbg &nbsp; </label>
     </div>
   </div>
     
