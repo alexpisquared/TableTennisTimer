@@ -17,26 +17,55 @@
               <InputRadio Value="option.PeriodInMin" class="px26x26" style="margin-left: 26px;margin-right: 1px;" id="@option.PeriodInMin" />
               <label for="@option.PeriodInMin">@option.PeriodInMin</label>
             }
-            <label>&nbsp;min</label>
+            <label>&nbsp;min&nbsp;&nbsp;&nbsp;</label>
+            
+            @if (court.Initiated )
+            {
+              <label style="color: #fa0">&nbsp;&nbsp;&nbsp;&nbsp; Next Rotation at &nbsp; <b> @court.NextTimeString </b></label>
+              <button @onclick="@court.Stop" style="color: #800;">Stop</button>
+            }
+
           </InputRadioGroup>
         </span>
       </div>
       <div class="right3">
       </div>
     </div>
-  
-  @if (court.Initiated == false)
+
+    @if (court.Initiated == false)
     {
-      <div class="Initiate">↑ ↑ ↑ </div>
-      <div class="Initiate" style="font-size: 56px;">Select play period...</div>
-      <div class="Initiate" >
-        <div style="font-size: 13px;">...Selecting: </div>
-        <div style="font-size: 13px;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="font-size: 16px;"><b>10</b></span> min triggers rotation at <span style="font-size: 16px;"><b>00, 10, 20, 30, 40, 50</b></span> ...</div>
-        <div style="font-size: 13px;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="font-size: 16px;"><b>15</b></span> min triggers rotation at <span style="font-size: 16px;"><b>00, 15, 30, 45</b></span> ...</div>
-        <div style="font-size: 13px;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="font-size: 16px;"><b>30</b></span> min triggers rotation at <span style="font-size: 16px;"><b>00 </b>and<b> 30</b></span> minutes past the hour.</div>
-      </div>
-      <div class="Initiate">&nbsp;</div>
-    } else
+      @if (court.IsSelected == false)
+      {
+        <div class="Initiate">↑ ↑ ↑ </div>
+        <div class="Initiate" style="font-size: 56px;">Select play period...</div>
+        <div class="Initiate">
+          <div style="font-size: 13px;">...Selecting: </div>
+          <div style="font-size: 13px;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="font-size: 16px;"><b>10</b></span> min triggers rotation at <span style="font-size: 16px;"><b>00, 10, 20, 30, 40, 50</b></span> ...</div>
+          <div style="font-size: 13px;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="font-size: 16px;"><b>15</b></span> min triggers rotation at <span style="font-size: 16px;"><b>00, 15, 30, 45</b></span> ...</div>
+          <div style="font-size: 13px;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="font-size: 16px;"><b>30</b></span> min triggers rotation at <span style="font-size: 16px;"><b>00 </b>and<b> 30</b></span> minutes past the hour.</div>
+        </div>
+      }
+      else
+      {
+        <table style="align-content: center;">
+          <tr>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td><button style="width: 90px;" @onclick="@court.StartAt0"><b>Rounded</b></button></td>
+            <td><button style="width: 90px;" @onclick="@court.StartNow"><b> Dirty </b></button></td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><pre style="color: #ff0; margin-left: 20px;">@court.NextTime0String</pre></td>
+            <td><pre style="color: #ff0; margin-left: 20px;">@court.NextTimeJString</pre></td>
+            <td></td>
+          </tr>
+        </table>
+      }
+    }
+    else
     {
       <div class="flex-container">
         <div class="foreground">
@@ -48,10 +77,10 @@
             </div>
           </div>
         </div>
-        <div style="width: @court.Progress%;" class="progress-bar progress"></div>
-        <div style="width: @court.Regress%; " class="progress-bar regress "></div>
+        <div style="width: @court.Progress%;" class="progress-bar progress">          <button @onclick="@court.Stop" style="color: #800;">Stop</button></div>
+        <div style="width: @court.Regress%; " class="progress-bar regress ">          <button @onclick="@court.Stop" style="color: #800;">Stop</button></div>
       </div>
-    }      
+    }
 
     <div class="row bottom" style="min-height: max-content;">
       <div><span style="color: #f30">@court.Error</span></div>
@@ -65,16 +94,18 @@
             <button @onclick="@court.PlayLastM">LastM</button>
             <button @onclick="@court.PlayRotat">Rotat</button>
             <button @onclick="@court.PlayChirp">Chirp</button>
-            <button @onclick="@court.PlayIntrQ">IntrQ</button>
-            <button @onclick="@court.PlayLastQ">LastQ</button>
-            <button @onclick="@court.PlayRotaQ">RotaQ</button>
-            <button @onclick="@court.PlayChirQ">ChirQ</button>
+            @* No sound:
+        <button @onclick="@court.PlayIntrQ">IntrQ</button>
+        <button @onclick="@court.PlayLastQ">LastQ</button>
+        <button @onclick="@court.PlayRotaQ">RotaQ</button>
+        <button @onclick="@court.PlayChirQ">ChirQ</button>*@
           }
 
           @if (_isWakeLockSupported == true)
           {
             <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "Stop" : "Start") WL</button>
-          } else @if (_isWakeLockSupported == false)
+          }
+          else @if (_isWakeLockSupported == false)
           {
             <p style="color: red;">The browser does not support the screen wake lock API.</p>
           }
@@ -92,13 +123,13 @@
         <div><span>&nbsp;</span></div>
       }
     </div>
-          
+
     <div class="right3" style="height: 3.5rem; z-index: 1;">
       <InputCheckbox class="px26x26" id="chkAudio" @bind-Value="court.IsAudible" /><label class="otherColor" for="chkAudio">&nbsp;Audio &nbsp; &nbsp; &nbsp; &nbsp;</label>
       <InputCheckbox class="px26x26" id="chkDebug" @bind-Value="court.IsDebug" /><label class="otherColor" for="chkDebug">&nbsp;Dbg &nbsp; </label>
     </div>
   </div>
-    
+
   <div class="flex-container">
     <div class="hc">
       <div><br /><br /><h1> Scan to share me:</h1>  <img src="qrcode_tabletennistimer.azurewebsites.net.png" height="360" /></div>
@@ -131,12 +162,12 @@
 </EditForm>
 
 @code {
-  const string id = "eval", version = "0117.2";
+  const string id = "eval", version = "127.6";
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   public Home()
   {
-    court = new ModelCourt(StateHasChanged, async () => await SetWakeLockOn());
+    court = new ModelCourt(StateHasChanged, async () => await SetWakeLockOn(), async () => await SetWakeLockOff());
     editContext = new EditContext(court);
   }
   protected override async Task OnInitializedAsync()
@@ -161,11 +192,12 @@
           EventName = $"ttt-{evName}",
           DoneAt = DateTime.Now
         };
-      court.Report += $"Ver: {version}\r\nMember since: {court.WebEventLog.FirstVisitId} \r\n{court.WebEventLog.BrowserSignature} \r\n"; 
+      court.Report += $"Ver: {version}\r\nMember since: {court.WebEventLog.FirstVisitId} \r\n{court.WebEventLog.BrowserSignature} \r\n";
       //? await Task.Delay(250);
       court.Report += await WebEventLoggerService.LogEventAsync("memberSince", court.WebEventLog);
       // await TextDbContext.AddStringAsync($"{GetType().FullName}.Put({court.Report})");
-    } catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(GetMemberSinceToReport)}, {err.Message}"; WriteLine(err); }
+    }
+    catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(GetMemberSinceToReport)}, {err.Message}"; WriteLine(err); }
   }
 
   async Task<string> getBrowserId()
@@ -186,7 +218,8 @@
               + $"{w}x{h}x{d}│zone│gpu│gpv│";
 
       return csv;
-    } catch (Exception ex) { return $"{ex.Message}|{ex.InnerException?.Message}|{ex.InnerException?.InnerException?.Message}"; }
+    }
+    catch (Exception ex) { return $"{ex.Message}|{ex.InnerException?.Message}|{ex.InnerException?.InnerException?.Message}"; }
   }
 
   WakeLockSentinel? _wakeSentinel;
@@ -209,11 +242,12 @@
       {
         _wakeSentinel = await ScreenWakeLockService.RequestWakeLockAsync();
         _isWakeLocked = true;
-        court.Report +=  $"{version}         Wake Lock is active!";
+        court.Report += $"{version}         Wake Lock is active!";
       }
 
       court.Error = "";
-    } catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(SetWakeLockOn)}, {err.Message}"; WriteLine(err); }
+    }
+    catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(SetWakeLockOn)}, {err.Message}"; WriteLine(err); }
   }
   async Task SetWakeLockOff()
   {
@@ -231,7 +265,8 @@
 
       court.Error = "";
       court.Report = "Wake Lock is released.";
-    } catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(SetWakeLockOff)}, {err.Message}"; WriteLine(err); }
+    }
+    catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(SetWakeLockOff)}, {err.Message}"; WriteLine(err); }
   }
 
   async Task<string> getMemberSince(string pieceOfCake = "LocalStoreTest")
@@ -245,7 +280,8 @@
         await SetCookie(pieceOfCake, memberSinceStringKey);
       }
       return memberSinceStringKey;
-    } catch (Exception err)
+    }
+    catch (Exception err)
     {
       Console.WriteLine($"{err.GetType().Name}, {err.Message}");
       return ($"ERROR in getMemberSince(): {err.GetType().Name}, {err.Message}");

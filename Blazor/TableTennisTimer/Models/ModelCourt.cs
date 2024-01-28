@@ -1,4 +1,6 @@
-﻿namespace TableTennisTimer.Models;
+﻿using System.Diagnostics;
+
+namespace TableTennisTimer.Models;
 
 public class ModelCourt
 {
@@ -13,51 +15,74 @@ public class ModelCourt
   public IWebEventLoggerService? WebEventLoggerService { get; set; }
   public WebEventLog? WebEventLog { get; set; }
 
-  int selectPeriodInMin;
 #if DEBUG
   const bool isDebug = true;
 #else
     const bool isDebug = false;
 #endif
 
-  public int SelectPeriodInMin
+  int _selectPeriodInMin; public int SelectPeriodInMin
   {
-    get => selectPeriodInMin;
+    get => _selectPeriodInMin;
     set {
-      selectPeriodInMin = value;
-      Report = $"{value} min    IsLooping: {IsLooping}";
-      _ = Task.Run(async () =>
-      {
-        Initiated = true;
-        SetWakeLockOn.Invoke();
-        //await PlayResource("LastQ", 0.1); await Task.Delay(99);
-        //await PlayResource("RotaQ", 0.1);
-        await PlayResource("LastM", 10);
-        await PlayResource("Rotat", 10);
-        //still need this? await Task.Delay(10);
-        await PlayResource("Intro");
-        if (IsLooping != true)
-          await MainLoopTask();
-      });
+      _selectPeriodInMin = value;
+      IsSelected = true;
+
+      var a = CalculateNextTime(true);
+      NextTime0String = $"{a:HH:mm:ss}\n"
+        + $"{a.AddMinutes(value * 1):HH:mm:ss}\n"
+        + $"{a.AddMinutes(value * 2):HH:mm:ss}\n"
+        + $"{a.AddMinutes(value * 3):HH:mm:ss}\n...";
+
+      var b = CalculateNextTime(false);
+      NextTimeJString = $"{b:HH:mm:ss}\n"
+        + $"{b.AddMinutes(value * 1):HH:mm:ss}\n"
+        + $"{b.AddMinutes(value * 2):HH:mm:ss}\n"
+        + $"{b.AddMinutes(value * 3):HH:mm:ss}\n...";
     }
   }
+
+  async Task StartAgain()
+  {
+    Initiated = true;
+    SetWakeLockOn.Invoke();
+    //await PlayResource("LastQ", 0.1); await Task.Delay(99);
+    //await PlayResource("RotaQ", 0.1);
+    await PlayResource("LastM", 10);
+    await PlayResource("Rotat", 10);
+    //still need this? await Task.Delay(10);
+    await PlayResource("Intro");
+    if (IsLooping != true)
+      await MainLoopTask();
+  }
+
+  bool _isRounded = false;
+  public async void StartNow() { _isRounded = false; await StartAgain(); }
+  public async void StartAt0() { _isRounded = true; await StartAgain(); }
+  public void Stop() { Initiated = IsLooping = IsSelected = false; SetWakeLockOff.Invoke(); }
 
   public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(15), new(30)];
 
   [Parameter] public bool Initiated { get; set; } = false;
+  [Parameter] public bool IsSelected { get; set; } = false;
   [Parameter] public bool IsLooping { get; set; }
   public bool IsAudible { get; set; } = true;
   public bool IsDebug { get; set; } = isDebug;
+  public string NextTimeString { get; private set; }
+  public string NextTime0String { get; private set; }
+  public string NextTimeJString { get; private set; }
 
   public void SetIsLooping(bool val) => IsLooping = val;
-  public ModelCourt(Action stateHasChanged, Action setWakeLockOn)
+  public ModelCourt(Action stateHasChanged, Action setWakeLockOn, Action setWakeLockOff)
   {
     StateHasChanged = stateHasChanged;
     SetWakeLockOn = setWakeLockOn;
+    SetWakeLockOff = setWakeLockOff;
     //IsAudible = true; // !IsDebug;
   }
 
   readonly Action SetWakeLockOn;
+  readonly Action SetWakeLockOff;
   readonly Action StateHasChanged;
 
   public void CheckboxChanged(bool e) => Report = $"Audio is {((IsAudible = e) ? "ON" : "Off")}.";
@@ -65,25 +90,27 @@ public class ModelCourt
   public async Task MainLoopTask()
   {
     IsLooping = true;
+    _nextTime = CalculateNextTime(_isRounded);
+    NextTimeString = $"{_nextTime:HH:mm:ss}";
 
     while (IsLooping)
     {
       var now = DateTimeOffset.Now;
-      _nextTime = SetAndShowNextTime();
 
       while (IsLooping && now < _nextTime)
       {
-        var prev = selectPeriodInMin;
+        var prev = _selectPeriodInMin;
         await Task.Delay(991);
-        if (prev != selectPeriodInMin) // if the user changed the time, then reset the timer
+        if (prev != _selectPeriodInMin) // if the user changed the time, then reset the timer
         {
-          _nextTime = SetAndShowNextTime();
+          _nextTime = CalculateNextTime(_isRounded);
+          NextTimeString = $"{_nextTime:HH:mm:ss}";
         }
 
         now = DateTimeOffset.Now;
         var secondsLeft = (_nextTime - now).TotalSeconds;
         CountdownString = $"{_nextTime - now:m\\:ss}";
-        Progress = 100 * ((selectPeriodInMin * 60) - secondsLeft) / (selectPeriodInMin * 60);
+        Progress = 100 * ((_selectPeriodInMin * 60) - secondsLeft) / (_selectPeriodInMin * 60);
         Regress = 100 - Progress;
 
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
@@ -98,6 +125,12 @@ public class ModelCourt
           await PlayResource("Intro", 100); // audible only on PC. Phone is silent but seems to ward off the screen lock.
         }
       } // while (now < _nextTime)
+
+      _nextTime = CalculateNextTime(_isRounded);
+
+      NextTimeString = isDebug ? $"{NextTimeString}\n{_nextTime:HH:mm:ss.fff}" : $"{_nextTime:HH:mm:ss}";
+
+      Debug.WriteLine($"{DateTime.Now:HH:mm:ss.fff}  {_nextTime:HH:mm:ss.fff}");
 
       if (IsLooping)
       {
@@ -124,10 +157,12 @@ public class ModelCourt
     await PlayResource("Chirp", 500);
   }
 
-  DateTimeOffset SetAndShowNextTime()
+  DateTimeOffset CalculateNextTime(bool isRounded)
   {
     var now = DateTimeOffset.Now;
-    return now.AddMinutes(selectPeriodInMin - (now.Minute % selectPeriodInMin)).AddSeconds(-now.Second).AddMilliseconds(-now.Millisecond);
+    return isRounded ?
+      now.AddMinutes(_selectPeriodInMin - (now.Minute % _selectPeriodInMin)).AddSeconds(-now.Second).AddMilliseconds(-now.Millisecond) :
+      now.AddMinutes(_selectPeriodInMin).AddMilliseconds(-200);
   }
 
   public async void PlayIntro() => await PlayWavFilesAsync("Intro", 360);
@@ -153,7 +188,7 @@ public class ModelCourt
 
       _ = await JSRuntime.InvokeAsync<Task>("PlayAudio", filePath);  //, volume); //todo: volume does not work here.
 
-      Report = $"{DateTime.Now:HH:mm:ss.fff}  {filePath}  played";
+      Report = $"{DateTime.Now:HH:mm:ss}  {filePath}  played";
 
       if (pauseAtMs == 0) return;
 
