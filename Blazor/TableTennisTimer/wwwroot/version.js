@@ -1,1 +1,1 @@
-const CACHE_VERSION = 127.6;
+const CACHE_VERSION = 128.0;

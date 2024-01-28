@@ -6,10 +6,10 @@ public class ModelCourt
 {
   DateTimeOffset _nextTime = DateTimeOffset.Now;
   object? wakeLock_OLD;
-  public string CountdownString = "↑ Select";
+  public string CountdownString = "88-88";
   public string Report = "";
   public string Error = "";
-  public double Progress = 0, Regress = 0;
+  public double Progress = 50, Regress = 50;
 
   public IJSRuntime? JSRuntime { get; set; }
   public IWebEventLoggerService? WebEventLoggerService { get; set; }
@@ -41,6 +41,14 @@ public class ModelCourt
         + $"{b.AddMinutes(value * 3):HH:mm:ss}\n...";
     }
   }
+  bool _isRoundedMode; public bool IsRoundedMode
+  {
+    get => _isRoundedMode;
+    set {
+      _isRoundedMode = value;
+      var a = CalculateNextTime(value);
+    }
+  }
 
   async Task StartAgain()
   {
@@ -59,6 +67,7 @@ public class ModelCourt
   bool _isRounded = false;
   public async void StartNow() { _isRounded = false; await StartAgain(); }
   public async void StartAt0() { _isRounded = true; await StartAgain(); }
+  public async void StartAsync() { Initiated = IsLooping = IsSelected = true; SetWakeLockOn.Invoke(); await StartAgain(); }
   public void Stop() { Initiated = IsLooping = IsSelected = false; SetWakeLockOff.Invoke(); }
 
   public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(15), new(30)];
@@ -79,6 +88,11 @@ public class ModelCourt
     SetWakeLockOn = setWakeLockOn;
     SetWakeLockOff = setWakeLockOff;
     //IsAudible = true; // !IsDebug;
+  }
+  public async Task OnInitializedAsync()
+  {
+    SelectPeriodInMin = 10;
+    await Task.Delay(0);
   }
 
   readonly Action SetWakeLockOn;
@@ -236,3 +250,6 @@ public class ModelCourt
     catch (Exception err) { Error = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(Error); }
   }
 }
+///todo: remove logging of navigations to home page in favour of actual manipulations:
+/// - period, timer selection
+/// - actual goes offs

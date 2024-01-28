@@ -103,8 +103,8 @@ label {
 }
 
 .progress-bar {
-  height: calc(100vh - 18px);
-  height: calc(100dvh - 18px);
+  height: calc(40vh - 18px);
+  height: calc(40dvh - 18px);
   border: 2px solid #aa5;
 }
 
@@ -142,9 +142,11 @@ label {
 .foreground {
   position: absolute;
   display: flex;
-  height: calc(100vh - 18px);
+  height: calc(40vh - 18px);
+  height: calc(40dvh - 18px);
+  /*  height: calc(100vh - 18px);
   height: calc(100dvh - 18px);
-  width: 96vw;
+*/ width: 96vw;
   margin-top: 10px;
 }
 

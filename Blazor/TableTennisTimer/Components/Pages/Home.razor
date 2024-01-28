@@ -17,70 +17,58 @@
               <InputRadio Value="option.PeriodInMin" class="px26x26" style="margin-left: 26px;margin-right: 1px;" id="@option.PeriodInMin" />
               <label for="@option.PeriodInMin">@option.PeriodInMin</label>
             }
-            <label>&nbsp;min&nbsp;&nbsp;&nbsp;</label>
-            
-            @if (court.Initiated )
-            {
-              <label style="color: #fa0">&nbsp;&nbsp;&nbsp;&nbsp; Next Rotation at &nbsp; <b> @court.NextTimeString </b></label>
-              <button @onclick="@court.Stop" style="color: #800;">Stop</button>
-            }
-
+            <label>&nbsp;min &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </label>
           </InputRadioGroup>
+          <InputRadioGroup @bind-Value="court.IsRoundedMode">
+            <InputRadio Value="court.IsRoundedMode" class="px26x26" style="margin-left: 26px;margin-right: 1px;" id="round00" />
+            <label for="round00">round00</label>
+            <InputRadio Value="court.IsRoundedMode" class="px26x26" style="margin-left: 26px;margin-right: 1px;" id="dirty68" />
+            <label for="dirty68">dirty68</label>
+          </InputRadioGroup>
+          <button @onclick="@court.StartAsync" style="color: #0a0;">Start</button>
         </span>
       </div>
       <div class="right3">
       </div>
     </div>
 
-    @if (court.Initiated == false)
-    {
-      @if (court.IsSelected == false)
-      {
-        <div class="Initiate">↑ ↑ ↑ </div>
-        <div class="Initiate" style="font-size: 56px;">Select play period...</div>
-        <div class="Initiate">
-          <div style="font-size: 13px;">...Selecting: </div>
-          <div style="font-size: 13px;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="font-size: 16px;"><b>10</b></span> min triggers rotation at <span style="font-size: 16px;"><b>00, 10, 20, 30, 40, 50</b></span> ...</div>
-          <div style="font-size: 13px;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="font-size: 16px;"><b>15</b></span> min triggers rotation at <span style="font-size: 16px;"><b>00, 15, 30, 45</b></span> ...</div>
-          <div style="font-size: 13px;">&nbsp; &nbsp; &nbsp; &nbsp; <span style="font-size: 16px;"><b>30</b></span> min triggers rotation at <span style="font-size: 16px;"><b>00 </b>and<b> 30</b></span> minutes past the hour.</div>
-        </div>
-      }
-      else
-      {
-        <table style="align-content: center;">
-          <tr>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            <td><button style="width: 90px;" @onclick="@court.StartAt0"><b>Rounded</b></button></td>
-            <td><button style="width: 90px;" @onclick="@court.StartNow"><b> Dirty </b></button></td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-          </tr>
-          <tr>
-            <td></td>
-            <td><pre style="color: #ff0; margin-left: 20px;">@court.NextTime0String</pre></td>
-            <td><pre style="color: #ff0; margin-left: 20px;">@court.NextTimeJString</pre></td>
-            <td></td>
-          </tr>
-        </table>
-      }
-    }
-    else
-    {
-      <div class="flex-container">
-        <div class="foreground">
-          <div class="vc">
-            <div class="hc">
-              <div class="h1">
-                @court.CountdownString
-              </div>
+    <div class="flex-container">
+      <div class="foreground">
+        <div class="vc">
+          <div class="hc">
+            <div>
             </div>
           </div>
         </div>
-        <div style="width: @court.Progress%;" class="progress-bar progress">          <button @onclick="@court.Stop" style="color: #800;">Stop</button></div>
-        <div style="width: @court.Regress%; " class="progress-bar regress ">          <button @onclick="@court.Stop" style="color: #800;">Stop</button></div>
       </div>
-    }
+      <div style="width: 50%;" class="progress-bar ">
+        <button @onclick="@court.StartAt0"><b>Rounded</b></button>
+        <br />
+        <pre style="color: #ff0; margin-left: 20px;">@court.NextTime0String</pre>
+      </div>
+      <div style="width: 50%;" class="progress-bar ">
+        <button @onclick="@court.StartNow"><b> Dirty </b></button>
+        <br />
+        <pre style="color: #ff0; margin-left: 20px;">@court.NextTimeJString</pre>
+      </div>
+    </div>
+
+
+    @if (court.Initiated == false) { } else { }
+
+    <div class="flex-container">
+      <div class="foreground">
+        <div class="vc">
+          <div class="hc">
+            <div class="h1">
+              @court.CountdownString
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="width: @court.Progress%;" class="progress-bar progress"></div>
+      <div style="width: @court.Regress%; " class="progress-bar regress "><button @onclick="@court.Stop" style="color: #800;">Stop</button></div>
+    </div>
 
     <div class="row bottom" style="min-height: max-content;">
       <div><span style="color: #f30">@court.Error</span></div>
@@ -162,7 +150,7 @@
 </EditForm>
 
 @code {
-  const string id = "eval", version = "127.6";
+  const string id = "eval", version = "128.0";
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   public Home()
@@ -173,9 +161,9 @@
   protected override async Task OnInitializedAsync()
   {
     await base.OnInitializedAsync();
-    court.JSRuntime = JSRuntime; // keep here: is not working from the ctor!!!
-    court.WebEventLoggerService = WebEventLoggerService; // keep here: is not working from the ctor!!!
-
+    await court.OnInitializedAsync();
+    court.JSRuntime = JSRuntime;                          // keep here: is not working from the ctor!!!
+    court.WebEventLoggerService = WebEventLoggerService;  // keep here: is not working from the ctor!!!
     _isWakeLockSupported = await ScreenWakeLockService.IsSupportedAsync();
     // await SetWakeLockOn(); //nogo: nor audio, nor wake lock is working on iPhone from here ==> manual start by user interaction.
     await GetMemberSinceToReport(version);
