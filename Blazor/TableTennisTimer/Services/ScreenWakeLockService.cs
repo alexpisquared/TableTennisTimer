@@ -1,14 +1,13 @@
-﻿using Microsoft.JSInterop;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace TableTennisTimer.Services;
 
 public class ScreenWakeLockService : IScreenWakeLockService
 {
-
-  private readonly IJSRuntime _jsRuntime;
-  private readonly ConcurrentDictionary<int, WakeLockSentinel> _wakeLocks;
-  private int _nextId;
+  readonly IJSRuntime _jsRuntime;
+  readonly ConcurrentDictionary<int, WakeLockSentinel> _wakeLocks;
+  int _nextId;
 
   public ScreenWakeLockService(IJSRuntime jsRuntime)
   {
@@ -30,9 +29,15 @@ public class ScreenWakeLockService : IScreenWakeLockService
     // Create a sentinel object and store it in a dictionary
     var id = Interlocked.Increment(ref _nextId);
     var sentinel = new WakeLockSentinel(id, jsObjectReference);
-    _wakeLocks.TryAdd(id, sentinel);
 
-    // Return the sentinel object
+    Console.WriteLine($"■ Before Console. {_wakeLocks.Count}");
+    Trace.WriteLine($"■ Before Trace. {_wakeLocks.Count}");
+    Debug.WriteLine($"■ Before Debug. {_wakeLocks.Count}");
+    _ = _wakeLocks.TryAdd(id, sentinel);
+    Console.WriteLine($"■ After Console. {_wakeLocks.Count}");
+    Trace.WriteLine($"■ After Trace. {_wakeLocks.Count}");
+    Debug.WriteLine($"■ After Debug. {_wakeLocks.Count}");
+
     return sentinel;
   }
 
@@ -47,14 +52,12 @@ public class ScreenWakeLockService : IScreenWakeLockService
     await sentinel.JsObjectReference.DisposeAsync();
 
     // Remove the sentinel object from the dictionary
-    _wakeLocks.TryRemove(sentinel.Id, out _);
+    _ = _wakeLocks.TryRemove(sentinel.Id, out _);
   }
 
-  public async Task<bool> IsSupportedAsync()
-  {
+  public async Task<bool> IsSupportedAsync() =>
     // Check if the navigator.wakeLock property exists
-    return await _jsRuntime.InvokeAsync<bool>("eval", "typeof navigator.wakeLock !== 'undefined'");
-  }
+    await _jsRuntime.InvokeAsync<bool>("eval", "typeof navigator.wakeLock !== 'undefined'");
 }
 
 /// this is this:
