@@ -8,6 +8,7 @@ public class ModelCourt
   object? wakeLock_OLD;
   public string CountdownString = "88-88";
   public string Report = "";
+  public string WLReport = "";
   public string Error = "";
   public double Progress = 50, Regress = 50;
 
@@ -18,7 +19,7 @@ public class ModelCourt
 #if DEBUG
   const bool isDebug = true;
 #else
-    const bool isDebug = false;
+  const bool isDebug = false;
 #endif
 
   int _selectPeriodInMin; public int SelectPeriodInMin
@@ -52,14 +53,9 @@ public class ModelCourt
 
   async Task StartAgain()
   {
-    Initiated = true;
-    SetWakeLockOn.Invoke();
-    //await PlayResource("LastQ", 0.1); await Task.Delay(99);
-    //await PlayResource("RotaQ", 0.1);
-    await PlayResource("LastM", 10);
-    await PlayResource("Rotat", 10);
-    //still need this? await Task.Delay(10);
+    Initiated = IsSelected = true;
     await PlayResource("Intro");
+    SetWakeLockOn.Invoke();
     if (IsLooping != true)
       await MainLoopTask();
   }
@@ -67,21 +63,21 @@ public class ModelCourt
   bool _isRounded = false;
   public async void StartNow() { _isRounded = false; await StartAgain(); }
   public async void StartAt0() { _isRounded = true; await StartAgain(); }
-  public async void StartAsync() { Initiated = IsLooping = IsSelected = true; SetWakeLockOn.Invoke(); await StartAgain(); }
-  public void Stop() { Initiated = IsLooping = IsSelected = false; SetWakeLockOff.Invoke(); }
+  public async void StartAsync() { await StartAgain(); ; }
+  public void StopButton() { IsLooping = Initiated = IsSelected = false; SetWakeLockOff.Invoke(); CountdownString = "0:00"; }
 
-  public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(15), new(30)];
+  public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(15), new(2)];
 
   [Parameter] public bool Initiated { get; set; } = false;
   [Parameter] public bool IsSelected { get; set; } = false;
   [Parameter] public bool IsLooping { get; set; }
   public bool IsAudible { get; set; } = true;
   public bool IsDebug { get; set; } = isDebug;
-  public string NextTimeString { get; private set; }
-  public string NextTime0String { get; private set; }
-  public string NextTimeJString { get; private set; }
+  public string NextTimeString { get; private set; } = "";
+  public string NextTime0String { get; private set; } = "";
+  public string NextTimeJString { get; private set; } = "";
 
-  public void SetIsLooping(bool val) => IsLooping = val;
+  public void StopTimer() => IsLooping = false;
   public ModelCourt(Action stateHasChanged, Action setWakeLockOn, Action setWakeLockOff)
   {
     StateHasChanged = stateHasChanged;
@@ -134,9 +130,9 @@ public class ModelCourt
           await PlayWavFilesAsync("LastM", 1410, GetLastMinute());
           await Task.Delay(1_640);
         }
-        else if (secondsLeft > 60 && ((int)secondsLeft) % 60 == 0) // workaround for PWA mode, where the screen lock is not available.
+        else if (((int)secondsLeft + 10) % 20 == 0) // workaround for PWA mode, where the screen lock is not available.
         {
-          await PlayResource("Intro", 100); // audible only on PC. Phone is silent but seems to ward off the screen lock.
+          await PlayResource("Intro", 100); // 100 audible only on PC. Phone is silent but seems to ward off the screen lock.
         }
       } // while (now < _nextTime)
 

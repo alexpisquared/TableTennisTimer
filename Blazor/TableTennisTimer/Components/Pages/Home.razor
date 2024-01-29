@@ -8,25 +8,8 @@
 <PageTitle>Main</PageTitle>
 <EditForm EditContext="this.editContext">
   <div class="mainRoot">
-    <div class="row top" style="height: 3.5rem; z-index: 1;">
+    <div class="row3 top3" style="height: 3.5rem; z-index: 1;">
       <div class="left3">
-        <span title="Play period in minutes">
-          <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
-            @foreach (var option in court.PlayPeriods)
-            {
-              <InputRadio Value="option.PeriodInMin" class="px26x26" style="margin-left: 26px;margin-right: 1px;" id="@option.PeriodInMin" />
-              <label for="@option.PeriodInMin">@option.PeriodInMin</label>
-            }
-            <label>&nbsp;min &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </label>
-          </InputRadioGroup>
-          <InputRadioGroup @bind-Value="court.IsRoundedMode">
-            <InputRadio Value="court.IsRoundedMode" class="px26x26" style="margin-left: 26px;margin-right: 1px;" id="round00" />
-            <label for="round00">round00</label>
-            <InputRadio Value="court.IsRoundedMode" class="px26x26" style="margin-left: 26px;margin-right: 1px;" id="dirty68" />
-            <label for="dirty68">dirty68</label>
-          </InputRadioGroup>
-          <button @onclick="@court.StartAsync" style="color: #0a0;">Start</button>
-        </span>
       </div>
       <div class="right3">
       </div>
@@ -37,19 +20,37 @@
         <div class="vc">
           <div class="hc">
             <div>
+              <span title="Play period in minutes">
+                <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
+                  <label>Minutes</label>
+                  @foreach (var option in court.PlayPeriods)
+                  {
+                    <br />
+                    <InputRadio Value="option.PeriodInMin" class="px26x26" style="margin-left: 26px;margin-right: 1px;" id="@option.PeriodInMin" />
+                    <label for="@option.PeriodInMin">@option.PeriodInMin</label>
+                  }
+                </InputRadioGroup>
+                <InputRadioGroup @bind-Value="court.IsRoundedMode">
+                  <InputRadio Value="court.IsRoundedMode" class="px26x26" style="margin-left: 26px;margin-right: 1px;" id="round00" />
+                  <label style="color: #f50" for="round00">round00</label>
+                  <br />
+                  <pre style="color: #f50; margin-left: 20px;">@court.NextTime0String</pre>
+                  <InputRadio Value="court.IsRoundedMode" class="px26x26" style="margin-left: 26px;margin-right: 1px;" id="dirty68" />
+                  <label style="color: #f50" for="dirty68">dirty68</label>
+                  <br />
+                  <pre style="color: #f50; margin-left: 20px;">@court.NextTimeJString</pre>
+                </InputRadioGroup>
+                <button @onclick="@court.StartAsync" style="color: #0a0;">Start</button>
+                <button @onclick="@court.StopButton" style="color: #c00;">Stop</button>
+                <div><pre style="color: #08f">@court.WLReport</pre></div>
+              </span>
             </div>
           </div>
         </div>
       </div>
-      <div style="width: 50%;" class="progress-bar ">
-        <button @onclick="@court.StartAt0"><b>Rounded</b></button>
-        <br />
-        <pre style="color: #ff0; margin-left: 20px;">@court.NextTime0String</pre>
+      <div style="width: 50%;">
       </div>
-      <div style="width: 50%;" class="progress-bar ">
-        <button @onclick="@court.StartNow"><b> Dirty </b></button>
-        <br />
-        <pre style="color: #ff0; margin-left: 20px;">@court.NextTimeJString</pre>
+      <div style="width: 50%;">
       </div>
     </div>
 
@@ -67,10 +68,10 @@
         </div>
       </div>
       <div style="width: @court.Progress%;" class="progress-bar progress"></div>
-      <div style="width: @court.Regress%; " class="progress-bar regress "><button @onclick="@court.Stop" style="color: #800;">Stop</button></div>
+      <div style="width: @court.Regress%; " class="progress-bar regress "></div>
     </div>
 
-    <div class="row bottom" style="min-height: max-content;">
+    <div class="row3 bottom3" style="min-height: max-content;">
       <div><span style="color: #f30">@court.Error</span></div>
       @if (court.IsDebug)
       {
@@ -91,7 +92,7 @@
 
           @if (_isWakeLockSupported == true)
           {
-            <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "Stop" : "Start") WL</button>
+            <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "StopButton" : "Start") WL</button>
           }
           else @if (_isWakeLockSupported == false)
           {
@@ -150,7 +151,7 @@
 </EditForm>
 
 @code {
-  const string id = "eval", version = "128.0";
+  const string id = "eval", version = "128.3";
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   public Home()
@@ -225,12 +226,12 @@
     try
     {
       if (_isWakeLocked)
-        court.Report += "Wake Lock is already active!";
+        court.WLReport = "Already active!";
       else
       {
         _wakeSentinel = await ScreenWakeLockService.RequestWakeLockAsync();
         _isWakeLocked = true;
-        court.Report += $"{version}         Wake Lock is active!";
+        court.WLReport = $"Active!";
       }
 
       court.Error = "";
@@ -251,8 +252,7 @@
         _isWakeLocked = false;
       }
 
-      court.Error = "";
-      court.Report = "Wake Lock is released.";
+      court.WLReport = "Released.";
     }
     catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(SetWakeLockOff)}, {err.Message}"; WriteLine(err); }
   }
@@ -286,7 +286,7 @@
   public async ValueTask DisposeAsync()
   {
     WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀  DisposeAsync() ");
-    court.SetIsLooping(false);
+    court.StopTimer();
     await SetWakeLockOff();
   }
   public bool IsDisposed { get; private set; }
@@ -296,7 +296,7 @@
     if (IsDisposed)
       return;
 
-    court.SetIsLooping(false);
+    court.StopTimer();
     await SetWakeLockOff();
 
     IsDisposed = true;

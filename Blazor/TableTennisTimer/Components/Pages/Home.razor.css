@@ -39,12 +39,12 @@ label {
   /*background-color: #0005;*/
 }
 
-.row {
+.row3 {
   display: flex;
   flex-direction: row;
 }
 
-.top, .bottom {
+.top3, .bottom3 {
   justify-content: flex-end;
   display: flex;
   align-items: center;
@@ -69,7 +69,7 @@ label {
   margin-top: 12px;
 }
 
-.center > div, .bottom > div {
+.center > div, .bottom3 > div {
   margin-left: -4px;
 }
 
@@ -96,7 +96,7 @@ label {
   margin-left: 16px;
 }
 
-.bottom > div {
+.bottom3 > div {
   display: flex;
   justify-content: center;
   align-items: center;
