@@ -32,8 +32,8 @@ public class ModelCourt
         SetWakeLockOn.Invoke();
         //await PlayResource("LastQ", 0.1); await Task.Delay(99);
         //await PlayResource("RotaQ", 0.1);
-        await PlayResource("LastM", 10);
-        await PlayResource("Rotat", 10);
+        //await PlayResource("LastM", 10);
+        //await PlayResource("Rotat", 10);
         //still need this? await Task.Delay(10);
         await PlayResource("Intro");
         if (IsLooping != true)
@@ -95,7 +95,7 @@ public class ModelCourt
         }
         else if (secondsLeft > 60 && ((int)secondsLeft) % 60 == 0) // workaround for PWA mode, where the screen lock is not available.
         {
-          await PlayResource("Intro", 100); // audible only on PC. Phone is silent but seems to ward off the screen lock.
+          await PlayResource("Intro", 100); // 100 audible only on PC. Phone is silent but seems to ward off the screen lock.
         }
       } // while (now < _nextTime)
 
