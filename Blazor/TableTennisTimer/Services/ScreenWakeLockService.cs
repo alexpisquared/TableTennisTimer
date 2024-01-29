@@ -30,13 +30,9 @@ public class ScreenWakeLockService : IScreenWakeLockService
     var id = Interlocked.Increment(ref _nextId);
     var sentinel = new WakeLockSentinel(id, jsObjectReference);
 
-    Console.WriteLine($"■ Before Console. {_wakeLocks.Count}");
-    Trace.WriteLine($"■ Before Trace. {_wakeLocks.Count}");
-    Debug.WriteLine($"■ Before Debug. {_wakeLocks.Count}");
+    WriteLine($"■ Before  {_wakeLocks.Count}");
     _ = _wakeLocks.TryAdd(id, sentinel);
-    Console.WriteLine($"■ After Console. {_wakeLocks.Count}");
-    Trace.WriteLine($"■ After Trace. {_wakeLocks.Count}");
-    Debug.WriteLine($"■ After Debug. {_wakeLocks.Count}");
+    WriteLine($"■ After   {_wakeLocks.Count}");
 
     return sentinel;
   }
@@ -65,3 +61,37 @@ public class ScreenWakeLockService : IScreenWakeLockService
 ///todo: also, see for PWA:
 /// https://stackoverflow.com/questions/59917660/wake-lock-works-in-browser-but-not-as-pwa
 /// https://reillyeon.github.io/scraps/wakelock.html
+
+
+
+/* //todo: JAn 28: https://progressier.com/pwa-capabilities/screen-wake-lock
+ *
+function toggleWakeLock(){
+  if (!navigator.wakeLock){
+    alert("Your device does not support the Wake Lock API. Try on an Android phone or on a device running iOS 16.4 or higher!");
+  }
+  else if (window.currentWakeLock && !window.currentWakeLock.released){
+    releaseScreen();
+  }
+  else {
+    lockScreen();
+  }
+}
+
+async function lockScreen(){
+   try {
+       window.currentWakeLock = await navigator.wakeLock.request();
+       document.getElementById('wake-lock-btn').innerHTML = "Release Wake Lock";
+       alert('Wake Lock enabled');
+    }
+    catch(err){
+      alert(err);
+    }
+}
+
+async function releaseScreen(){
+  window.currentWakeLock.release();
+  document.getElementById('wake-lock-btn').innerHTML = "Start Wake Lock";
+  alert('Wake Lock released');
+}
+*/

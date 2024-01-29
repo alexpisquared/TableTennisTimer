@@ -8,12 +8,12 @@ public class ModelCourt
   object? wakeLock_OLD;
   public string CountdownString = "88-88";
   public string Report = "";
-  public string WLReport = "";
+  public string WLReport = "WLReport";
   public string Error = "";
   public double Progress = 50, Regress = 50;
 
-  public IJSRuntime? JSRuntime { get; set; }
   public IWebEventLoggerService? WebEventLoggerService { get; set; }
+  public IJSRuntime? JSRuntime { get; set; }
   public WebEventLog? WebEventLog { get; set; }
 
 #if DEBUG

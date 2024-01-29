@@ -4,125 +4,97 @@
 @inject IWebEventLoggerService WebEventLoggerService
 @implements IDisposable
 @implements IAsyncDisposable
-
 <PageTitle>Main</PageTitle>
-<EditForm EditContext="this.editContext">
-  <div class="mainRoot">
-    <div class="row3 top3" style="height: 3.5rem; z-index: 1;">
-      <div class="left3">
-      </div>
-      <div class="right3">
-      </div>
-    </div>
 
+<EditForm EditContext="this.editContext">
+  <div class="flexVertical">
+    <div class="flexHorizontal">
+      <div class="left3">
+        <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
+          @foreach (var option in court.PlayPeriods)
+          {
+            <InputRadio Value="option.PeriodInMin" id="@option.PeriodInMin" class="nogo1" style="margin-left: 20px;" />
+            <label for="@option.PeriodInMin">@option.PeriodInMin</label>
+          }
+          <label>&nbsp; min </label>
+        </InputRadioGroup>
+      </div>
+      <div>
+        <InputCheckbox id="chkRound" @bind-Value="court.IsRoundedMode" />
+        <label style="color: #f80;" for="chkRound">Rounded</label>
+      </div>
+      <button @onclick="@court.StartAsync" class="button" style="color: #0a0;">Start</button>
+      <button @onclick="@court.StopButton" class="button" style="color: #c00;">Stop</button>
+      <pre style="margin-left: 26px; color: #08f">@court.WLReport</pre>
+    </div>
     @if (court.Initiated == false)
     {
-      <div class="flex-container">
-        <div class="foreground">
-          <div class="vc">
-            <div class="hc">
-              <div>
-                <span title="Play period in minutes">
-                  <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
-                    <label>Minutes</label>
-                    @foreach (var option in court.PlayPeriods)
-                    {
-                      <br />
-                      <InputRadio Value="option.PeriodInMin" class="px26x26" style="margin-left: 26px;margin-right: 1px;" id="@option.PeriodInMin" />
-                      <label for="@option.PeriodInMin">@option.PeriodInMin</label>
-                    }
-                  </InputRadioGroup>
-                  <InputRadioGroup @bind-Value="court.IsRoundedMode">
-                    <InputRadio Value="court.IsRoundedMode" class="px26x26" style="margin-left: 26px;margin-right: 1px;" id="round00" />
-                    <label style="color: #f50" for="round00">round00</label>
-                    <br />
-                    <pre style="color: #f50; margin-left: 20px;">@court.NextTime0String</pre>
-                    <InputRadio Value="court.IsRoundedMode" class="px26x26" style="margin-left: 26px;margin-right: 1px;" id="dirty68" />
-                    <label style="color: #f50" for="dirty68">dirty68</label>
-                    <br />
-                    <pre style="color: #f50; margin-left: 20px;">@court.NextTimeJString</pre>
-                  </InputRadioGroup>
-                  <button @onclick="@court.StartAsync" style="color: #0a0;">Start</button>
-                  <div><pre style="color: #08f">@court.WLReport</pre></div>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div style="width: 50%;">
-        </div>
-        <div style="width: 50%;">
-        </div>
+      <div class="flexHorizontal">
+        <div class="left3"></div>
+        <pre style="color: #f80; ">@court.NextTime0String</pre>
       </div>
     }
     else
     {
-      <div class="flex-container">
-        <div class="foreground">
-          <div class="vc">
-            <div class="hc">
-              <div class="h1">
-                @court.CountdownString
-              </div>
-              <button @onclick="@court.StopButton" style="color: #c00;">Stop</button>
-              <div><pre style="color: #08f">@court.WLReport</pre></div>
+      <div class="flexHorizontal">
+        <div class="backgroundPanel progress" style="width: @court.Progress%;"></div>
+        <div class="backgroundPanel regress " style="width: @court.Regress%; "></div>
+      </div>
+      <div class="absolutePanel">
+        <div class="vc">
+          <div class="hc">
+            <div class="h1">
+              @court.CountdownString
             </div>
           </div>
         </div>
-        <div style="width: @court.Progress%;" class="progress-bar progress"></div>
-        <div style="width: @court.Regress%; " class="progress-bar regress "></div>
       </div>
     }
 
-    <div class="row3 bottom3" style="min-height: max-content;">
+    <div class="flexHorizontal" style="margin: 16px;">
+      <InputCheckbox class="nogo1" id="chkAudio" @bind-Value="court.IsAudible" /><label class="otherColor" for="chkAudio">&nbsp;Audio &nbsp; &nbsp; &nbsp; &nbsp;</label>
+      <InputCheckbox class="nogo1" id="chkDebug" @bind-Value="court.IsDebug" /><label class="otherColor" for="chkDebug">&nbsp;Dbg &nbsp; </label>
+      <div>
+        @if (court.IsDebug)
+        {
+          <div>
+            @if (court.IsAudible)
+            {
+              <button @onclick="@court.PlayIntro">Intro</button>
+              <button @onclick="@court.PlayLastM">LastM</button>
+              <button @onclick="@court.PlayRotat">Rotat</button>
+              <button @onclick="@court.PlayChirp">Chirp</button>
+              @* No sound:          <button @onclick="@court.PlayIntrQ">IntrQ</button>          <button @onclick="@court.PlayLastQ">LastQ</button>          <button @onclick="@court.PlayRotaQ">RotaQ</button>          <button @onclick="@court.PlayChirQ">ChirQ</button>*@
+            }
+
+            @if (_isWakeLockSupported == true)
+            {
+              <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "StopButton" : "Start") WL</button>
+            }
+            else @if (_isWakeLockSupported == false)
+            {
+              <p style="color: red;">The browser does not support the screen wake lock API.</p>
+            }
+
+            <img src="icon-512.png" height="16" width="16" /> &nbsp;
+            <img src="icon-192.png" height="16" width="16" /> &nbsp;
+            @* <button @onclick="@GetMemberSinceToReport">Get M-Since</button> *@
+            @* <InputCheckbox class="nogo1" style="margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="chkAudio" checked="@court.IsAudible" /> *@
+            @* <button onclick="document.getElementById('Intro').play()">JS</button> <br />    *@
+          </div>
+        }
+        else
+        {
+          <div><span>&nbsp;</span></div>
+        }
+      </div>
+
+    </div>
+    <div>
+      <div><pre style="color: #fa0">@court.Report</pre></div>
       <div><span style="color: #f30">@court.Error</span></div>
-      @if (court.IsDebug)
-      {
-        <div><pre style="color: #fa0">@court.Report</pre></div>
-        <div>
-          @if (court.IsAudible)
-          {
-            <button @onclick="@court.PlayIntro">Intro</button>
-            <button @onclick="@court.PlayLastM">LastM</button>
-            <button @onclick="@court.PlayRotat">Rotat</button>
-            <button @onclick="@court.PlayChirp">Chirp</button>
-            @* No sound:
-        <button @onclick="@court.PlayIntrQ">IntrQ</button>
-        <button @onclick="@court.PlayLastQ">LastQ</button>
-        <button @onclick="@court.PlayRotaQ">RotaQ</button>
-        <button @onclick="@court.PlayChirQ">ChirQ</button>*@
-          }
-
-          @if (_isWakeLockSupported == true)
-          {
-            <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "StopButton" : "Start") WL</button>
-          }
-          else @if (_isWakeLockSupported == false)
-          {
-            <p style="color: red;">The browser does not support the screen wake lock API.</p>
-          }
-
-          <img src="icon-512.png" height="36" width="36" /> &nbsp;
-          @* <button @onclick="@GetMemberSinceToReport">Get M-Since</button> *@
-          <img src="icon-192.png" height="36" width="36" /> &nbsp;
-
-          @* <InputCheckbox class="px26x26" style="margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="chkAudio" checked="@court.IsAudible" /> *@
-          @*    <button onclick="document.getElementById('Intro').play()">JS</button> <br />    *@
-        </div>
-      }
-      else
-      {
-        <div><span>&nbsp;</span></div>
-      }
     </div>
 
-    <div class="right3" style="height: 3.5rem; z-index: 1;">
-      <InputCheckbox class="px26x26" id="chkAudio" @bind-Value="court.IsAudible" /><label class="otherColor" for="chkAudio">&nbsp;Audio &nbsp; &nbsp; &nbsp; &nbsp;</label>
-      <InputCheckbox class="px26x26" id="chkDebug" @bind-Value="court.IsDebug" /><label class="otherColor" for="chkDebug">&nbsp;Dbg &nbsp; </label>
-    </div>
-  </div>
-
-  <div class="flex-container">
     <div class="hc">
       <div><br /><br /><h1> Scan to share me:</h1>  <img src="qrcode_tabletennistimer.azurewebsites.net.png" height="360" /></div>
     </div>
@@ -316,36 +288,3 @@
   //   }
   // }
 }
-
-
-/* //todo: JAn 28: https://progressier.com/pwa-capabilities/screen-wake-lock
-
-function toggleWakeLock(){
-  if (!navigator.wakeLock){
-    alert("Your device does not support the Wake Lock API. Try on an Android phone or on a device running iOS 16.4 or higher!");
-  }
-  else if (window.currentWakeLock && !window.currentWakeLock.released){
-    releaseScreen();
-  }
-  else {
-    lockScreen();
-  }
-}
-
-async function lockScreen(){
-   try {
-       window.currentWakeLock = await navigator.wakeLock.request();
-       document.getElementById('wake-lock-btn').innerHTML = "Release Wake Lock";
-       alert('Wake Lock enabled');
-    }
-    catch(err){
-      alert(err);
-    }
-}
-
-async function releaseScreen(){
-  window.currentWakeLock.release();
-  document.getElementById('wake-lock-btn').innerHTML = "Start Wake Lock";
-  alert('Wake Lock released');
-}
-*/

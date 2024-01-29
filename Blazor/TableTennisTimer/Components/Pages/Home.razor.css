@@ -1,111 +1,31 @@
-﻿.centered-div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 20%;
-  height: 20%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  white-space: normal;
-  overflow: visible;
-  font-size: 36vw;
-  font-weight: 600;
-  font-family: Tw Cen MT Condensed;
-  border-radius: 8.8px;
-  border: 1px solid #ddd;
-}
-
-button {
-  margin: 10px;
-  min-width: 52px;
-  height: 42px;
-  background-color: #0005;
-  color: #ccc;
-}
-
-label {
-  font-size: 16px;
-  color: #ff5;
-}
-
-/** << ****************************************************************/
-.mainRoot {
+﻿.flexVertical {
   display: flex;
   flex-direction: column;
   color: #ff5;
-  margin: -20px;
-  /*background-color: #0005;*/
 }
 
-.row3 {
+.flexHorizontal {
   display: flex;
-  flex-direction: row;
+  color: #ff5;
 }
 
-.top3, .bottom3 {
-  justify-content: flex-end;
-  display: flex;
-  align-items: center;
-  /*background-color: #0002;*/
-}
-
-.center {
-  flex-grow: .75;
-}
-
-.left3 {
-  /*
-  width: 260px;
-    background-color: #0005;*/
-  margin-top: 12px;
-}
-
-.right3 {
-  width: calc(100% - 260px);
-  justify-content: flex-end;
-  display: flex;
-  margin-top: 12px;
-}
-
-.center > div, .bottom3 > div {
-  margin-left: -4px;
-}
-
-.center > div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /*background-color: #0005;*/
-}
-
-  .center > div h1 {
-    font-size: 35vw;
-    font-weight: 600;
-    font-family: Tw Cen MT Condensed;
-    text-align: center;
-    word-wrap: break-word;
-    margin-top: -8px;
-  }
-
-.Initiate {
-  height: 100%;
-  font-size: 80px;
-  font-weight: 600;
-  margin-left: 16px;
-}
-
-.bottom3 > div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.progress-bar {
-  height: calc(40vh - 18px);
-  height: calc(40dvh - 18px);
+.backgroundPanel {
   border: 2px solid #aa5;
+  border-radius: 52.8px;
+  height: calc(80vh - 36px);
+  height: calc(80dvh - 36px);
+  background-color: #fff;
+}
+
+.absolutePanel {
+  position: absolute;
+  width: 96.3%;
+  height: calc(80vh - 36px);
+  height: calc(80dvh - 36px);
+  margin-top: 36px;
+  margin-left: 0px;
+  margin-right: 0px;
+  background-color: #fff2;
 }
 
 .progress {
@@ -120,38 +40,7 @@ label {
   border-left: 0px;
 }
 
-.hCenterParent {
-  position: relative;
-}
-
-.px26x26 {
-  width: 26px;
-  height: 26px;
-}
-
-.otherColor {
-  color: #ccc;
-}
-/** >> ****************************************************************/
-/* << *** Centering over background divs *** */
-.flex-container {
-  display: flex;
-  margin-top: 12px;
-}
-
-.foreground {
-  position: absolute;
-  display: flex;
-  height: calc(40vh - 18px);
-  height: calc(40dvh - 18px);
-  /*  height: calc(100vh - 18px);
-  height: calc(100dvh - 18px);
-*/ width: 96vw;
-  margin-top: 10px;
-}
-
 .vc {
-  align-self: center;
   flex: 1;
   flex-shrink: 0; /* prevent wrapping of all items vertically on TTT.com */
 }
@@ -169,3 +58,47 @@ label {
   word-wrap: break-word;
 }
 /* >> *** Centering over background divs *** */
+
+
+
+.button {
+}
+
+button {
+  margin-left: 26px;
+  margin-top: -12px;
+  margin-left: 10px;
+  margin-right: 10px;
+  min-width: 52px;
+  height: 42px;
+  background-color: #0005;
+  color: #ccc;
+  border-radius: 10px;
+}
+
+label {
+  font-size: 16px;
+  color: #ff5;
+}
+
+.left3 {
+  width: 190px;
+  background-color: #0002;
+}
+
+.right3 {
+  width: calc(100% - 260px);
+  margin-top: 12px;
+  justify-content: flex-end;
+}
+
+.otherColor {
+  margin-top: 5px;
+  color: #ccc;
+}
+
+.nogo1 {
+  width: 26px;
+  height: 26px;
+  margin-left: 20px;
+}
