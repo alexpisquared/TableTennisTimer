@@ -60,7 +60,7 @@ public class ModelCourt
   public async void StartAsync() { await StartAgain(); ; }
   public void StopButton() { IsLooping = Initiated = IsSelected = false; SetWakeLockOff.Invoke(); CountdownString = "0:00"; }
 
-  public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(15), new(2)];
+  public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(15)];
 
   [Parameter] public bool Initiated { get; set; } = false;
   [Parameter] public bool IsSelected { get; set; } = false;

@@ -15,8 +15,8 @@
 .backgroundPanel {
   border: 2px solid #aa5;
   border-radius: 52.8px;
-  height: calc(80vh - 36px);
-  height: calc(80dvh - 36px);
+  height: calc(99vh - 36px);
+  height: calc(99dvh - 36px);
   background-color: #fff;
 }
 
@@ -48,12 +48,12 @@
 .centerVerti {
   display: flex;
   align-items: center; /* align vertical */
-  height: calc(80vh - 36px);
-  height: calc(80dvh - 36px);
+  height: calc(99vh - 36px);
+  height: calc(99dvh - 36px);
 }
 
 .mmss {
-  font-size: 42vw;
+  font-size: 38vw;
   font-weight: 600;
   font-family: Tw Cen MT Condensed;
   word-wrap: break-word;
@@ -72,12 +72,12 @@ button {
 }
 
 label {
-  font-size: 16px;
+  font-size: 20px;
   color: #ff5;
 }
 
 .left3 {
-  width: 190px;
+  width: 160px;
 }
 
 .right3 {
@@ -95,4 +95,8 @@ label {
   width: 26px;
   height: 26px;
   margin-left: 20px;
+}
+
+.onTop {
+  z-index: 1;
 }

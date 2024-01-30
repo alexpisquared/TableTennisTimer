@@ -8,38 +8,41 @@
 
 <EditForm EditContext="this.editContext">
   <div class="flexVertical">
-    <div class="flexHorizontal">
+    <div class="flexHorizontal onTop">
       <div class="left3">
         <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
           @foreach (var option in court.PlayPeriods)
           {
-            <InputRadio Value="option.PeriodInMin" id="@option.PeriodInMin" class="nogo1" style="margin-left: 20px;" />
-            <label for="@option.PeriodInMin">@option.PeriodInMin</label>
+            <InputRadio Value="option.PeriodInMin" id="@option.PeriodInMin" class="nogo1" style="margin-left: 10px;" />
+            <label for="@option.PeriodInMin" style="margin-right: 26px;">@option.PeriodInMin</label>
           }
-          <label>&nbsp; min </label>
         </InputRadioGroup>
       </div>
-      <div style="width: 111px; margin-left: 18px;">
+      <div style="width: 120px; margin-left: 15px;">
         <InputCheckbox id="chkRound" @bind-Value="court.IsRoundedMode" />
-        <label style="color: #fb0; background-color: #0003;" for="chkRound">Rounded &nbsp; &nbsp; &nbsp; &nbsp; </label>
+        <label style="color: #fb0;" for="chkRound">Rounded</label>
       </div>
 
       @if (court.Initiated == false)
       {
-        <button @onclick="@court.StartAsync" class="button" style="color: #0a0;">Start</button>
+        <button @onclick="@court.StartAsync" class="button" style="color: #0a0; margin-left: 0; margin-right: 0;">Start</button>
       }
       else
       {
-        <button @onclick="@court.StopButton" class="button" style="color: #c00;">Stop</button>
+        <button @onclick="@court.StopButton" class="button" style="color: #c00; margin-left: 0; margin-right: 0;">Stop</button>
       }
 
-      <pre style="color: #08f">@court.WLReport</pre>
+      <pre style="color: #08f">@(court.IsDebug ? @court.WLReport : "")</pre>
     </div>
     @if (court.Initiated == false)
     {
       <div class="flexHorizontal">
         <div class="backgroundPanel left3" style="border: 0px; background-color: transparent;"></div>
-        <pre style="color: #fb0; background-color: #0003; font-size: 18px;">@court.NextTimeString</pre>
+        <div style="width: 120px; margin-left: 15px;">
+        <pre style="color: #fb0; font-size: 18px;">@court.NextTimeString</pre>
+          <InputCheckbox id="chkRound" @bind-Value="court.IsRoundedMode" />
+          <label style="color: #fb0;" for="chkRound">Rounded</label>
+        </div>
       </div>
     }
     else
@@ -61,7 +64,7 @@
 
     <div class="centerHoriz"><pre style="color: #f30;">@court.Error</pre></div>
 
-    <div class="flexHorizontal flexRight" style="margin: 16px;">
+    <div class="flexHorizontal flexRight onTop" style="margin: 16px;">
       <div>
         @if (court.IsDebug)
         {
@@ -144,7 +147,7 @@
 </EditForm>
 
 @code {
-  const string id = "eval", version = "128.3";
+  const string id = "eval", version = "129.5";
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   public Home()
