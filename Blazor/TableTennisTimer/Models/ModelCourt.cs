@@ -6,7 +6,7 @@ public class ModelCourt
 {
   DateTimeOffset _nextTime = DateTimeOffset.Now;
   object? wakeLock_OLD;
-  public string CountdownString = "88-88";
+  public string CountdownString = "";
   public string Report = "";
   public string WLReport = "WLReport";
   public string Error = "";
@@ -35,15 +35,15 @@ public class ModelCourt
 
   private void NewMethod()
   {
-    var nxt = CalculateNextTime(IsRoundedMode);
+    _nextTime = CalculateNextTime(IsRoundedMode);
     NextTimeString = 
-        $" {nxt:HH:mm:ss} \n"
-      + $" {nxt.AddMinutes(SelectPeriodInMin * 1):HH:mm:ss} \n"
-      + $" {nxt.AddMinutes(SelectPeriodInMin * 2):HH:mm:ss} \n"
-      + $" {nxt.AddMinutes(SelectPeriodInMin * 3):HH:mm:ss} \n"
-      + $" {nxt.AddMinutes(SelectPeriodInMin * 4):HH:mm:ss} \n"
-      + $" {nxt.AddMinutes(SelectPeriodInMin * 5):HH:mm:ss} \n"
-      + $" {nxt.AddMinutes(SelectPeriodInMin * 6):HH:mm:ss} \n ..."  ;
+        $" {_nextTime:HH:mm:ss} \n"
+      + $" {_nextTime.AddMinutes(SelectPeriodInMin * 1):HH:mm:ss} \n"
+      + $" {_nextTime.AddMinutes(SelectPeriodInMin * 2):HH:mm:ss} \n"
+      + $" {_nextTime.AddMinutes(SelectPeriodInMin * 3):HH:mm:ss} \n"
+      + $" {_nextTime.AddMinutes(SelectPeriodInMin * 4):HH:mm:ss} \n"
+      + $" {_nextTime.AddMinutes(SelectPeriodInMin * 5):HH:mm:ss} \n"
+      + $" {_nextTime.AddMinutes(SelectPeriodInMin * 6):HH:mm:ss} \n ..."  ;
   }
 
   async Task StartAgain()
