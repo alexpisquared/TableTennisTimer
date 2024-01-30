@@ -83,7 +83,7 @@
 
             @if (_isWakeLockSupported == true)
             {
-              <button @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "Stop" : "Start") WL</button>
+              <button id="wake-lock-btn" @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "Stop" : "Start") WL</button>
             }
             else @if (_isWakeLockSupported == false)
             {
@@ -147,14 +147,28 @@
 </EditForm>
 
 @code {
-  const string eval = "eval", version = "129.7";
+  const string eval = "eval", version = "130.1";
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
+  IJSObjectReference? module;
+
   public Home()
   {
     court = new ModelCourt(StateHasChanged, async () => await SetWakeLockOn(), async () => await SetWakeLockOff());
     editContext = new EditContext(court);
   }
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    WriteLine($"▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀ OnAfterRenderAsync {firstRender}.");
+
+    if (firstRender)
+    {
+      module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Components/Pages/Home.razor.js");
+      // try { await module.InvokeVoidAsync("toggleWakeLock"); } catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(ToggleWakeLock)}, {err.Message}"; WriteLine(err); }    if (_isWakeLocked)      await SetWakeLockOff();    else      await SetWakeLockOn();
+    }
+  }
+
   protected override async Task OnInitializedAsync()
   {
     await base.OnInitializedAsync();
@@ -212,10 +226,7 @@
   bool? _isWakeLockSupported = null;
   async Task ToggleWakeLock()
   {
-    if (_isWakeLocked)
-      await SetWakeLockOff();
-    else
-      await SetWakeLockOn();
+    if (_isWakeLocked) await SetWakeLockOff(); else await SetWakeLockOn(); //nogo on my iPhone: try { await module.InvokeVoidAsync("toggleWakeLock"); } catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(ToggleWakeLock)}, {err.Message}"; WriteLine(err); }
   }
   async Task SetWakeLockOn()
   {
@@ -225,8 +236,8 @@
         court.WLReport = "Already active!";
       else
       {
-        var ii = await JSRuntime.InvokeAsync<object>(eval, "window.currentWakeLock =  navigator.wakeLock.request();");
-        //       _wakeSentinel = await ScreenWakeLockService.RequestWakeLockAsync();
+        // await module.InvokeVoidAsync("WakeLock");
+        _wakeSentinel = await ScreenWakeLockService.RequestWakeLockAsync();
 
         _isWakeLocked = true;
         court.WLReport = $"Active!";
@@ -242,14 +253,14 @@
     {
       if (_isWakeLocked)
       {
+        _isWakeLocked = false;
+
+        // await module.InvokeVoidAsync("WakeUnlock");
         if (_wakeSentinel is not null)
         {
-          var ii = await JSRuntime.InvokeAsync<object>(eval, "window.currentWakeLock.release();");
-          //        await ScreenWakeLockService.ReleaseWakeLockAsync(_wakeSentinel);
-
+          await ScreenWakeLockService.ReleaseWakeLockAsync(_wakeSentinel);
           _wakeSentinel = null;
         }
-        _isWakeLocked = false;
       }
 
       court.WLReport = "Released.";
@@ -257,7 +268,8 @@
     catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(SetWakeLockOff)}, {err.Message}"; WriteLine(err); }
   }
 
-  async Task<string> getMemberSince(string pieceOfCake = "LocalStoreTest")
+  async Task<string>
+  getMemberSince(string pieceOfCake = "LocalStoreTest")
   {
     try
     {
@@ -276,7 +288,8 @@
     }
   }
   async Task SetCookie(string key, string value) { await JSRuntime.InvokeVoidAsync(eval, $"document.cookie = '{key}={value};path=/'"); }
-  async Task<string> GetCookie(string key)
+  async Task<string>
+    GetCookie(string key)
   {
     var cookie = await JSRuntime.InvokeAsync<string>
       (eval, $"document.cookie.split('; ').find(row => row.startsWith('{key}='))?.split('=')[1]"); return cookie;
@@ -286,8 +299,10 @@
   public async ValueTask DisposeAsync()
   {
     WriteLine("▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀  DisposeAsync() ");
+
     court.StopTimer();
     await SetWakeLockOff();
+    if (module is not null) await module.DisposeAsync();
   }
   public bool IsDisposed { get; private set; }
   public async void Dispose()
@@ -298,6 +313,7 @@
 
     court.StopTimer();
     await SetWakeLockOff();
+    if (module is not null) await module.DisposeAsync();
 
     IsDisposed = true;
   }
