@@ -1,4 +1,5 @@
 ﻿global using System;
+global using System.Diagnostics;
 global using System.Text;
 global using System.Text.Json;
 global using System.Threading.Tasks;
@@ -9,5 +10,4 @@ global using Microsoft.JSInterop;
 global using TableTennisTimer.Components;
 global using TableTennisTimer.Models;
 global using TableTennisTimer.Services;
-global using AlexPiApi.Services;
 global using static System.Console;

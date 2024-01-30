@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   color: #ff5;
+  margin: -16px;
 }
 
 .flexHorizontal {
@@ -16,8 +17,8 @@
 .backgroundPanel {
   border: 2px solid #aa5;
   border-radius: 52.8px;
-  height: calc(99vh - 36px);
-  height: calc(99dvh - 36px);
+  height: calc(91vh );
+  height: calc(91dvh );
   background-color: #fff;
 }
 
@@ -36,7 +37,7 @@
 .absolutePanel {
   position: absolute;
   width: 96.3%;
-  margin-top: 36px;
+  margin-top: 58px;
   margin-left: 0px;
   margin-right: 0px;
 }
@@ -49,8 +50,8 @@
 .centerVerti {
   display: flex;
   align-items: center; /* align vertical */
-  height: calc(99vh - 36px);
-  height: calc(99dvh - 36px);
+  height: calc(91vh );
+  height: calc(91dvh );
 }
 
 .mmss {

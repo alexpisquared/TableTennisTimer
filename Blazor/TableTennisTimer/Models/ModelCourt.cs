@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace TableTennisTimer.Models;
+﻿namespace TableTennisTimer.Models;
 
 public class ModelCourt
 {
@@ -37,13 +35,13 @@ public class ModelCourt
   {
     _nextTime = CalculateNextTime(IsRoundedMode);
     NextTime_String = $"{_nextTime:HH:mm:ss}";
-    NextTimesString = 
+    NextTimesString =
         $" {_nextTime.AddMinutes(SelectPeriodInMin * 1):HH:mm:ss} \n"
       + $" {_nextTime.AddMinutes(SelectPeriodInMin * 2):HH:mm:ss} \n"
       + $" {_nextTime.AddMinutes(SelectPeriodInMin * 3):HH:mm:ss} \n"
       + $" {_nextTime.AddMinutes(SelectPeriodInMin * 4):HH:mm:ss} \n"
       + $" {_nextTime.AddMinutes(SelectPeriodInMin * 5):HH:mm:ss} \n"
-      + $" {_nextTime.AddMinutes(SelectPeriodInMin * 6):HH:mm:ss} \n ..."  ;
+      + $" {_nextTime.AddMinutes(SelectPeriodInMin * 6):HH:mm:ss} \n ...";
   }
 
   async Task StartAgain()
@@ -51,14 +49,20 @@ public class ModelCourt
     Initiated = IsSelected = true;
     await PlayResource("Intro");
     SetWakeLockOn.Invoke();
+    _ = Task.Run(async () => await LogToAzureLog($"ttt·Start-{(_isRoundedMode ? "Round" : "Dirty")}")); // :too slow, thus: Fire and forget.
     if (IsLooping != true)
       await MainLoopTask();
   }
 
-  public async void StartNow() { IsRoundedMode = false; await StartAgain(); }
-  public async void StartAt0() { IsRoundedMode = true; await StartAgain(); }
-  public async void StartAsync() { await StartAgain(); ; }
-  public void StopButton() { IsLooping = Initiated = IsSelected = false; SetWakeLockOff.Invoke(); CountdownString = "0:00"; }
+  public async void StartAsync() => await StartAgain();
+  public async void StopButton()
+  {
+    IsLooping = false;
+    CountdownString = "Stop"; await Task.Delay(333);
+    Initiated = IsSelected = false;
+    SetWakeLockOff.Invoke();
+    _ = Task.Run(async () => await LogToAzureLog($"ttt·Stop-{(_isRoundedMode ? "Round" : "Dirty")}")); // :too slow, thus: Fire and forget.
+  }
 
   public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(15)];
 
@@ -140,17 +144,11 @@ public class ModelCourt
         CountdownString = "Rotate";
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
         await PlayWavFilesAsync("Rotat", 5_590, GetTimeToChange());
-
-        ArgumentNullException.ThrowIfNull(WebEventLog, "@26");
-        WebEventLog.EventName = "ttt-Rotation";
-        WebEventLog.DoneAt = DateTime.Now;
-
-        ArgumentNullException.ThrowIfNull(WebEventLoggerService, "@22");
-        Report += await WebEventLoggerService.LogEventAsync("memberSince", WebEventLog);
+        await LogToAzureLog("ttt·Rotation");
       }
       else
       {
-        CountdownString = "■ ■";
+        CountdownString = "Start";
         Error = "·";
       }
     } // while (IsLooping)
@@ -158,6 +156,16 @@ public class ModelCourt
     await Task.Delay(250); // collides with the "Wake Lock released" sound. ...on NG.
 
     await PlayResource("Chirp", 500);
+  }
+
+  private async Task LogToAzureLog(string dd)
+  {
+    ArgumentNullException.ThrowIfNull(WebEventLog, "@26");
+    WebEventLog.EventName = dd;
+    WebEventLog.DoneAt = DateTime.Now;
+
+    ArgumentNullException.ThrowIfNull(WebEventLoggerService, "@22");
+    Report += await WebEventLoggerService.LogEventAsync("memberSince", WebEventLog);
   }
 
   DateTimeOffset CalculateNextTime(bool isRounded)

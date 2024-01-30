@@ -122,7 +122,7 @@
   </div>
 
   <div style="visibility: collapse;">
-    <audio id="Intro" controls><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
+    <video id="Intro" controls><source src="Audio/Start - Arcade Alarm.mp3"></video>
     <audio id="LastM" controls><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
     <audio id="Rotat" controls><source src="Audio/Good - Fanfare.7.mp3"></audio>
     <audio id="Chirp" controls><source src="Audio/Start - Arcade Chirp Descend.mp3"></audio>
@@ -147,7 +147,7 @@
 </EditForm>
 
 @code {
-  const string eval = "eval", version = "130.4";
+  const string eval = "eval", version = "130.9";
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   IJSObjectReference? module;
@@ -188,12 +188,11 @@
         {
           BrowserSignature = await getBrowserId(),
           FirstVisitId = await getMemberSince(),
-          EventName = $"ttt-{evName}",
+          EventName = $"ttt·{evName}",
           DoneAt = DateTime.Now
         };
       court.Report += $"Ver: {version}\r\nMember since: {court.WebEventLog.FirstVisitId} \r\n{court.WebEventLog.BrowserSignature} \r\n";
-      //? await Task.Delay(250);
-      court.Report += await WebEventLoggerService.LogEventAsync("memberSince", court.WebEventLog);
+      // court.Report += await WebEventLoggerService.LogEventAsync("memberSince", court.WebEventLog); :no point to log this event, as mostly it is either the developer or web crawler => not a real usage.
       // await TextDbContext.AddStringAsync($"{GetType().FullName}.Put({court.Report})");
     }
     catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(GetMemberSinceToReport)}, {err.Message}"; WriteLine(err); }
