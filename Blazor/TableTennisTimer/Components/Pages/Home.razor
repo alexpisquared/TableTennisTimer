@@ -18,9 +18,10 @@
           }
         </InputRadioGroup>
       </div>
-      <div class="vertCenter" style="width: 120px; margin-left: 15px;">
+      <div class="vertCenter" style="width: 140px; margin-left: 15px;">
+        <label style="color: #fb0; font-size: 12px;" for="chkRound">Next &nbsp;</label>
         <InputCheckbox id="chkRound" @bind-Value="court.IsRoundedMode" />
-        <label style="color: #fb0;" for="chkRound">Rounded</label>
+        <label style="color: #fb0;" for="chkRound">@court.NextTime_String</label>
       </div>
 
       @if (court.Initiated == false)
@@ -38,10 +39,11 @@
     {
       <div class="flexHorizontal">
         <div class="backgroundPanel left160" style="border: 0px; background-color: transparent;"></div>
-        <div style="width: 120px; margin-left: 15px;">
-          <pre style="color: #fb0; font-size: 18px;">@court.NextTimeString</pre>
+        <div style="width: 140px; margin-left: 15px;">
+          <pre style="color: #fb0; font-size: 18px;">@court.NextTimesString</pre>
+          <label style="color: #fb0; font-size: 12px;" for="chkRound">Next &nbsp;</label>
           <InputCheckbox id="chkRound" @bind-Value="court.IsRoundedMode" />
-          <label style="color: #fb0;" for="chkRound">Rounded</label>
+          <label style="color: #fb0;" for="chkRound">@court.NextTime_String</label>
         </div>
       </div>
     }
@@ -145,7 +147,7 @@
 </EditForm>
 
 @code {
-  const string eval = "eval", version = "130.1";
+  const string eval = "eval", version = "130.4";
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   IJSObjectReference? module;

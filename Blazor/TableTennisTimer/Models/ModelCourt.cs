@@ -36,9 +36,9 @@ public class ModelCourt
   private void NewMethod()
   {
     _nextTime = CalculateNextTime(IsRoundedMode);
-    NextTimeString = 
-        $" {_nextTime:HH:mm:ss} \n"
-      + $" {_nextTime.AddMinutes(SelectPeriodInMin * 1):HH:mm:ss} \n"
+    NextTime_String = $"{_nextTime:HH:mm:ss}";
+    NextTimesString = 
+        $" {_nextTime.AddMinutes(SelectPeriodInMin * 1):HH:mm:ss} \n"
       + $" {_nextTime.AddMinutes(SelectPeriodInMin * 2):HH:mm:ss} \n"
       + $" {_nextTime.AddMinutes(SelectPeriodInMin * 3):HH:mm:ss} \n"
       + $" {_nextTime.AddMinutes(SelectPeriodInMin * 4):HH:mm:ss} \n"
@@ -67,7 +67,8 @@ public class ModelCourt
   [Parameter] public bool IsLooping { get; set; }
   public bool IsAudible { get; set; } = true;
   public bool IsDebug { get; set; } = isDebug;
-  public string NextTimeString { get; private set; } = "";
+  public string NextTime_String { get; private set; } = "";
+  public string NextTimesString { get; private set; } = "";
 
   public void StopTimer() => IsLooping = false;
   public ModelCourt(Action stateHasChanged, Action setWakeLockOn, Action setWakeLockOff)
@@ -93,7 +94,7 @@ public class ModelCourt
   {
     IsLooping = true;
     _nextTime = CalculateNextTime(IsRoundedMode);
-    NextTimeString = $"{_nextTime:HH:mm:ss}";
+    NextTime_String = $"{_nextTime:HH:mm:ss}";
 
     while (IsLooping)
     {
@@ -106,7 +107,7 @@ public class ModelCourt
         if (prev != _selectPeriodInMin) // if the user changed the time, then reset the timer
         {
           _nextTime = CalculateNextTime(IsRoundedMode);
-          NextTimeString = $"{_nextTime:HH:mm:ss}";
+          NextTime_String = $"{_nextTime:HH:mm:ss}";
         }
 
         now = DateTimeOffset.Now;
@@ -130,7 +131,7 @@ public class ModelCourt
 
       _nextTime = CalculateNextTime(IsRoundedMode);
 
-      NextTimeString = isDebug ? $"{NextTimeString}\n{_nextTime:HH:mm:ss.fff}" : $"{_nextTime:HH:mm:ss}";
+      NextTime_String = isDebug ? $"{NextTime_String}\n{_nextTime:HH:mm:ss.fff}" : $"{_nextTime:HH:mm:ss}";
 
       Debug.WriteLine($"{DateTime.Now:HH:mm:ss.fff}  {_nextTime:HH:mm:ss.fff}");
 
