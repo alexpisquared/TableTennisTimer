@@ -25,30 +25,25 @@ public class ModelCourt
   int _selectPeriodInMin; public int SelectPeriodInMin
   {
     get => _selectPeriodInMin;
-    set {
-      _selectPeriodInMin = value;
-      IsSelected = true;
-
-      var a = CalculateNextTime(true);
-      NextTime0String = $"{a:HH:mm:ss}\n"
-        + $"{a.AddMinutes(value * 1):HH:mm:ss}\n"
-        + $"{a.AddMinutes(value * 2):HH:mm:ss}\n"
-        + $"{a.AddMinutes(value * 3):HH:mm:ss}\n...";
-
-      var b = CalculateNextTime(false);
-      NextTimeJString = $"{b:HH:mm:ss}\n"
-        + $"{b.AddMinutes(value * 1):HH:mm:ss}\n"
-        + $"{b.AddMinutes(value * 2):HH:mm:ss}\n"
-        + $"{b.AddMinutes(value * 3):HH:mm:ss}\n...";
-    }
+    set { _selectPeriodInMin = value; IsSelected = true; NewMethod(); }
   }
   bool _isRoundedMode; public bool IsRoundedMode
   {
     get => _isRoundedMode;
-    set {
-      _isRoundedMode = value;
-      var a = CalculateNextTime(value);
-    }
+    set { _isRoundedMode = value; NewMethod(); }
+  }
+
+  private void NewMethod()
+  {
+    var nxt = CalculateNextTime(IsRoundedMode);
+    NextTimeString = 
+        $" {nxt:HH:mm:ss} \n"
+      + $" {nxt.AddMinutes(SelectPeriodInMin * 1):HH:mm:ss} \n"
+      + $" {nxt.AddMinutes(SelectPeriodInMin * 2):HH:mm:ss} \n"
+      + $" {nxt.AddMinutes(SelectPeriodInMin * 3):HH:mm:ss} \n"
+      + $" {nxt.AddMinutes(SelectPeriodInMin * 4):HH:mm:ss} \n"
+      + $" {nxt.AddMinutes(SelectPeriodInMin * 5):HH:mm:ss} \n"
+      + $" {nxt.AddMinutes(SelectPeriodInMin * 6):HH:mm:ss} \n ..."  ;
   }
 
   async Task StartAgain()
@@ -60,9 +55,8 @@ public class ModelCourt
       await MainLoopTask();
   }
 
-  bool _isRounded = false;
-  public async void StartNow() { _isRounded = false; await StartAgain(); }
-  public async void StartAt0() { _isRounded = true; await StartAgain(); }
+  public async void StartNow() { IsRoundedMode = false; await StartAgain(); }
+  public async void StartAt0() { IsRoundedMode = true; await StartAgain(); }
   public async void StartAsync() { await StartAgain(); ; }
   public void StopButton() { IsLooping = Initiated = IsSelected = false; SetWakeLockOff.Invoke(); CountdownString = "0:00"; }
 
@@ -74,8 +68,6 @@ public class ModelCourt
   public bool IsAudible { get; set; } = true;
   public bool IsDebug { get; set; } = isDebug;
   public string NextTimeString { get; private set; } = "";
-  public string NextTime0String { get; private set; } = "";
-  public string NextTimeJString { get; private set; } = "";
 
   public void StopTimer() => IsLooping = false;
   public ModelCourt(Action stateHasChanged, Action setWakeLockOn, Action setWakeLockOff)
@@ -100,7 +92,7 @@ public class ModelCourt
   public async Task MainLoopTask()
   {
     IsLooping = true;
-    _nextTime = CalculateNextTime(_isRounded);
+    _nextTime = CalculateNextTime(IsRoundedMode);
     NextTimeString = $"{_nextTime:HH:mm:ss}";
 
     while (IsLooping)
@@ -113,7 +105,7 @@ public class ModelCourt
         await Task.Delay(991);
         if (prev != _selectPeriodInMin) // if the user changed the time, then reset the timer
         {
-          _nextTime = CalculateNextTime(_isRounded);
+          _nextTime = CalculateNextTime(IsRoundedMode);
           NextTimeString = $"{_nextTime:HH:mm:ss}";
         }
 
@@ -136,7 +128,7 @@ public class ModelCourt
         }
       } // while (now < _nextTime)
 
-      _nextTime = CalculateNextTime(_isRounded);
+      _nextTime = CalculateNextTime(IsRoundedMode);
 
       NextTimeString = isDebug ? $"{NextTimeString}\n{_nextTime:HH:mm:ss.fff}" : $"{_nextTime:HH:mm:ss}";
 
@@ -240,7 +232,7 @@ public class ModelCourt
     try
     {
       ArgumentNullException.ThrowIfNull(JSRuntime, "@20");
-      wakeLock_OLD = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-a-while-in-blazor-4b29
+      wakeLock_OLD = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-nxt-while-in-blazor-4b29
       Report = "Wake Lock is  active -- !";
     }
     catch (Exception err) { Error = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(Error); }

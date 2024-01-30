@@ -8,6 +8,9 @@
   display: flex;
   color: #ff5;
 }
+.flexRight {
+  justify-content: flex-end;
+}
 
 .backgroundPanel {
   border: 2px solid #aa5;
@@ -15,17 +18,6 @@
   height: calc(80vh - 36px);
   height: calc(80dvh - 36px);
   background-color: #fff;
-}
-
-.absolutePanel {
-  position: absolute;
-  width: 96.3%;
-  height: calc(80vh - 36px);
-  height: calc(80dvh - 36px);
-  margin-top: 36px;
-  margin-left: 0px;
-  margin-right: 0px;
-  background-color: #fff2;
 }
 
 .progress {
@@ -40,18 +32,27 @@
   border-left: 0px;
 }
 
-.vc {
-  flex: 1;
-  flex-shrink: 0; /* prevent wrapping of all items vertically on TTT.com */
+.absolutePanel {
+  position: absolute;
+  width: 96.3%;
+  margin-top: 36px;
+  margin-left: 0px;
+  margin-right: 0px;
 }
 
-.hc {
+.centerHoriz {
   display: flex;
-  justify-content: center;
-  flex: 1;
+  justify-content: center; /* align horizontal */
 }
 
-.h1 {
+.centerVerti {
+  display: flex;
+  align-items: center; /* align vertical */
+  height: calc(80vh - 36px);
+  height: calc(80dvh - 36px);
+}
+
+.mmss {
   font-size: 42vw;
   font-weight: 600;
   font-family: Tw Cen MT Condensed;
@@ -59,17 +60,11 @@
 }
 /* >> *** Centering over background divs *** */
 
-
-
-.button {
-}
-
 button {
-  margin-left: 26px;
   margin-top: -12px;
-  margin-left: 10px;
-  margin-right: 10px;
-  min-width: 52px;
+  margin-left: 4px;
+  margin-right: 4px;
+  min-width: 80px;
   height: 42px;
   background-color: #0005;
   color: #ccc;
@@ -83,7 +78,6 @@ label {
 
 .left3 {
   width: 190px;
-  background-color: #0002;
 }
 
 .right3 {
