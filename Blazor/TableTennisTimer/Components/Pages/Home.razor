@@ -8,8 +8,8 @@
 
 <EditForm EditContext="this.editContext">
   <div class="flexVertical">
-    <div class="flexHorizontal onTop">
-      <div class="left3">
+    <div class="flexHorizontal zIndexTop">
+      <div class="left160 vertCenter">
         <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
           @foreach (var option in court.PlayPeriods)
           {
@@ -18,7 +18,7 @@
           }
         </InputRadioGroup>
       </div>
-      <div style="width: 120px; margin-left: 15px;">
+      <div class="vertCenter" style="width: 120px; margin-left: 15px;">
         <InputCheckbox id="chkRound" @bind-Value="court.IsRoundedMode" />
         <label style="color: #fb0;" for="chkRound">Rounded</label>
       </div>
@@ -37,7 +37,7 @@
     @if (court.Initiated == false)
     {
       <div class="flexHorizontal">
-        <div class="backgroundPanel left3" style="border: 0px; background-color: transparent;"></div>
+        <div class="backgroundPanel left160" style="border: 0px; background-color: transparent;"></div>
         <div style="width: 120px; margin-left: 15px;">
           <pre style="color: #fb0; font-size: 18px;">@court.NextTimeString</pre>
           <InputCheckbox id="chkRound" @bind-Value="court.IsRoundedMode" />
@@ -64,14 +64,12 @@
 
     <div class="centerHoriz"><pre style="color: #f30;">@court.Error</pre></div>
 
-    <div class="flexHorizontal flexRight onTop" style="margin: 16px;">
+    <div class="flexHorizontal flexRight vertCenter zIndexTop" style="margin: 16px;">
       <div>
         @if (court.IsDebug)
         {
           <div>
-            <img src="icon-512.png" height="16" width="16" /> &nbsp;
-            <img src="icon-192.png" height="16" width="16" /> &nbsp;
-
+            @* <img src="icon-512.png" height="16" width="16" /> &nbsp;            <img src="icon-192.png" height="16" width="16" /> &nbsp; *@
             @if (court.IsAudible)
             {
               <button @onclick="@court.PlayIntro">Intro</button>
@@ -105,7 +103,7 @@
         <InputCheckbox class="nogo1" id="chkAudio" @bind-Value="court.IsAudible" /><label class="otherColor" for="chkAudio">&nbsp;Audio &nbsp; &nbsp; &nbsp; &nbsp;</label>
       </span>
       <span>
-        <InputCheckbox class="nogo1" id="chkDebug" @bind-Value="court.IsDebug" /><label class="otherColor" for="chkDebug">&nbsp;Dbg &nbsp; </label>
+        <InputCheckbox class="nogo1" id="chkDebug" @bind-Value="court.IsDebug" /><label class="otherColor" for="chkDebug">&nbsp;Dbg &nbsp; &nbsp; &nbsp; &nbsp; </label>
       </span>
     </div>
 
