@@ -27,7 +27,7 @@ public class ModelCourt
   }
   bool _isRoundedMode;
   int _ms = 2048;
-  readonly int _min = 512;
+  readonly int _min = 1024; // 1024 was working!!!!! ??? why ???
 
   public bool IsRoundedMode
   {
