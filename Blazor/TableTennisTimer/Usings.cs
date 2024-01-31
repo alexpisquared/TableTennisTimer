@@ -11,3 +11,5 @@ global using TableTennisTimer.Components;
 global using TableTennisTimer.Models;
 global using TableTennisTimer.Services;
 global using static System.Console;
+global using System.Net.Http.Json;
+global using Microsoft.AspNetCore.Components.WebAssembly.Http;

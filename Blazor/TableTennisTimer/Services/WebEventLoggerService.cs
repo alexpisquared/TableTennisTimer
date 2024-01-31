@@ -1,7 +1,4 @@
-﻿using System.Net.Http.Json;
-using Microsoft.AspNetCore.Components.WebAssembly.Http;
-
-namespace TableTennisTimer.Services;
+﻿namespace TableTennisTimer.Services;
 public class WebEventLoggerService : IWebEventLoggerService
 {
   readonly HttpClient _httpClient;
@@ -17,12 +14,9 @@ public class WebEventLoggerService : IWebEventLoggerService
       //var WebEventLogs = await _httpClient.GetFromJsonAsync<WebEventLog[]>("api/WebEventLogs");
       //WriteLine($"resp: {response}.  {WebEventLogs?.Length} WEL items returned.");
 
-      return $"\nLog Success!!!  {response}\n";
+      return $"{eventData.DoneAt:HH:mm:ss}  azure log:  {eventData.EventName}.";
     }
-    catch (Exception ex)
-    {
-      return $"\nLog Failure!!!  {ex.Message}";
-    }
+    catch (Exception ex) { return $"Azure Log Failure!!!  {ex.Message}"; }
   }
 
   public async Task<string> LogEventAsync_bad(string eventName, string eventData) //bad.

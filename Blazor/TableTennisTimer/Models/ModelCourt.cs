@@ -3,14 +3,14 @@
 public class ModelCourt
 {
   const int _min = 50;
-  int _ms = 1000, _a;
+  int _ms = 200, _a;
   object? wakeLock_OLD;
   DateTimeOffset _nextTime = DateTimeOffset.Now;
   public string CountdownString = "";
   string lowerLog = "";
   public string WLStatus = "WLStatus";
   public string ErrorMsg = "";
-  public double Progress = 50, Regress = 50, version = 131.1127;
+  public double Progress = 50, Regress = 50, version = 131.1355;
 
   public IWebEventLoggerService? WebEventLoggerService { get; set; }
   public IJSRuntime? JSRuntime { get; set; }
@@ -129,15 +129,16 @@ public class ModelCourt
 
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
 
-        //if (secondsLeft is >= 59 and <= 61)
-        //{
-        //  await PlayWavFilesAsync("LastM", 1410, GetLastMinute());
-        //  await Task.Delay(1_640);
-        //}        else 
-        if (((int)secondsLeft + 9) % 20 == 0) // workaround for PWA mode, where the screen lock is not available.
+        if (secondsLeft is >= 59 and <= 61)
+        {
+          await PlayWavFilesAsync("LastM", 1410, "cheerfulLastMinute");
+          await Task.Delay(1_640);
+        }
+        else
+        if (((int)secondsLeft + 11) % 20 == 0) // workaround for PWA mode, where the screen lock is not available.
         {
           _ms = _ms > _min ? _ms - 50 : _min;
-          await PlayResource(_audios[(_a++) % _audios.Length], _ms); 
+          await PlayResource(_audios[_a++ % _audios.Length], _ms);
           //await LogToAzureLog($"ttt·{_ms}");
         }
       } // while (now < _nextTime)
@@ -152,7 +153,7 @@ public class ModelCourt
       {
         CountdownString = "Rotate";
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
-        await PlayWavFilesAsync("Rotat", 5_590, GetTimeToChange());
+        await PlayWavFilesAsync("Rotat", 5_590, "cheerfulRotate");
         await LogToAzureLog("ttt·Rotation");
       }
       else
@@ -189,12 +190,9 @@ public class ModelCourt
   public async void PlayLastM() => await PlayWavFilesAsync("LastM", 0_500);
   public async void PlayRotat() => await PlayWavFilesAsync("Rotat", 4_500);
   public async void PlayChirp() => await PlayWavFilesAsync("Chirp", 0_500);
-  public async void PlayIntrQ() => await PlayWavFilesAsync("IntrQ", 0_500);
-  public async void PlayLastQ() => await PlayWavFilesAsync("LastQ", 0_500);
-  public async void PlayRotaQ() => await PlayWavFilesAsync("RotaQ", 4_500);
-  public async void PlayChirQ() => await PlayWavFilesAsync("ChirQ", 0_500);
 
-  readonly string[] _audios = { "Intro", "LastM", "Rotat", /*"IntrQ", "LastQ", "RotaQ", "ChirQ",*/ "angryLastMinute", "calmLastMinute", "cheerfulLastMinute", "gentleLastMinute", "sadLastMinute", "seriousLastMinute", "angryRotate", "calmRotate", "cheerfulRotate", "gentleRotate", "sadRotate", "seriousRotate", "LockReleased", "Chirp" };
+  readonly string[] _audios = { "Intro", "LastM", "Rotat", "cheerfulLastMinute", "cheerfulRotate", "LockReleased", "Chirp" }; /*"IntrQ", "LastQ", "RotaQ", "ChirQ", "angryLastMinute", "calmLastMinute", "gentleLastMinute", "sadLastMinute", "seriousLastMinute", "angryRotate", "calmRotate", "cheerfulRotate", "gentleRotate", "sadRotate", "seriousRotate",  */
+
   public async void PlayAllMs()
   {
     try
@@ -234,30 +232,6 @@ public class ModelCourt
       }
     }
     catch (Exception err) { ErrorMsg = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(ErrorMsg); }
-  }
-
-  static string GetLastMinute()
-  {
-    string[] stringArr = [
-      "angryLastMinute",      //      "Audio\\zh-CN-XiaomoNeural~1.00~100~angry~Last minute! EQAQJ！.7.mp3",
-      "calmLastMinute",       //      "Audio\\zh-CN-XiaomoNeural~1.00~100~calm~Last minute! EQAQJ！.7.mp3",
-      "cheerfulLastMinute",   //      "Audio\\zh-CN-XiaomoNeural~1.00~100~cheerful~Last minute! EQAQJ！.7.mp3",
-      "gentleLastMinute",     //      "Audio\\zh-CN-XiaomoNeural~1.00~100~gentle~Last minute! EQAQJ！.7.mp3",
-      "sadLastMinute",        //      "Audio\\zh-CN-XiaomoNeural~1.00~100~sad~Last minute! EQAQJ！.7.mp3",
-      "seriousLastMinute" ];  //      "Audio\\zh-CN-XiaomoNeural~1.00~100~serious~Last minute! EQAQJ！.7.mp3"};
-    return stringArr[new Random().Next(stringArr.Length)];
-  }
-
-  static string GetTimeToChange()
-  {
-    string[] stringArr = [
-      "angryRotate",      //       "Audio\\zh-CN-XiaomoNeural~1.00~100~angry~Time to rotate! DYRGOE！.7.mp3",
-      "calmRotate",       //       "Audio\\zh-CN-XiaomoNeural~1.00~100~calm~Time to rotate! DYRGOE！.7.mp3",
-      "cheerfulRotate",   //       "Audio\\zh-CN-XiaomoNeural~1.00~100~cheerful~Time to rotate! DYRGOE！.7.mp3",
-      "gentleRotate",     //       "Audio\\zh-CN-XiaomoNeural~1.00~100~gentle~Time to rotate! DYRGOE！.7.mp3",
-      "sadRotate",        //       "Audio\\zh-CN-XiaomoNeural~1.00~100~sad~Time to rotate! DYRGOE！.7.mp3",
-      "seriousRotate" ];  //       "Audio\\zh-CN-XiaomoNeural~1.00~100~serious~Time to rotate! DYRGOE！.7.mp3"};
-    return stringArr[new Random().Next(stringArr.Length)];
   }
 
   async Task RequestWakeLock_nogoOnIPhone()
