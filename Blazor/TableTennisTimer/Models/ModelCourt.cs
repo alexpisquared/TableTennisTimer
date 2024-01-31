@@ -23,19 +23,19 @@ public class ModelCourt
   int _selectPeriodInMin; public int SelectPeriodInMin
   {
     get => _selectPeriodInMin;
-    set { _selectPeriodInMin = value; IsSelected = true; NewMethod(); }
+    set { _selectPeriodInMin = value; IsSelected = true; SetNextTimesString(); }
   }
   bool _isRoundedMode;
   int _ms = 2048;
-  readonly int _min = 512;
+  readonly int _min = 1024;
 
   public bool IsRoundedMode
   {
     get => _isRoundedMode;
-    set { _isRoundedMode = value; NewMethod(); }
+    set { _isRoundedMode = value; SetNextTimesString(); }
   }
 
-  private void NewMethod()
+  void SetNextTimesString()
   {
     _nextTime = CalculateNextTime(IsRoundedMode);
     NextTime_String = $"{_nextTime:HH:mm:ss}";
@@ -200,7 +200,7 @@ public class ModelCourt
     {
       var all = new[] { "Intro", "LastM", "Rotat", /*"IntrQ", "LastQ", "RotaQ", "ChirQ",*/ "angryLastMinute", "calmLastMinute", "cheerfulLastMinute", "gentleLastMinute", "sadLastMinute", "seriousLastMinute", "angryRotate", "calmRotate", "cheerfulRotate", "gentleRotate", "sadRotate", "seriousRotate", "LockReleased", "Chirp" };
 
-      foreach (var item in all) await PlayResource(item, 600);
+      foreach (var item in all) await PlayResource(item, 800);
 
       Report = $"{DateTime.Now:HH:mm:ss}  played all ■ ■ ■";
     }
