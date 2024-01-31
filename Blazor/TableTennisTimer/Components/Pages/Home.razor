@@ -62,7 +62,7 @@
       </div>
     }
 
-    <div class="centerHoriz"><pre style="color: #f30;">@court.Error</pre></div>
+    <div class="centerHoriz"><pre style="color: #f30;">@court.ErrorMsg</pre></div>
 
     <div class="flexHorizontal flexRight vertCenter zIndexTop" style="margin: 16px;">
       @if (court.IsDebug)
@@ -81,7 +81,7 @@
         @if (_isWakeLockSupported == true)
         {
           <button id="wake-lock-btn" @onclick="ToggleWakeLock" style="color: #0c0;">@(_isWakeLocked ? "Stop" : "Start") WL</button>
-          <label style="color: #08f; margin-right: 32px;">            @(court.IsDebug ? @court.WLReport : "")          </label>
+          <label style="color: #08f; margin-right: 32px;">            @(court.IsDebug ? @court.WLStatus : "")          </label>
         }
         else @if (_isWakeLockSupported == false)
         {
@@ -113,7 +113,7 @@
       </div><br />
     </div><br />
 
-    <div><pre style="color: #fa0">@court.Report</pre></div>
+    <div><pre style="color: #fa0">@court.LowerLog</pre></div>
   </div>
 
   <div style="visibility: collapse;">
@@ -142,7 +142,7 @@
 </EditForm>
 
 @code {
-  const string eval = "eval", version = "130.2208";
+  const string eval = "eval", version = "131.1127";
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   IJSObjectReference? module;
@@ -160,7 +160,7 @@
     if (firstRender)
     {
       module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Components/Pages/Home.razor.js");
-      // try { await module.InvokeVoidAsync("toggleWakeLock"); } catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(ToggleWakeLock)}, {err.Message}"; WriteLine(err); }    if (_isWakeLocked)      await SetWakeLockOff();    else      await SetWakeLockOn();
+      // try { await module.InvokeVoidAsync("toggleWakeLock"); } catch (Exception err) { court.ErrorMsg = $"{err.GetType().Name}.{nameof(ToggleWakeLock)}, {err.Message}"; WriteLine(err); }    if (_isWakeLocked)      await SetWakeLockOff();    else      await SetWakeLockOn();
     }
   }
 
@@ -186,11 +186,11 @@
           EventName = $"ttt·{evName}",
           DoneAt = DateTime.Now
         };
-      court.Report += $"Ver: {version}\r\nMember since: {court.WebEventLog.FirstVisitId} \r\n{court.WebEventLog.BrowserSignature} \r\n";
-      // court.Report += await WebEventLoggerService.LogEventAsync("memberSince", court.WebEventLog); :no point to log this event, as mostly it is either the developer or web crawler => not a real usage.
-      // await TextDbContext.AddStringAsync($"{GetType().FullName}.Put({court.Report})");
+      court.LowerLog += $"Ver: {version}\r\nMember since: {court.WebEventLog.FirstVisitId} \r\n{court.WebEventLog.BrowserSignature} \r\n";
+      // court.LowerLog += await WebEventLoggerService.LogEventAsync("memberSince", court.WebEventLog); :no point to log this event, as mostly it is either the developer or web crawler => not a real usage.
+      // await TextDbContext.AddStringAsync($"{GetType().FullName}.Put({court.LowerLog})");
     }
-    catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(GetMemberSinceToReport)}, {err.Message}"; WriteLine(err); }
+    catch (Exception err) { court.ErrorMsg = $"{err.GetType().Name}.{nameof(GetMemberSinceToReport)}, {err.Message}"; WriteLine(err); }
   }
 
   async Task<string> getBrowserId()
@@ -220,26 +220,26 @@
   bool? _isWakeLockSupported = null;
   async Task ToggleWakeLock()
   {
-    if (_isWakeLocked) await SetWakeLockOff(); else await SetWakeLockOn(); //nogo on my iPhone: try { await module.InvokeVoidAsync("toggleWakeLock"); } catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(ToggleWakeLock)}, {err.Message}"; WriteLine(err); }
+    if (_isWakeLocked) await SetWakeLockOff(); else await SetWakeLockOn(); //nogo on my iPhone: try { await module.InvokeVoidAsync("toggleWakeLock"); } catch (Exception err) { court.ErrorMsg = $"{err.GetType().Name}.{nameof(ToggleWakeLock)}, {err.Message}"; WriteLine(err); }
   }
   async Task SetWakeLockOn()
   {
     try
     {
       if (_isWakeLocked)
-        court.WLReport = "Already active!";
+        court.WLStatus = "Already active!";
       else
       {
         // await module.InvokeVoidAsync("WakeLock");
         _wakeSentinel = await ScreenWakeLockService.RequestWakeLockAsync();
 
         _isWakeLocked = true;
-        court.WLReport = $"Active!";
+        court.WLStatus = $"Active!";
       }
 
-      court.Error = "";
+      court.ErrorMsg = "";
     }
-    catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(SetWakeLockOn)}, {err.Message}"; WriteLine(err); }
+    catch (Exception err) { court.ErrorMsg = $"{err.GetType().Name}.{nameof(SetWakeLockOn)}, {err.Message}"; WriteLine(err); }
   }
   async Task SetWakeLockOff()
   {
@@ -257,9 +257,9 @@
         }
       }
 
-      court.WLReport = "Released.";
+      court.WLStatus = "Released.";
     }
-    catch (Exception err) { court.Error = $"{err.GetType().Name}.{nameof(SetWakeLockOff)}, {err.Message}"; WriteLine(err); }
+    catch (Exception err) { court.ErrorMsg = $"{err.GetType().Name}.{nameof(SetWakeLockOff)}, {err.Message}"; WriteLine(err); }
   }
 
   async Task<string>

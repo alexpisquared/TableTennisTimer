@@ -49,7 +49,7 @@ public class WebEventLoggerService : IWebEventLoggerService
       }
       else
       {
-        throw new Exception($"Failed to get Domain for service. Error {response.StatusCode}");
+        throw new Exception($"Failed to get Domain for service. ErrorMsg {response.StatusCode}");
       }
     }
     catch (Exception ex)
@@ -69,7 +69,7 @@ public class WebEventLoggerService : IWebEventLoggerService
     }
     else
     {
-      throw new Exception($"Failed to get Domain for service. Error {result.StatusCode}");
+      throw new Exception($"Failed to get Domain for service. ErrorMsg {result.StatusCode}");
     }
   }
 

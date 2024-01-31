@@ -2,13 +2,15 @@
 
 public class ModelCourt
 {
-  DateTimeOffset _nextTime = DateTimeOffset.Now;
+  const int _min = 50;
+  int _ms = 1000, _a;
   object? wakeLock_OLD;
+  DateTimeOffset _nextTime = DateTimeOffset.Now;
   public string CountdownString = "";
-  public string Report = "";
-  public string WLReport = "WLReport";
-  public string Error = "";
-  public double Progress = 50, Regress = 50;
+  string lowerLog = "";
+  public string WLStatus = "WLStatus";
+  public string ErrorMsg = "";
+  public double Progress = 50, Regress = 50, version = 131.1127;
 
   public IWebEventLoggerService? WebEventLoggerService { get; set; }
   public IJSRuntime? JSRuntime { get; set; }
@@ -26,8 +28,6 @@ public class ModelCourt
     set { _selectPeriodInMin = value; IsSelected = true; SetNextTimesString(); }
   }
   bool _isRoundedMode;
-  int _ms = 2048;
-  readonly int _min = 1024; // 1024 was working!!!!! ??? why ???
 
   public bool IsRoundedMode
   {
@@ -79,6 +79,7 @@ public class ModelCourt
   public bool IsDebug { get; set; } = isDebug;
   public string NextTime_String { get; private set; } = "";
   public string NextTimesString { get; private set; } = "";
+  public string LowerLog { get => lowerLog; set => lowerLog += $"\n{value}"; }
 
   public void StopTimer() => IsLooping = false;
   public ModelCourt(Action stateHasChanged, Action setWakeLockOn, Action setWakeLockOff)
@@ -98,7 +99,7 @@ public class ModelCourt
   readonly Action SetWakeLockOff;
   readonly Action StateHasChanged;
 
-  public void CheckboxChanged(bool e) => Report = $"Audio is {((IsAudible = e) ? "ON" : "Off")}.";
+  public void CheckboxChanged(bool e) => LowerLog = $"Audio is {((IsAudible = e) ? "ON" : "Off")}.";
 
   public async Task MainLoopTask()
   {
@@ -132,13 +133,12 @@ public class ModelCourt
         //{
         //  await PlayWavFilesAsync("LastM", 1410, GetLastMinute());
         //  await Task.Delay(1_640);
-        //  _ms = 4096;
         //}        else 
-        if (((int)secondsLeft + 10) % 20 == 0) // workaround for PWA mode, where the screen lock is not available.
+        if (((int)secondsLeft + 9) % 20 == 0) // workaround for PWA mode, where the screen lock is not available.
         {
-          _ms = _ms > _min ? _ms / 2 : _min;
-          await PlayResource("Intro", _ms); // 100 audible only on PC. Phone is silent but seems to ward off the screen lock.
-          await LogToAzureLog($"ttt·{_ms}");
+          _ms = _ms > _min ? _ms - 50 : _min;
+          await PlayResource(_audios[(_a++) % _audios.Length], _ms); 
+          //await LogToAzureLog($"ttt·{_ms}");
         }
       } // while (now < _nextTime)
 
@@ -158,7 +158,7 @@ public class ModelCourt
       else
       {
         CountdownString = "Start";
-        Error = "·";
+        ErrorMsg = "·";
       }
     } // while (IsLooping)
 
@@ -174,7 +174,7 @@ public class ModelCourt
     WebEventLog.DoneAt = DateTime.Now;
 
     ArgumentNullException.ThrowIfNull(WebEventLoggerService, "@22");
-    Report += await WebEventLoggerService.LogEventAsync(/*"memberSince",*/ WebEventLog);
+    LowerLog = await WebEventLoggerService.LogEventAsync(/*"memberSince",*/ WebEventLog);
   }
 
   DateTimeOffset CalculateNextTime(bool isRounded)
@@ -194,17 +194,14 @@ public class ModelCourt
   public async void PlayRotaQ() => await PlayWavFilesAsync("RotaQ", 4_500);
   public async void PlayChirQ() => await PlayWavFilesAsync("ChirQ", 0_500);
 
+  readonly string[] _audios = { "Intro", "LastM", "Rotat", /*"IntrQ", "LastQ", "RotaQ", "ChirQ",*/ "angryLastMinute", "calmLastMinute", "cheerfulLastMinute", "gentleLastMinute", "sadLastMinute", "seriousLastMinute", "angryRotate", "calmRotate", "cheerfulRotate", "gentleRotate", "sadRotate", "seriousRotate", "LockReleased", "Chirp" };
   public async void PlayAllMs()
   {
     try
     {
-      var all = new[] { "Intro", "LastM", "Rotat", /*"IntrQ", "LastQ", "RotaQ", "ChirQ",*/ "angryLastMinute", "calmLastMinute", "cheerfulLastMinute", "gentleLastMinute", "sadLastMinute", "seriousLastMinute", "angryRotate", "calmRotate", "cheerfulRotate", "gentleRotate", "sadRotate", "seriousRotate", "LockReleased", "Chirp" };
-
-      foreach (var item in all) await PlayResource(item, 800);
-
-      Report = $"{DateTime.Now:HH:mm:ss}  played all ■ ■ ■";
+      foreach (var item in _audios) await PlayResource(item, 800);      //tmi: LowerLog = $"{DateTime.Now:HH:mm:ss}  played _audios ■ ■ ■";
     }
-    catch (Exception err) { Error = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(Error); }
+    catch (Exception err) { ErrorMsg = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(ErrorMsg); }
   }
 
   async Task PlayWavFilesAsync(string name, int delay, string? speech = null)
@@ -216,23 +213,27 @@ public class ModelCourt
   }
   public async Task PlayResource(string filePath, int pauseAtMs = 0)
   {
-    if (IsAudible)
+    try
     {
-      ArgumentNullException.ThrowIfNull(JSRuntime, "@21");
+      if (IsAudible)
+      {
+        ArgumentNullException.ThrowIfNull(JSRuntime, "@21");
 
-      _ = await JSRuntime.InvokeAsync<Task>("PlayAudio", filePath);  //, volume); //todo: volume does not work here.
+        _ = await JSRuntime.InvokeAsync<Task>("PlayAudio", filePath);  //, volume); //todo: volume does not work here.
 
-      Report = $"{DateTime.Now:HH:mm:ss}  {filePath}  played";
+        LowerLog = $"{DateTime.Now:HH:mm:ss}  played for{pauseAtMs,5} ms  {filePath}.";
 
-      if (pauseAtMs == 0) return;
+        if (pauseAtMs == 0) return;
 
-      await Task.Delay(pauseAtMs);
-      _ = await JSRuntime.InvokeAsync<Task>("PauseAudio", filePath);
+        await Task.Delay(pauseAtMs);
+        _ = await JSRuntime.InvokeAsync<Task>("PauseAudio", filePath);
+      }
+      else
+      {
+        LowerLog = $"{filePath} ...but Audio is off.";
+      }
     }
-    else
-    {
-      Report = $"{filePath} ...but Audio is off.";
-    }
+    catch (Exception err) { ErrorMsg = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(ErrorMsg); }
   }
 
   static string GetLastMinute()
@@ -265,9 +266,9 @@ public class ModelCourt
     {
       ArgumentNullException.ThrowIfNull(JSRuntime, "@20");
       wakeLock_OLD = await JSRuntime.InvokeAsync<object>("navigator.wakeLock.request", "screen"); //todo: if nogo: https://dev.to/this-is-learning/how-to-prevent-the-screen-turn-off-after-nxt-while-in-blazor-4b29
-      Report = "Wake Lock is  active -- !";
+      WLStatus = "Wake Lock is  active -- !";
     }
-    catch (Exception err) { Error = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(Error); }
+    catch (Exception err) { ErrorMsg = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(ErrorMsg); }
   }
 }
 ///todo: remove logging of navigations to home page in favour of actual manipulations:
