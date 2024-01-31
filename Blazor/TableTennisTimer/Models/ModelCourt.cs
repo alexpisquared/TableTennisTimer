@@ -27,7 +27,7 @@ public class ModelCourt
   }
   bool _isRoundedMode;
   int _ms = 2048;
-  readonly int _min = 1024;
+  readonly int _min = 128;
 
   public bool IsRoundedMode
   {
