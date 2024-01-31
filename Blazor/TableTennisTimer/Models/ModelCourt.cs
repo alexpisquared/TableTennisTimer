@@ -53,6 +53,8 @@ public class ModelCourt
     Initiated = IsSelected = true;
     await PlayResource("Intro");
     SetWakeLockOn.Invoke();
+    await PlayResource("LastM", 10); // preload!!!
+    await PlayResource("Rotat", 10); // preload!!!
     _ = Task.Run(async () => await LogToAzureLog($"ttt·Start-{(_isRoundedMode ? "Round" : "Dirty")}")); // :too slow, thus: Fire and forget.
     if (IsLooping != true)
       await MainLoopTask();
