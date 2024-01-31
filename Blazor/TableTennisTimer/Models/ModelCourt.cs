@@ -27,7 +27,7 @@ public class ModelCourt
   }
   bool _isRoundedMode;
   int _ms = 2048;
-  readonly int _min = 128;
+  readonly int _min = 512;
 
   public bool IsRoundedMode
   {
@@ -174,7 +174,7 @@ public class ModelCourt
     WebEventLog.DoneAt = DateTime.Now;
 
     ArgumentNullException.ThrowIfNull(WebEventLoggerService, "@22");
-    Report += await WebEventLoggerService.LogEventAsync("memberSince", WebEventLog);
+    Report += await WebEventLoggerService.LogEventAsync(/*"memberSince",*/ WebEventLog);
   }
 
   DateTimeOffset CalculateNextTime(bool isRounded)
