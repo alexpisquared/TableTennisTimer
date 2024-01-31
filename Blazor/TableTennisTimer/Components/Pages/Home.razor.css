@@ -60,7 +60,6 @@
   font-family: Tw Cen MT Condensed;
   word-wrap: break-word;
 }
-/* >> *** Centering over background divs *** */
 
 button {
   margin: 4px;
@@ -113,6 +112,7 @@ checkbox {
   color: #ccc;
   border-radius: 10px;
 }
+
 input {
   margin: 14px;
   min-width: 80px;
@@ -121,6 +121,7 @@ input {
   color: #ccc;
   border-radius: 10px;
 }
+
 differentClass {
   margin: 14px;
   min-width: 80px;

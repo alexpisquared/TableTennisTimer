@@ -32,8 +32,6 @@
       {
         <button @onclick="@court.StopButton" class="button" style="color: #c00; margin-left: 0; margin-right: 0;">Stop</button>
       }
-
-      <pre style="color: #08f">@(court.IsDebug ? @court.WLReport : "")</pre>
     </div>
     @if (court.Initiated == false)
     {
@@ -67,39 +65,37 @@
     <div class="centerHoriz"><pre style="color: #f30;">@court.Error</pre></div>
 
     <div class="flexHorizontal flexRight vertCenter zIndexTop" style="margin: 16px;">
-      <div>
-        @if (court.IsDebug)
+      @if (court.IsDebug)
+      {
+        @* <img src="icon-512.png" height="16" width="16" /> &nbsp;            <img src="icon-192.png" height="16" width="16" /> &nbsp; *@
+        @if (court.IsAudible)
         {
-          <div>
-            @* <img src="icon-512.png" height="16" width="16" /> &nbsp;            <img src="icon-192.png" height="16" width="16" /> &nbsp; *@
-            @if (court.IsAudible)
-            {
-              <button @onclick="@court.PlayIntro">Intro</button>
-              <button @onclick="@court.PlayLastM">LastM</button>
-              <button @onclick="@court.PlayRotat">Rotat</button>
-              <button @onclick="@court.PlayChirp">Chirp</button>
-              @* No sound:          <button @onclick="@court.PlayIntrQ">IntrQ</button>          <button @onclick="@court.PlayLastQ">LastQ</button>          <button @onclick="@court.PlayRotaQ">RotaQ</button>          <button @onclick="@court.PlayChirQ">ChirQ</button>*@
-            }
-
-            @if (_isWakeLockSupported == true)
-            {
-              <button id="wake-lock-btn" @onclick="ToggleWakeLock" style="color: green;">@(_isWakeLocked ? "Stop" : "Start") WL</button>
-            }
-            else @if (_isWakeLockSupported == false)
-            {
-              <h2 style="color: red;">The browser does not support the screen wake lock API.</h2>
-            }
-
-            @* <button @onclick="@GetMemberSinceToReport">Get M-Since</button> *@
-            @* <InputCheckbox class="nogo1" style="margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="chkAudio" checked="@court.IsAudible" /> *@
-            @* <button onclick="document.getElementById('Intro').play()">JS</button> <br />    *@
-          </div>
+          <button @onclick="@court.PlayIntro">Intro</button>
+          <button @onclick="@court.PlayLastM">LastM</button>
+          <button @onclick="@court.PlayRotat">Rotat</button>
+          <button @onclick="@court.PlayChirp">Chirp</button>
+          <button @onclick="@court.PlayAllMs" style="color: #f80;">All!!</button>
+          @* No sound:          <button @onclick="@court.PlayIntrQ">IntrQ</button>          <button @onclick="@court.PlayLastQ">LastQ</button>          <button @onclick="@court.PlayRotaQ">RotaQ</button>          <button @onclick="@court.PlayChirQ">ChirQ</button>*@
         }
-        else
+
+        @if (_isWakeLockSupported == true)
         {
-          <div><span>&nbsp;</span></div>
+          <button id="wake-lock-btn" @onclick="ToggleWakeLock" style="color: #0c0;">@(_isWakeLocked ? "Stop" : "Start") WL</button>
+          <label style="color: #08f; margin-right: 32px;">            @(court.IsDebug ? @court.WLReport : "")          </label>
         }
-      </div>
+        else @if (_isWakeLockSupported == false)
+        {
+          <h2 style="color: red;">The browser does not support the screen wake lock API.</h2>
+        }
+
+        @* <button @onclick="@GetMemberSinceToReport">Get M-Since</button> *@
+        @* <InputCheckbox class="nogo1" style="margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="chkAudio" checked="@court.IsAudible" /> *@
+        @* <button onclick="document.getElementById('Intro').play()">JS</button> <br />    *@
+      }
+      else
+      {
+        <div><span>&nbsp;</span></div>
+      }
 
       <span>
         <InputCheckbox class="nogo1" id="chkAudio" @bind-Value="court.IsAudible" /><label class="otherColor" for="chkAudio">&nbsp;Audio &nbsp; &nbsp; &nbsp; &nbsp;</label>
@@ -116,38 +112,37 @@
         <br />
       </div><br />
     </div><br />
-    <div>
-      <div><pre style="color: #fa0">@court.Report</pre></div>
-    </div>
+
+    <div><pre style="color: #fa0">@court.Report</pre></div>
   </div>
 
   <div style="visibility: collapse;">
     <video id="Intro" controls><source src="Audio/Start - Arcade Alarm.mp3"></video>
-    <audio id="LastM" controls><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
-    <audio id="Rotat" controls><source src="Audio/Good - Fanfare.7.mp3"></audio>
-    <audio id="Chirp" controls><source src="Audio/Start - Arcade Chirp Descend.mp3"></audio>
-    <audio id="IntrQ" controls muted><source src="Audio/Start - Arcade Alarm.mp3" type="audio/mpeg"></audio>
-    <audio id="LastQ" controls muted><source src="Audio/Start - Arcade Power Up.7.mp3"></audio>
-    <audio id="RotaQ" controls muted><source src="Audio/Good - Fanfare.7.mp3"></audio>
-    <audio id="ChirQ" controls muted><source src="Audio/Start - Arcade Chirp Descend.mp3"></audio>
-    <audio id="angryLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~angry~Last minute! EQAQJ！.7.mp3"></audio>
-    <audio id="calmLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~calm~Last minute! EQAQJ！.7.mp3"></audio>
-    <audio id="cheerfulLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~cheerful~Last minute! EQAQJ！.7.mp3"></audio>
-    <audio id="gentleLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~gentle~Last minute! EQAQJ！.7.mp3"></audio>
-    <audio id="sadLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~sad~Last minute! EQAQJ！.7.mp3"></audio>
-    <audio id="seriousLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~serious~Last minute! EQAQJ！.7.mp3" }></audio>
-    <audio id="angryRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~angry~Time to rotate! DYRGOE！.7.mp3"></audio>
-    <audio id="calmRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~calm~Time to rotate! DYRGOE！.7.mp3"></audio>
-    <audio id="cheerfulRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~cheerful~Time to rotate! DYRGOE！.7.mp3"></audio>
-    <audio id="gentleRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~gentle~Time to rotate! DYRGOE！.7.mp3"></audio>
-    <audio id="sadRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~sad~Time to rotate! DYRGOE！.7.mp3"></audio>
-    <audio id="seriousRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~serious~Time to rotate! DYRGOE！.7.mp3"></audio>
-    <audio id="LockReleased" controls><source src="Audio/en-US-AriaNeural~1.00~100~whispering~Wake Lock released!.7.mp3"></audio>
+    <video id="LastM" controls><source src="Audio/Start - Arcade Power Up.7.mp3"></video>
+    <video id="Rotat" controls><source src="Audio/Good - Fanfare.7.mp3"></video>
+    <video id="Chirp" controls><source src="Audio/Start - Arcade Chirp Descend.mp3"></video>
+    <video id="IntrQ" controls muted><source src="Audio/Start - Arcade Alarm.mp3"></video>     @* type="audio/mpeg" *@
+    <video id="LastQ" controls muted><source src="Audio/Start - Arcade Power Up.7.mp3"></video>
+    <video id="RotaQ" controls muted><source src="Audio/Good - Fanfare.7.mp3"></video>
+    <video id="ChirQ" controls muted><source src="Audio/Start - Arcade Chirp Descend.mp3"></video>
+    <video id="angryLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~angry~Last minute! EQAQJ！.7.mp3"></video>
+    <video id="calmLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~calm~Last minute! EQAQJ！.7.mp3"></video>
+    <video id="cheerfulLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~cheerful~Last minute! EQAQJ！.7.mp3"></video>
+    <video id="gentleLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~gentle~Last minute! EQAQJ！.7.mp3"></video>
+    <video id="sadLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~sad~Last minute! EQAQJ！.7.mp3"></video>
+    <video id="seriousLastMinute" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~serious~Last minute! EQAQJ！.7.mp3"></video>
+    <video id="angryRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~angry~Time to rotate! DYRGOE！.7.mp3"></video>
+    <video id="calmRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~calm~Time to rotate! DYRGOE！.7.mp3"></video>
+    <video id="cheerfulRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~cheerful~Time to rotate! DYRGOE！.7.mp3"></video>
+    <video id="gentleRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~gentle~Time to rotate! DYRGOE！.7.mp3"></video>
+    <video id="sadRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~sad~Time to rotate! DYRGOE！.7.mp3"></video>
+    <video id="seriousRotate" controls><source src="Audio/zh-CN-XiaomoNeural~1.00~100~serious~Time to rotate! DYRGOE！.7.mp3"></video>
+    <video id="LockReleased" controls><source src="Audio/en-US-AriaNeural~1.00~100~whispering~Wake Lock released!.7.mp3"></video>
   </div>
 </EditForm>
 
 @code {
-  const string eval = "eval", version = "130.9";
+  const string eval = "eval", version = "130.20";
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   IJSObjectReference? module;

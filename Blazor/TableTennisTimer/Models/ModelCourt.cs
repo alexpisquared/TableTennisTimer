@@ -25,7 +25,11 @@ public class ModelCourt
     get => _selectPeriodInMin;
     set { _selectPeriodInMin = value; IsSelected = true; NewMethod(); }
   }
-  bool _isRoundedMode; public bool IsRoundedMode
+  bool _isRoundedMode;
+  int _ms = 2048;
+  readonly int _min = 512;
+
+  public bool IsRoundedMode
   {
     get => _isRoundedMode;
     set { _isRoundedMode = value; NewMethod(); }
@@ -64,7 +68,7 @@ public class ModelCourt
     _ = Task.Run(async () => await LogToAzureLog($"ttt·Stop-{(_isRoundedMode ? "Round" : "Dirty")}")); // :too slow, thus: Fire and forget.
   }
 
-  public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(15)];
+  public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(3)];
 
   [Parameter] public bool Initiated { get; set; } = false;
   [Parameter] public bool IsSelected { get; set; } = false;
@@ -122,14 +126,17 @@ public class ModelCourt
 
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
 
-        if (secondsLeft is >= 59 and <= 61)
+        //if (secondsLeft is >= 59 and <= 61)
+        //{
+        //  await PlayWavFilesAsync("LastM", 1410, GetLastMinute());
+        //  await Task.Delay(1_640);
+        //  _ms = 4096;
+        //}        else 
+        if (((int)secondsLeft + 10) % 20 == 0) // workaround for PWA mode, where the screen lock is not available.
         {
-          await PlayWavFilesAsync("LastM", 1410, GetLastMinute());
-          await Task.Delay(1_640);
-        }
-        else if (((int)secondsLeft + 10) % 20 == 0) // workaround for PWA mode, where the screen lock is not available.
-        {
-          await PlayResource("Intro", 100); // 100 audible only on PC. Phone is silent but seems to ward off the screen lock.
+          _ms = _ms > _min ? _ms / 2 : _min;
+          await PlayResource("Intro", _ms); // 100 audible only on PC. Phone is silent but seems to ward off the screen lock.
+          await LogToAzureLog($"ttt·{_ms}");
         }
       } // while (now < _nextTime)
 
@@ -184,6 +191,20 @@ public class ModelCourt
   public async void PlayLastQ() => await PlayWavFilesAsync("LastQ", 0_500);
   public async void PlayRotaQ() => await PlayWavFilesAsync("RotaQ", 4_500);
   public async void PlayChirQ() => await PlayWavFilesAsync("ChirQ", 0_500);
+
+  public async void PlayAllMs()
+  {
+    try
+    {
+      var all = new[] { "Intro", "LastM", "Rotat", /*"IntrQ", "LastQ", "RotaQ", "ChirQ",*/ "angryLastMinute", "calmLastMinute", "cheerfulLastMinute", "gentleLastMinute", "sadLastMinute", "seriousLastMinute", "angryRotate", "calmRotate", "cheerfulRotate", "gentleRotate", "sadRotate", "seriousRotate", "LockReleased", "Chirp" };
+
+      foreach (var item in all) await PlayResource(item, 600);
+
+      Report = $"{DateTime.Now:HH:mm:ss}  played all ■ ■ ■";
+    }
+    catch (Exception err) { Error = $"{err.GetType().Name}.{nameof(RequestWakeLock_nogoOnIPhone)}, {err.Message}"; WriteLine(Error); }
+  }
+
   async Task PlayWavFilesAsync(string name, int delay, string? speech = null)
   {
     await PlayResource(name);
