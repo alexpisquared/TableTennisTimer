@@ -10,7 +10,7 @@ public class ModelCourt
   string lowerLog = "";
   public string WLStatus = "WLStatus";
   public string ErrorMsg = "";
-  public double Progress = 50, Regress = 50, version = 131.1355;
+  public double Progress = 50, Regress = 50, version = 202.0;
 
   public IWebEventLoggerService? WebEventLoggerService { get; set; }
   public IJSRuntime? JSRuntime { get; set; }
@@ -27,13 +27,7 @@ public class ModelCourt
     get => _selectPeriodInMin;
     set { _selectPeriodInMin = value; IsSelected = true; SetNextTimesString(); }
   }
-  bool _isRoundedMode;
-
-  public bool IsRoundedMode
-  {
-    get => _isRoundedMode;
-    set { _isRoundedMode = value; SetNextTimesString(); }
-  }
+  bool _isRoundedMode = true; public bool IsRoundedMode { get => _isRoundedMode; set { _isRoundedMode = value; SetNextTimesString(); } }
 
   void SetNextTimesString()
   {
@@ -55,7 +49,7 @@ public class ModelCourt
     SetWakeLockOn.Invoke();
     await PlayResource("LastM", 10); // preload!!!
     await PlayResource("Rotat", 10); // preload!!!
-    _ = Task.Run(async () => await LogToAzureLog($"ttt·Start-{(_isRoundedMode ? "Round" : "Dirty")}")); // :too slow, thus: Fire and forget.
+    //tmi: _ = Task.Run(async () => await LogToAzureLog($"ttt·Start-{(_isRoundedMode ? "Round" : "Dirty")}")); // :too slow, thus: Fire and forget.
     if (IsLooping != true)
       await MainLoopTask();
   }
@@ -70,7 +64,7 @@ public class ModelCourt
     _ = Task.Run(async () => await LogToAzureLog($"ttt·Stop-{(_isRoundedMode ? "Round" : "Dirty")}")); // :too slow, thus: Fire and forget.
   }
 
-  public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(3)];
+  public List<PlayPeriod> PlayPeriods { get; set; } = [new(10), new(15)];
 
   [Parameter] public bool Initiated { get; set; } = false;
   [Parameter] public bool IsSelected { get; set; } = false;
@@ -154,7 +148,7 @@ public class ModelCourt
         CountdownString = "Rotate";
         StateHasChanged(); // await InvokeAsync(StateHasChanged);
         await PlayWavFilesAsync("Rotat", 5_590, "cheerfulRotate");
-        await LogToAzureLog("ttt·Rotation");
+        await LogToAzureLog($"ttt·Rotation v{version}");
       }
       else
       {
@@ -219,7 +213,7 @@ public class ModelCourt
 
         _ = await JSRuntime.InvokeAsync<Task>("PlayAudio", filePath);  //, volume); //todo: volume does not work here.
 
-        LowerLog = $"{DateTime.Now:HH:mm:ss}  played for{pauseAtMs,5} ms  {filePath}.";
+        LowerLog = $"{DateTime.Now:HH:mm:ss} {pauseAtMs,5} ms  of {filePath}";
 
         if (pauseAtMs == 0) return;
 
