@@ -128,7 +128,7 @@
 </EditForm>
 
 @code {
-  const string eval = "eval", version = "202.0";
+  const string eval = "eval", version = "24.0721";
   ModelCourt court;
   EditContext editContext; // https://stackoverflow.com/questions/67541036/how-to-use-radiobuttons-and-checkboxes-in-an-asp-net-blazor-page
   IJSObjectReference? module;
@@ -190,15 +190,17 @@
 
       var userAgentRAW = await JSRuntime.InvokeAsync<string>(eval, "navigator.userAgent");
       var userAgentArray = userAgentRAW.Split(new[] { "Mozilla/5.0 (", ") AppleWebKit/", "(KHTML, like Gecko)" }, StringSplitOptions.RemoveEmptyEntries);
-      var csv = $"{userAgentArray.FirstOrDefault()?.Trim()}│{userAgentArray[1]?.Trim()}│{userAgentArray.LastOrDefault()?.Trim()}│"
-              + $"{await JSRuntime.InvokeAsync<int>(eval, "navigator.hardwareConcurrency")}│"
-              + $"{await JSRuntime.InvokeAsync<string>(eval, "navigator.platform")}│"
-              + $"{await JSRuntime.InvokeAsync<string>(eval, "navigator.languages.toString()")}│"
-              + $"{w}x{h}x{d}│zone│gpu│gpv│";
+      var csv = $"{userAgentArray.FirstOrDefault()?.Trim().Substring(0,12)}"  // iPhone; CPU iPhone OS 17_3_1 ... :version changes often => cut it off
+              + $"│{userAgentArray[1]?.Trim()}"
+              + $"│{userAgentArray.LastOrDefault()?.Trim().Substring(0, 6)}"  // Chrome/85.0.4183.121 ... :version changes often => cut it off
+              + $"│{await JSRuntime.InvokeAsync<int>(eval, "navigator.hardwareConcurrency")}"
+              + $"│{await JSRuntime.InvokeAsync<string>(eval, "navigator.platform")}"
+              + $"│{await JSRuntime.InvokeAsync<string>(eval, "navigator.languages.toString()")}"
+              + $"│{w}x{h}x{d}│zone│gpu│gpv│";
 
       return csv;
     }
-    catch (Exception ex) { return $"{ex.Message}|{ex.InnerException?.Message}|{ex.InnerException?.InnerException?.Message}"; }
+    catch (Exception ex) { return $"Err: {ex.Message}|{ex.InnerException?.Message}|{ex.InnerException?.InnerException?.Message}"; }
   }
 
   WakeLockSentinel? _wakeSentinel;
