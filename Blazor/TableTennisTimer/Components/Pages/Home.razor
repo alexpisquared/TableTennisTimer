@@ -183,20 +183,19 @@
   {
     try
     {
-      var w = await JSRuntime.InvokeAsync<int>(eval, "window.screen.width");
-      var h = await JSRuntime.InvokeAsync<int>(eval, "window.screen.height");
-      var d = await JSRuntime.InvokeAsync<int>(eval, "window.screen.colorDepth");
       // var u = await JSRuntime.InvokeAsync<object>(id, "window.screen");
 
       var userAgentRAW = await JSRuntime.InvokeAsync<string>(eval, "navigator.userAgent");
       var userAgentArray = userAgentRAW.Split(new[] { "Mozilla/5.0 (", ") AppleWebKit/", "(KHTML, like Gecko)" }, StringSplitOptions.RemoveEmptyEntries);
-      var csv = $"{userAgentArray.FirstOrDefault()?.Trim().Substring(0,12)}"  // iPhone; CPU iPhone OS 17_3_1 ... :version changes often => cut it off
+      var csv = $"{userAgentArray.FirstOrDefault()?.Trim().Substring(0,12)}"  // iPhone; CPU iPhone OS 17_3_1...  :version changes often => cut it off
               + $"│{userAgentArray[1]?.Trim()}"
-              + $"│{userAgentArray.LastOrDefault()?.Trim().Substring(0, 6)}"  // Chrome/85.0.4183.121 ... :version changes often => cut it off
-              + $"│{await JSRuntime.InvokeAsync<int>(eval, "navigator.hardwareConcurrency")}"
+              + $"│{userAgentArray.LastOrDefault()?.Trim().Substring(0, 6)}"  // Chrome/85.0.4183.121...          :version changes often => cut it off
+              + $"│{await JSRuntime.InvokeAsync<int>(eval, "navigator.hardwareConcurrency")}" // 12      :~CPU cores
               + $"│{await JSRuntime.InvokeAsync<string>(eval, "navigator.platform")}"
               + $"│{await JSRuntime.InvokeAsync<string>(eval, "navigator.languages.toString()")}"
-              + $"│{w}x{h}x{d}│zone│gpu│gpv│";
+              + $"│{await JSRuntime.InvokeAsync<int>(eval, "window.screen.width")}"
+              + $"x{await JSRuntime.InvokeAsync<int>(eval, "window.screen.height")}"
+              + $"x{await JSRuntime.InvokeAsync<int>(eval, "window.screen.colorDepth")}│zone│gpu│gpv│";
 
       return csv;
     }
