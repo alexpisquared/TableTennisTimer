@@ -10,7 +10,7 @@ public class ModelCourt
   string lowerLog = "";
   public string WLStatus = "WLStatus";
   public string ErrorMsg = "";
-  public double Progress = 50, Regress = 50, version = 24.0721;
+  public double Progress = 50, Regress = 50, version = 20240722.2200;
 
   public IWebEventLoggerService? WebEventLoggerService { get; set; }
   public IJSRuntime? JSRuntime { get; set; }

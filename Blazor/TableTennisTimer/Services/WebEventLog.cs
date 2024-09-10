@@ -4,7 +4,7 @@ namespace TableTennisTimer.Services;
 
 public class WebEventLog
 {
-  [NotMapped] public string[] Sub { get; set; } = ["TTTimer"];
+  //[NotMapped] public string[] Sub { get; set; } = ["TTTimer"];
   [NotMapped] public string BrowserSignature { get; set; } = "TTTimer";
   [NotMapped] public string Nickname { get; set; } = "TTTimer";      // don't change order!!! :parsing depends on it.
   [NotMapped] public string FirstVisitId { get; set; } = "TTTimer";  // don't change order!!! :parsing depends on it.
