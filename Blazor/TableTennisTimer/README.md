@@ -117,3 +117,10 @@ WithOrigins at C:\Users\alexp\source\repos\alex-pi\AlexPiApi\Startup.cs is the c
 
 # 2024-01-15: //todo: flexbox for the timer layout: https://www.youtube.com/watch?v=fYq5PXgSsbE
 
+# 2025-03-09  AlexPi.Plug.ASP.NET.Core.Web.App - Publish over/plug alexpi.ca
+- followed https://www.youtube.com/watch?v=xJFX_bGb6Uc ==> SUCESS!!!
+- simple creation of a new project, then publish over the alexpi.ca replaced it with the new blank project.
+- //todo: try to do the same with the  AlexPi.Plug.BlazorApp:
+    - see if it offers a better more modern look and opps to look better
+    - AlexPi.Plug.BlazorApp was created as Auto/Both (Blazor Server and WebAssembly) .. maybe other options are better: the default is server, but maybe WebAssembly is better for the plug.
+```
