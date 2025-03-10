@@ -123,4 +123,6 @@ WithOrigins at C:\Users\alexp\source\repos\alex-pi\AlexPiApi\Startup.cs is the c
 - //todo: try to do the same with the  AlexPi.Plug.BlazorApp:
     - see if it offers a better more modern look and opps to look better
     - AlexPi.Plug.BlazorApp was created as Auto/Both (Blazor Server and WebAssembly) .. maybe other options are better: the default is server, but maybe WebAssembly is better for the plug.
+- AlexPi.Plug.AngularProject is also a candidate for this. But id does not have Publish option in the context menu of VS!?!?!?!?
+- 
 ```
