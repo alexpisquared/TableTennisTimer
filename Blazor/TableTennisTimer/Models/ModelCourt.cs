@@ -3,6 +3,8 @@
 public class ModelCourt
 {
   const int _min = 50;
+int  _lessMilliSec = 94_000;
+
   int _ms = 200, _a;
   object? wakeLock_OLD;
   DateTimeOffset _nextTime = DateTimeOffset.Now;
@@ -33,13 +35,6 @@ public class ModelCourt
   {
     _nextTime = CalculateNextTime(IsRoundedMode);
     NextTime_String = $"{_nextTime:HH:mm:ss}";
-    NextTimesString =
-        $" {_nextTime.AddMinutes(SelectPeriodInMin * 1):HH:mm:ss} \n"
-      + $" {_nextTime.AddMinutes(SelectPeriodInMin * 2):HH:mm:ss} \n"
-      + $" {_nextTime.AddMinutes(SelectPeriodInMin * 3):HH:mm:ss} \n"
-      + $" {_nextTime.AddMinutes(SelectPeriodInMin * 4):HH:mm:ss} \n"
-      + $" {_nextTime.AddMinutes(SelectPeriodInMin * 5):HH:mm:ss} \n"
-      + $" {_nextTime.AddMinutes(SelectPeriodInMin * 6):HH:mm:ss} \n ...";
   }
 
   async Task StartAgain()
@@ -72,7 +67,6 @@ public class ModelCourt
   public bool IsAudible { get; set; } = true;
   public bool IsDebug { get; set; } = isDebug;
   public string NextTime_String { get; private set; } = "";
-  public string NextTimesString { get; private set; } = "";
   public string LowerLog { get => lowerLog; set => lowerLog += $"\n{value}"; }
 
   public void StopTimer() => IsLooping = false;
@@ -87,6 +81,8 @@ public class ModelCourt
   {
     SelectPeriodInMin = 10;
     await Task.Delay(0);
+    StartAsync();
+    _lessMilliSec = 0;
   }
 
   readonly Action SetWakeLockOn;
@@ -98,7 +94,9 @@ public class ModelCourt
   public async Task MainLoopTask()
   {
     IsLooping = true;
-    _nextTime = CalculateNextTime(IsRoundedMode);
+    IsRoundedMode = (CalculateNextTime(true) - DateTimeOffset.Now).TotalMinutes > 8.26;
+
+    _nextTime = CalculateNextTime(IsRoundedMode, _lessMilliSec);
     NextTime_String = $"{_nextTime:HH:mm:ss}";
 
     while (IsLooping)
@@ -129,12 +127,12 @@ public class ModelCourt
           await Task.Delay(1_640);
         }
         else
-        if (((int)secondsLeft + 11) % 20 == 0) // workaround for PWA mode, where the screen lock is not available.
-        {
-          _ms = _ms > _min ? _ms - 50 : _min;
-          await PlayResource(_audios[_a++ % _audios.Length], _ms);
-          //await LogToAzureLog($"ttt·{_ms}");
-        }
+          if (((int)secondsLeft + 11) % 20 == 0) // workaround for PWA mode, where the screen lock is not available.
+          {
+            _ms = _ms > _min ? _ms - 50 : _min;
+            await PlayResource(_audios[_a++ % _audios.Length], _ms);
+            //await LogToAzureLog($"ttt·{_ms}");
+          }
       } // while (now < _nextTime)
 
       _nextTime = CalculateNextTime(IsRoundedMode);
@@ -172,14 +170,20 @@ public class ModelCourt
     LowerLog = await WebEventLoggerService.LogEventAsync(/*"memberSince",*/ WebEventLog);
   }
 
-  DateTimeOffset CalculateNextTime(bool isRounded)
+  DateTimeOffset CalculateNextTime(bool isRounded, int lessMiliSeconds = 0)
   {
     var now = DateTimeOffset.Now;
     return isRounded ?
       now.AddMinutes(_selectPeriodInMin - (now.Minute % _selectPeriodInMin)).AddSeconds(-now.Second).AddMilliseconds(-now.Millisecond) :
-      now.AddMinutes(_selectPeriodInMin).AddMilliseconds(-200);
+      now.AddMinutes(_selectPeriodInMin).AddMilliseconds(-200 - lessMiliSeconds);
   }
 
+  public async void HardRefresh()
+  {
+    // perform hard refresh by reloading the page, which will reload the entire app from the server, thus resetting all states and timers. 
+    ArgumentNullException.ThrowIfNull(JSRuntime, "@23");
+    await JSRuntime.InvokeVoidAsync("location.reload");
+  }
   public async void PlayIntro() => await PlayWavFilesAsync("Intro", 360);
   public async void PlayLastM() => await PlayWavFilesAsync("LastM", 0_500);
   public async void PlayRotat() => await PlayWavFilesAsync("Rotat", 4_500);

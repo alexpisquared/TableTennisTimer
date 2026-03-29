@@ -13,9 +13,9 @@
     <None Remove="Components\Pages\TTTimerPort2.razor.css" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\Users\alexp\source\repos\alex-pi\AzurePseudoLogger\ITextDbContext.cs" Link="Services\ITextDbContext.cs" />
-    <Compile Include="..\..\..\..\Users\alexp\source\repos\alex-pi\AzurePseudoLogger\PoorMansLogger.cs" Link="Services\PoorMansLogger.cs" />
-    <Compile Include="..\..\..\..\Users\alexp\source\repos\alex-pi\AzurePseudoLogger\TextDbContext.cs" Link="Services\TextDbContext.cs" />
+    <Compile Include="C:\g\alex-pi\Src\AzurePseudoLogger\ITextDbContext.cs" Link="Services\ITextDbContext.cs" />
+    <Compile Include="C:\g\alex-pi\Src\AzurePseudoLogger\PoorMansLogger.cs" Link="Services\PoorMansLogger.cs" />
+    <Compile Include="C:\g\alex-pi\Src\AzurePseudoLogger\TextDbContext.cs" Link="Services\TextDbContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Components\Pages\Home.razor.js" />

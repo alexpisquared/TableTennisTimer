@@ -8,40 +8,45 @@
 
 <EditForm EditContext="this.editContext">
   <div class="flexVertical">
-    <div class="flexHorizontal zIndexTop">
+    <div class="flexHorizontal zIndexTop right3">
+      @*
       <div class="left160 vertCenter">
-        <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
+          <InputRadioGroup @bind-Value="court.SelectPeriodInMin">
           @foreach (var option in court.PlayPeriods)
           {
             <InputRadio Value="option.PeriodInMin" id="@option.PeriodInMin" class="nogo1" style="margin-left: 10px;" />
             <label for="@option.PeriodInMin" style="margin-right: 26px;">@option.PeriodInMin</label>
           }
-        </InputRadioGroup>
+        </InputRadioGroup> 
       </div>
       <div class="vertCenter" style="width: 140px; margin-left: 15px;">
-        <label style="color: #fb0; font-size: 12px;" for="chkRound">Next &nbsp;</label>
         <InputCheckbox id="chkRound" @bind-Value="court.IsRoundedMode" />
         <label style="color: #fb0;" for="chkRound">@court.NextTime_String</label>
       </div>
+        *@
+
 
       @if (court.Initiated == false)
       {
-        <button @onclick="@court.StartAsync" class="button" style="color: #0a0; margin-left: 0; margin-right: 0;">Start</button>
+        <button @onclick="@court.StartAsync" class="button" style="color: #0d0; background-color: #050; margin-right: 0; font-size: 26px; font-weight: 600;">Start</button>
       }
       else
       {
-        <button @onclick="@court.StopButton" class="button" style="color: #c00; margin-left: 0; margin-right: 0;">Stop</button>
+        <button @onclick="@court.StopButton" class="button" style="color: #f05; background-color: #500; margin-right: 0; font-size: 26px; font-weight: 600;">Stop</button>
       }
     </div>
+    
     @if (court.Initiated == false)
     {
       <div class="flexHorizontal">
         <div class="backgroundPanel left160" style="border: 0px; background-color: transparent;"></div>
-        <div style="width: 140px; margin-left: 15px;">
-          <pre style="color: #fb0; font-size: 18px;">@court.NextTimesString</pre>
-          <label style="color: #fb0; font-size: 12px;" for="chkRound">Next &nbsp;</label>
-          <InputCheckbox id="chkRound" @bind-Value="court.IsRoundedMode" />
-          <label style="color: #fb0;" for="chkRound">@court.NextTime_String</label>
+        @*  <div style="width: 140px; margin-left: 15px;"><InputCheckbox id="chkRound" @bind-Value="court.IsRoundedMode" /><label style="color: #fb0;" for="chkRound">@court.NextTime_String</label></div>*@      
+        <div class="absolutePanel">
+          <div class="centerHoriz">
+            <div class="centerVerti">
+              <button @onclick="@court.StartAsync" class="button" style="color: #0e0; background-color: #050; margin-left: 0; margin-right: 0; font-size: 58px; height: 100px; width: 200px;">Start</button>
+            </div>
+          </div>
         </div>
       </div>
     }
@@ -83,10 +88,13 @@
           <button id="wake-lock-btn" @onclick="ToggleWakeLock" style="color: #0c0;">@(_isWakeLocked ? "Stop" : "Start") WL</button>
           <label style="color: #08f; margin-right: 32px;">            @(court.IsDebug ? @court.WLStatus : "")          </label>
         }
-        else @if (_isWakeLockSupported == false)
-        {
-          <h2 style="color: red;">The browser does not support the screen wake lock API.</h2>
-        }
+        else
+          @if (_isWakeLockSupported == false)
+          {
+            <h2 style="color: red;">The browser does not support the screen wake lock API.</h2>
+          }
+
+        <button @onclick="@court.HardRefresh" style="color: orangered;">Refresh</button>
 
         @* <button @onclick="@GetMemberSinceToReport">Get M-Since</button> *@
         @* <InputCheckbox class="nogo1" style="margin: 10px;" ValueChanged="@((e) => @court.CheckboxChanged(e))" ValueExpression="@(() => @court.IsAudible)" id="chkAudio" checked="@court.IsAudible" /> *@
@@ -166,12 +174,12 @@
     try
     {
       court.WebEventLog = new WebEventLog
-        {
-          BrowserSignature = await getBrowserId(),
-          FirstVisitId = await getMemberSince(),
-          EventName = $"ttt·{evName}",
-          DoneAt = DateTime.Now
-        };
+      {
+        BrowserSignature = await getBrowserId(),
+        FirstVisitId = await getMemberSince(),
+        EventName = $"ttt·{evName}",
+        DoneAt = DateTime.Now
+      };
       court.LowerLog += $"Ver: {version}\r\nMember since: {court.WebEventLog.FirstVisitId} \r\n{court.WebEventLog.BrowserSignature} \r\n";
       // court.LowerLog += await WebEventLoggerService.LogEventAsync("memberSince", court.WebEventLog); :no point to log this event, as mostly it is either the developer or web crawler => not a real usage.
       // await TextDbContext.AddStringAsync($"{GetType().FullName}.Put({court.LowerLog})");
@@ -187,7 +195,7 @@
 
       var userAgentRAW = await JSRuntime.InvokeAsync<string>(eval, "navigator.userAgent");
       var userAgentArray = userAgentRAW.Split(new[] { "Mozilla/5.0 (", ") AppleWebKit/", "(KHTML, like Gecko)" }, StringSplitOptions.RemoveEmptyEntries);
-      var csv = $"{userAgentArray.FirstOrDefault()?.Trim().Substring(0,12)}"  // iPhone; CPU iPhone OS 17_3_1...  :version changes often => cut it off
+      var csv = $"{userAgentArray.FirstOrDefault()?.Trim().Substring(0, 12)}"  // iPhone; CPU iPhone OS 17_3_1...  :version changes often => cut it off
               + $"│{userAgentArray[1]?.Trim()}"
               + $"│{userAgentArray.LastOrDefault()?.Trim().Substring(0, 6)}"  // Chrome/85.0.4183.121...          :version changes often => cut it off
               + $"│{await JSRuntime.InvokeAsync<int>(eval, "navigator.hardwareConcurrency")}" // 12      :~CPU cores
@@ -209,6 +217,9 @@
   {
     if (_isWakeLocked) await SetWakeLockOff(); else await SetWakeLockOn(); //nogo on my iPhone: try { await module.InvokeVoidAsync("toggleWakeLock"); } catch (Exception err) { court.ErrorMsg = $"{err.GetType().Name}.{nameof(ToggleWakeLock)}, {err.Message}"; WriteLine(err); }
   }
+  async Task Start10() { }
+  async Task Start00() { }
+
   async Task SetWakeLockOn()
   {
     try

@@ -85,8 +85,10 @@ label {
 }
 
 .right3 {
-  width: calc(100% - 260px);
-  margin-top: 12px;
+  width: calc(100% - 80px);
+  margin-top: -52px;
+  margin-bottom: 8px;
+  margin-left: 10px;
   justify-content: flex-end;
 }
 
